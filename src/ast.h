@@ -55,12 +55,12 @@ public:
      *  "GlobalVariable":           node of global var's definition
      *  "Function":                 node of function's definition
      *  "ParameterList":            node of list of function's parameters
-     *  "Paramater":                node of single parametre
+     *  "Paramater":                node of single parameter
      *  "FunctionCode":             node of all the instructions in a function
      *  "Instruction":              node of single instruction
      *  "Definition":               node of a definition instruction
-     *  "LocalDefinitionList":      node of vars-definition's instruction, list of local vars' definition
-     *  "LocalDefinition":          node of local var's definition
+     *  "LocalVariableList":        node of list of local vars' definition
+     *  "LocalVariable":            node of local var's definition
      *  "Statement":                node of a instruction but definition
      *  "Expression":               node of a expression
      *  "Arguments":                node of arguments
