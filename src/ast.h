@@ -83,7 +83,7 @@ public:
     Node **child_Node;
     
     /**
-     * @brief The number of line of the node in the file 
+     * @brief The number of line of which the node located in the file 
      */
     int line_Count;
 
@@ -105,6 +105,11 @@ public:
      * @param ... 
      */
     Node(string nodeName, string nodeType, int childNum, ...);
+
+    /**
+     * @brief Destroy the Node object
+     */
+    ~Node();
 
     /**
      * @brief Get the value's type of the node
@@ -145,7 +150,6 @@ public:
     vector<pair<string, llvm::Type*>> *getParam();
     Json::Value jsonGen();
 
-    ~Node();
 };
 
 llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction, llvm::StringRef VarName, llvm::Type* type);
