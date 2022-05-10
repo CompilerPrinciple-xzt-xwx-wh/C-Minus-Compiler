@@ -14,6 +14,10 @@ digit   [0-9]
 letter   [a-zA-Z]
 ID      {letter}({digit}|{letter}|"_")*
 
+ICONST   "0"|[1-9]{digit}*
+FCONST   "0"|[1-9]{digit}*"."{digit}+
+CCONST   \'.\'|\'\\.\'  
+
 COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 
 /*REGULAR EXPRESSIONS defining the tokens*/
@@ -58,7 +62,10 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 "break"           {yylval.node = new Node(yytext, "BREAK", 0); return BREAK;}
 "return"          {yylval.node = new Node(yytext, "RETURN", 0); return RETURN;}
 
-{ID}              {yylval.node = new Node(yytext, "", 0); return ID;}
+{ID}              {yylval.node = new Node(yytext, "ID", 0); return ID;}
+{ICONST}          {yylval.node = new Node(yytext, "Integer", 0); return Integer;}
+{FCONST}          {yylval.node = new Node(yytext, "Realnumber", 0); return Realnumber;}
+{CCONST}          {yylval.node = new Node(yytext, "Character", 0); return Character;}
 {COMMENT}         { ;}
 "\n"              {lineno = lineno + 1;}
 "\t"              { ;}
