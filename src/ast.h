@@ -88,17 +88,33 @@ public:
     int line_Count;
 
     /**
+     * @brief 
+     * alteration of parameter's type ,nodeName: char* --> string
+     * modification log: 2022/5/10,19:05
+     * modificated by: Wang Hui
+     */
+    /**
      * @brief Construct a new Node object
-     * 
      * @param nodeName 
      * @param nodeType 
-     * @param lineNo 
+     * @param lineNo
      */
-    Node(char * nodeName, string nodeType, int lineNo);
+    Node(string nodeName, string nodeType, int lineNo);
 
     /**
      * @brief Construct a new Node object
-     * 
+     * this constructor is not suggested but still provided
+     * constructor using string as nodeName's type is highly recommended
+     * @param nodeName 
+     * @param nodeType 
+     * @param Num 
+     * modification log: 2022/5/10,19:46
+     * modificated by: Wang Hui
+     */
+    Node(char* nodeName, string nodeType, int Num) ;
+
+    /**
+     * @brief Construct a new Node object
      * @param nodeName 
      * @param nodeType 
      * @param childNum 
@@ -107,9 +123,10 @@ public:
     Node(string nodeName, string nodeType, int childNum, ...);
 
     /**
-     * @brief Destroy the Node object
+     * @brief delete the customization of destructor
+     * modification log: 2022/5/10,19:22
+     * modificated by: Wang Hui
      */
-    ~Node();
 
     /**
      * @brief Get the value's type of the node
@@ -148,6 +165,14 @@ public:
     vector<llvm::Value *> *getPrintArgs();
     vector<llvm::Value *> *getArgsAddr();
     vector<pair<string, llvm::Type*>> *getParam();
+
+    /**
+     * @brief 
+     * 
+     * @return Json::Value 
+     * modification log: 
+     * modificated by: 
+     */
     Json::Value jsonGen();
 
 };
