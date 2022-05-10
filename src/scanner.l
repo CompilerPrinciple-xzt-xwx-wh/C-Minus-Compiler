@@ -11,8 +11,8 @@ void yyerror();
 %}
 /*TOKEN definitions*/
 digit   [0-9]
-alpha   [a-zA-Z]
-ID      {alpha}({digit}|{alpha}|"_")*
+letter   [a-zA-Z]
+ID      {letter}({digit}|{letter}|"_")*
 
 COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 
@@ -29,18 +29,18 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 "||"              {yylval.node = new Node(yytext, "OR", 0); return OR;}
 "!"               {yylval.node = new Node(yytext, "NOT", 0); return NOT;}
 "=="              {yylval.node = new Node(yytext, "EQUAL", 0); return EQUAL;}
-"!="              {yylval.node = new Node(yytext, "UNEQUAL", 0); return UNEQUAL;}
+"!="              {yylval.node = new Node(yytext, "NOTEQUAL", 0); return NOTEQUAL;}
 ">"               {yylval.node = new Node(yytext, "GT", 0); return GT;}
 ">="              {yylval.node = new Node(yytext, "GE", 0); return GE;}
 "<"               {yylval.node = new Node(yytext, "LT", 0); return LT;}
 "<="              {yylval.node = new Node(yytext, "LE", 0); return LE;}
 
-"("               {yylval.node = new Node(yytext, "LPAREN", 0); return LPAREN;}
-")"               {yylval.node = new Node(yytext, "RPAREN", 0); return RPAREN;}
-"]"               {yylval.node = new Node(yytext, "LBRACK", 0); return LBRACK;}
-"["               {yylval.node = new Node(yytext, "RBRACK", 0); return RBRACK;}
-"{"               {yylval.node = new Node(yytext, "LBRACE", 0); return LBRACE;}
-"}"               {yylval.node = new Node(yytext, "RBRACE", 0); return RBRACE;}
+"("               {yylval.node = new Node(yytext, "OPENPAREN", 0); return OPENPAREN;}
+")"               {yylval.node = new Node(yytext, "CLOSEPAREN", 0); return CLOSEPAREN;}
+"]"               {yylval.node = new Node(yytext, "OPENBRACKET", 0); return OPENBRACKET;}
+"["               {yylval.node = new Node(yytext, "CLOSEBRACKET", 0); return CLOSEBRACKET;}
+"{"               {yylval.node = new Node(yytext, "OPENCURLY", 0); return OPENCURLY;}
+"}"               {yylval.node = new Node(yytext, "CLOSECURLY", 0); return CLOSECURLY;}
 ","               {yylval.node = new Node(yytext, "COMMA", 0); return COMMA;}
 "."               {yylval.node = new Node(yytext, "DOT", 0); return DOT;}
 ";"               {yylval.node = new Node(yytext, "SEMI", 0); return SEMI;}
