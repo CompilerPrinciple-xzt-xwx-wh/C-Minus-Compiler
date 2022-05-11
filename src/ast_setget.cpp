@@ -1,15 +1,23 @@
 /**
- * @file ast.cpp
- * @brief created 2022/5/10,19:10
- *        add TODO for each function code
+ * @file ast_setget.cpp
+ * @brief separated from ast.cpp, define some public API for building process
  * @author Wang Hui (3190105609@zju.edu.cn)
  * @version 1.0
- * @date 2022-05-10
+ * @date 2022-05-11
  * @copyright Copyright (c) 2022
  * 
  */
 #include"ast.h"
 #include<cstdarg>
+
+/**
+ * @brief 
+ * var root is the root of program AST
+ * extern used in parser.yacc, main.cpp, ast_builder.cpp
+ * modification log: 2022/5/11,19:42
+ * modificated by: Wang Hui
+ */
+Node* root;
 
 /**
  * @brief Construct a new Node object
@@ -39,7 +47,6 @@ Node::Node(char* nodeName, string nodeType, int lineNo) {
     this->node_Type = nodeType ;
     this->line_Count = lineNo ;
 }
-
 
 /**
  * @brief Construct a new Node object
@@ -93,48 +100,6 @@ void Node::setValueType(int type){
     this->val_Type = type ;
 }
 
-llvm::Value *Node::irBuild(){
-    //TODO
-}
-llvm::Value *Node::irBuildExp(){
-    //TODO
-}
-llvm::Value *Node::irBuildFun(){
-    //TODO
-}
-llvm::Value *Node::irBuildVar(){
-    //TODO
-}
-llvm::Value *Node::irBuildStmt(){
-    //TODO
-}
-llvm::Value *Node::irBuildWhile(){
-    //TODO
-}
-llvm::Value *Node::irBuildIf(){
-    //TODO
-}
-llvm::Value *Node::irBuildReturn(){
-    //TODO
-}
-llvm::Value *Node::irBuildCompSt(){
-    //TODO
-}
-llvm::Value *Node::irBuildRELOP(){
-    //TODO
-}
-llvm::Value *Node::irBuildPrint(){
-    //TODO
-}
-llvm::Value *Node::irBuildPrintf(){
-    //TODO
-}
-llvm::Value *Node::irBuildScan(){
-    //TODO
-}
-llvm::Value *Node::irBuildAddr(){
-    //TODO
-}
 llvm::Instruction::CastOps Node::getCastInst(llvm::Type* src, llvm::Type* dst){
     //TODO
 }
@@ -163,11 +128,11 @@ vector<pair<string, llvm::Type*>> *Node::getParam(){
 
 /**
  * @brief 
- * 
+ * jsonGen() is implemented in file visualization.cpp
  * @return Json::Value 
- * modification log: 
- * modificated by: 
+ * modification log: delete this function 2022/5/11,19:52
+ * modificated by: Wang Hui
  */
-Json::Value Node::jsonGen(){
-    //TODO
-}
+// Json::Value Node::jsonGen(){
+//     //TODO
+// }

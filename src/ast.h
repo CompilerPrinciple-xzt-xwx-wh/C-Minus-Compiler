@@ -142,6 +142,29 @@ public:
      */
     void setValueType(int type);
 
+    /**
+     * @brief functions above and these 
+     * implemented in file ast_setget.cpp
+     * modification log: 2022/5/11,20:11
+     * modificated by: Wang Hui
+     */
+    llvm::Instruction::CastOps getCastInst(llvm::Type* src, llvm::Type* dst);
+    llvm::Value *typeCast(llvm::Value* src, llvm::Type* dst);
+    llvm::Type* getLlvmType(int type, int arraySize); 
+
+    vector<pair<string, int>> *getNameList(int type);
+    vector<llvm::Value *> *getArgs();
+    vector<llvm::Value *> *getPrintArgs();
+    vector<llvm::Value *> *getArgsAddr();
+    vector<pair<string, llvm::Type*>> *getParam();
+
+    /**
+     * @brief for all builder functions below
+     * implemented in file set_builder.cpp
+     * @return llvm::Value* 
+     * modification log: 2022/5/11,20:10
+     * modificated by: Wang Hui
+     */
     llvm::Value *irBuild();
     llvm::Value *irBuildExp();
     llvm::Value *irBuildFun();
@@ -156,22 +179,13 @@ public:
     llvm::Value *irBuildPrintf();
     llvm::Value *irBuildScan();
     llvm::Value *irBuildAddr();
-    llvm::Instruction::CastOps getCastInst(llvm::Type* src, llvm::Type* dst);
-    llvm::Value *typeCast(llvm::Value* src, llvm::Type* dst);
-    llvm::Type* getLlvmType(int type, int arraySize); 
-
-    vector<pair<string, int>> *getNameList(int type);
-    vector<llvm::Value *> *getArgs();
-    vector<llvm::Value *> *getPrintArgs();
-    vector<llvm::Value *> *getArgsAddr();
-    vector<pair<string, llvm::Type*>> *getParam();
 
     /**
-     * @brief 
-     * 
+     * @brief function jsonGen(), to visiualize AST
+     * implemented in file visulization.cpp
      * @return Json::Value 
-     * modification log: 
-     * modificated by: 
+     * modification log: 2022/5/11,20:09
+     * modificated by: Wang Hui
      */
     Json::Value jsonGen();
 
