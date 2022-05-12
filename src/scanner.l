@@ -38,6 +38,7 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 ">="              {yylval.node = new Node(yytext, "GE", 0); return GE;}
 "<"               {yylval.node = new Node(yytext, "LT", 0); return LT;}
 "<="              {yylval.node = new Node(yytext, "LE", 0); return LE;}
+"&"               {yylval.node = new Node(yytext, "ADDRESS", 0); return ADDRESS;}
 
 "("               {yylval.node = new Node(yytext, "OPENPAREN", 0); return OPENPAREN;}
 ")"               {yylval.node = new Node(yytext, "CLOSEPAREN", 0); return CLOSEPAREN;}
