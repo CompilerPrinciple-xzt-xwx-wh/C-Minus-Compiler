@@ -11,13 +11,33 @@
 #include<cstdarg>
 
 /**
- * @brief 
- * var root is the root of program AST
+ * @brief remove global variables from ast_setget.cpp
+ * ASTroot, context and builder are defined in file globals.cpp
+ * just extern used in local
+ * modification log: 2022/5/14,11:10
+ * modificated by: Wang Hui
+ */
+/**
+ * @brief rename root as ASTroot
+ * since parser.yacc has already declared to use extern ASTroot
+ * modification log: 2022/5/12,11:11
+ * modificated by: Wang Hui
+ */
+/**
+ * @brief var root is the root of program AST
  * extern used in parser.yacc, main.cpp, ast_builder.cpp
  * modification log: 2022/5/11,19:42
  * modificated by: Wang Hui
  */
-Node* root;
+extern Node* ASTroot ;
+/**
+ * @brief context and builder are global variables
+ * extern used in ast_builder.cpp,
+ * modification log: 2022/5/14,10:30
+ * modificated by: Wang Hui
+ */
+extern llvm::LLVMContext context ;
+extern llvm::IRBuilder<> builder(context) ;
 
 /**
  * @brief Construct a new Node object
@@ -79,7 +99,7 @@ int Node::getValueType(){
     if ( this->node_Type == "Typer" ) {
         if ( this->child_Node[0]->node_Name == "int" ) 
             return TYPE_INT ;
-        if ( this->child_Node[0]->node_Name == "floar" ) 
+        if ( this->child_Node[0]->node_Name == "float" ) 
             return TYPE_FLOAT ;
         if ( this->child_Node[0]->node_Name == "double" )
             return TYPE_DOUBLE ;
@@ -110,19 +130,19 @@ llvm::Type* Node::getLlvmType(int type, int arraySize){
     //TODO
 }
 
-vector<pair<string, int>> *Node::getNameList(int type){
+vector<pair<string, int>> Node::getNameList(int type){
     //TODO
 }
-vector<llvm::Value *> *Node::getArgs(){
+vector<llvm::Value *> Node::getArgs(){
     //TODO
 }
-vector<llvm::Value *> *Node::getPrintArgs(){
+vector<llvm::Value *> Node::getPrintArgs(){
     //TODO
 }
-vector<llvm::Value *> *Node::getArgsAddr(){
+vector<llvm::Value *> Node::getArgsAddr(){
     //TODO
 }
-vector<pair<string, llvm::Type*>> *Node::getParam(){
+vector<pair<string, llvm::Type*>> Node::getParam(){
     //TODO
 }
 

@@ -152,23 +152,46 @@ public:
     llvm::Value *typeCast(llvm::Value* src, llvm::Type* dst);
     llvm::Type* getLlvmType(int type, int arraySize); 
 
-    vector<pair<string, int>> *getNameList(int type);
-    vector<llvm::Value *> *getArgs();
-    vector<llvm::Value *> *getPrintArgs();
-    vector<llvm::Value *> *getArgsAddr();
-    vector<pair<string, llvm::Type*>> *getParam();
+    /**
+     * @brief getters for building
+     * retype the return value, remove the pointer to vector
+     * @param type 
+     * @return vector<pair<string, int>> 
+     * modification log: 2022/5/14,10:05
+     * modificated by: Wang Hui
+     */
+    vector<pair<string, int>> getNameList(int type);
+    vector<llvm::Value *> getArgs();
+    vector<llvm::Value *> getPrintArgs();
+    vector<llvm::Value *> getArgsAddr();
+    vector<pair<string, llvm::Type*>> getParam();
 
     /**
      * @brief for all builder functions below
      * implemented in file set_builder.cpp
+     * irBuild() is the root function for program's building
      * @return llvm::Value* 
      * modification log: 2022/5/11,20:10
      * modificated by: Wang Hui
      */
     llvm::Value *irBuild();
+    /**
+     * @brief rename function irBuildVar()
+     * irBuildVariable() build the variable for global and local
+     * @return llvm::Value* 
+     * modification log: 2022/5/14,10:00
+     * modificated by: Wang Hui
+     */
+    llvm::Value *irBuildVariable();
+    /**
+     * @brief rename function irBuildFun()
+     * irBuildFunction() build the function in the global
+     * @return llvm::Value* 
+     * modification log: 2022/5/14,10:01
+     * modificated by: Wang Hui
+     */
+    llvm::Value *irBuildFunction();
     llvm::Value *irBuildExp();
-    llvm::Value *irBuildFun();
-    llvm::Value *irBuildVar();
     llvm::Value *irBuildStmt();
     llvm::Value *irBuildWhile();
     llvm::Value *irBuildIf();
