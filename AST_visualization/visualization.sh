@@ -1,0 +1,1 @@
+pytm-cli -i *.json -o output.html -t 2

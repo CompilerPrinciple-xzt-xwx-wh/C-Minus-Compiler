@@ -2,9 +2,10 @@
  * @Author: xwxr
  * @Date: 2022-05-09 20:00:51
  * @LastEditors: xwxr
- * @LastEditTime: 2022-05-10 21:45:32
+ * @LastEditTime: 2022-05-12 12:42:55
  * @Description: C-Minus Grammar Generator without error detection
  */
+
 /*
  * @Author: xwxr
  * @Date: 2022-05-09 20:00:51
@@ -34,6 +35,7 @@
 %token <node> PLUS MINUS MUL DIV MOD
 %token <node> ASSIGN
 %token <node> INCR
+%token <node> ADDRESS
 %token <node> AND OR NOT
 %token <node> EQUAL NOTEQUAL GT GE LT LE
 %token <node> OPENPAREN CLOSEPAREN OPENBRACKET CLOSEBRACKET OPENCURLY CLOSECURLY
@@ -80,8 +82,8 @@ GlobalDefinition:
     Typer GlobalVariableList SEMI {
         $$ = new Node("", "GlobalDefinition", 3, $1, $2, $3);
     }
-    | Typer Function SEMI {
-        $$ = new Node("", "GlobalDefinition", 3, $1, $2, $3);
+    | Typer Function {
+        $$ = new Node("", "GlobalDefinition", 2, $1, $2);
     }
     ;
 
@@ -121,6 +123,9 @@ GlobalVariable:
     }
     | ID OPENBRACKET INT CLOSEBRACKET {
         $$ = new Node("", "GlobalVariable", 4, $1, $2, $3, $4);
+    }
+    | ID ASSIGN Expression {
+        $$ = new Node("", "GlobalVariable", 3, $1, $2, $3);
     }
     ;
 
@@ -205,6 +210,9 @@ LocalVariable:
     | ID OPENBRACKET CLOSEBRACKET {
         $$ = new Node("", "LocalVariable", 3, $1, $2, $3);
     }
+    | ID ASSIGN Expression {
+        $$ = new Node("", "LocalVariable", 3, $1, $2, $3);
+    }
     ;
 
 // a single instruction but definition
@@ -266,6 +274,10 @@ Expression:
     | Expression INCR {
         $$ = new Node("", "Expression", 2, $1, $2);
         $$->setValueType($1->getValueType());
+    }
+    | ADDRESS Expression {
+        $$ = new Node("", "Expression", 2, $1, $2);
+        $$->setValueType(TYPE_INT);
     }
     | Expression PLUS Expression {
         $$ = new Node("", "Expression", 3, $1, $2, $3);
