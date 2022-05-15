@@ -9,7 +9,6 @@
  */
 #include"ast.h"
 #include<cstdarg>
-
 /**
  * @brief remove global variables from ast_setget.cpp
  * ASTroot, context and builder are defined in file globals.cpp
@@ -17,25 +16,7 @@
  * modification log: 2022/5/14,11:10
  * modificated by: Wang Hui
  */
-/**
- * @brief rename root as ASTroot
- * since parser.yacc has already declared to use extern ASTroot
- * modification log: 2022/5/12,11:11
- * modificated by: Wang Hui
- */
-/**
- * @brief var root is the root of program AST
- * extern used in parser.yacc, main.cpp, ast_builder.cpp
- * modification log: 2022/5/11,19:42
- * modificated by: Wang Hui
- */
 extern Node* ASTroot ;
-/**
- * @brief context and builder are global variables
- * extern used in ast_builder.cpp,
- * modification log: 2022/5/14,10:30
- * modificated by: Wang Hui
- */
 extern llvm::LLVMContext context ;
 extern llvm::IRBuilder<> builder(context) ;
 
@@ -126,12 +107,112 @@ llvm::Instruction::CastOps Node::getCastInst(llvm::Type* src, llvm::Type* dst){
 llvm::Value *Node::typeCast(llvm::Value* src, llvm::Type* dst){
     //TODO
 }
-llvm::Type* Node::getLlvmType(int type, int arraySize){
-    //TODO
+
+/**
+ * @brief allocate space for a variable
+ * 
+ * @param type 
+ * @param arraySize 
+ * @return llvm::Type* 
+ * modification log: 2022/5/15,15:29
+ * modificated by: Wang Hui
+ */
+llvm::Type* Node::getLlvmType(int type, int size){
+    switch (type) {
+        case TYPE_INT:
+            return llvm::Type::getInt32Ty(context) ;
+        case TYPE_INT_ARRAY:
+            return llvm::ArrayType::get(llvm::Type::getInt32Ty(context), size) ;
+        case TYPE_INT_ARRAY_ARRAY:
+            //TODO
+            break;
+        
+        case TYPE_FLOAT:
+            return llvm::Type::getFloatTy(context);
+        case TYPE_FLOAT_ARRAY:
+            return llvm::ArrayType::get(llvm::Type::getFloatTy(context), size) ;
+        case TYPE_FLOAT_ARRAY_ARRAY:
+            //TODO
+            break; 
+
+        case TYPE_CHAR:
+            return llvm::Type::getInt8Ty(context);
+        case TYPE_CHAR_ARRAY:
+            return llvm::ArrayType::get(llvm::Type::getInt8Ty(context), size) ;
+        case TYPE_CHAR_ARRAY_ARRAY:
+            //TODO
+            break;
+        
+        case TYPE_DOUBLE:
+            return llvm::Type::getDoubleTy(context) ;
+        case TYPE_DOUBLE_ARRAY:
+            return llvm::ArrayType::get(llvm::Type::getDoubleTy(context), size) ;
+        case TYPE_DOUBLE_ARRAY_ARRAY:
+            //TODO
+            break;
+
+        default:
+            break;
+    }
+    return llvm::Type::getVoidTy(context);
 }
 
-vector<pair<string, int>> Node::getNameList(int type){
-    //TODO
+/**
+ * @brief Resolve the names of VariableList to define
+ * GlobalVariableList --> GlobalVariable COMMA GlobalVariableList | GlobalVariable
+ * LocalVariableList --> LocalVariable COMMA LocalVariableList | LocalVariable
+ * @param type 
+ * @return vector<Variable> 
+ * turn to CustomClass/variable.h to clarify Variable
+ * modification log: 2022/5/15,14:02
+ * modificated by: Wang Hui
+ */
+vector<Variable> Node::getNameList(int type){
+    vector<Variable> namelist ;
+    Node* temp = this ;
+    while ( true ) {
+        Node* var = temp->child_Node[0] ;
+        // Variable --> ID
+        if ( var->child_Num == 1 ) {
+            Variable variable(var->child_Node[0]->node_Name,type) ;
+            namelist.push_back(variable);
+            var->child_Node[0]->setValueType(type) ;
+        }
+        // Variable --> ID OPENBRACKET INT CLOSEBRACKET
+        else if ( var->child_Num == 4 ) {
+            int size = stoi(var->child_Node[2]->node_Name) ;
+            Variable variable(var->child_Node[0]->node_Name,type+ARRAY,size) ;
+            namelist.push_back(variable) ;
+            var->child_Node[0]->setValueType(type+ARRAY) ;
+        }
+        // Variable --> ID OPENBRACKET INT CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET
+        else if ( var->child_Num == 7 ) {
+            int one_dimension = stoi(var->child_Node[2]->node_Name), two_dimension = stoi(var->child_Node[5]->node_Name) ;
+            Variable variable(var->child_Node[0]->node_Name,type+ARRAY+ARRAY,one_dimension*two_dimension,two_dimension) ;
+            namelist.push_back(variable) ;
+            var->child_Node[0]->setValueType(type+ARRAY+ARRAY) ;
+        }
+        else if ( var->child_Num == 3 ) {
+            // Variable --> ID ASSIGN Expression
+            if ( var->child_Node[2]->node_Type == "Expression" ) {
+                //TODO
+            } 
+            // Variable --> ID OPENBRACKET CLOSEBRACKET
+            else {
+                // out of use, C grammer do not allow statement like "int arr[];"
+                // make sure statements like it not occur
+                throw logic_error("Error! Size-unclear array's definition.") ; 
+            }
+        } 
+        else {
+            throw logic_error("Error! Wrong definition.") ;
+        }
+        if ( temp->child_Num == 1 ) 
+            break;
+        else // iterative construction
+            temp = temp->child_Node[2] ;
+    }
+    return namelist ;
 }
 vector<llvm::Value *> Node::getArgs(){
     //TODO

@@ -26,7 +26,7 @@ Node* ASTroot ;
 
 /**
  * @brief context and builder are global variables
- * extern used in ast_builder.cpp,
+ * extern used in ast_builder.cpp, ast_setget.cpp, generator.cpp
  * modification log: 2022/5/14,10:30
  * modificated by: Wang Hui
  */

@@ -30,6 +30,7 @@
 #include <ostream>
 
 #include "type.h"
+#include "variable.h"
 
 using namespace std;
 
@@ -156,11 +157,11 @@ public:
      * @brief getters for building
      * retype the return value, remove the pointer to vector
      * @param type 
-     * @return vector<pair<string, int>> 
+     * @return vector<variable> 
      * modification log: 2022/5/14,10:05
      * modificated by: Wang Hui
      */
-    vector<pair<string, int>> getNameList(int type);
+    vector<Variable> getNameList(int type);
     vector<llvm::Value *> getArgs();
     vector<llvm::Value *> getPrintArgs();
     vector<llvm::Value *> getArgsAddr();
@@ -191,12 +192,19 @@ public:
      * modificated by: Wang Hui
      */
     llvm::Value *irBuildFunction();
-    llvm::Value *irBuildExp();
-    llvm::Value *irBuildStmt();
+    /**
+     * @brief Rename functions
+     * irBuildExp --> irBuildExpression, irBuildStmt --> irBuildStatement, irBuildCompSt --> irBuildCode
+     * @return llvm::Value* 
+     * modification log: 2022/5/14,22:27
+     * modificated by: Wang Hui
+     */
+    llvm::Value *irBuildExpression();
+    llvm::Value *irBuildStatement();
     llvm::Value *irBuildWhile();
     llvm::Value *irBuildIf();
     llvm::Value *irBuildReturn();
-    llvm::Value *irBuildCompSt();
+    llvm::Value *irBuildCode();
     llvm::Value *irBuildRELOP();
     llvm::Value *irBuildPrint();
     llvm::Value *irBuildPrintf();

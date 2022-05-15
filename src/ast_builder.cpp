@@ -10,7 +10,6 @@
  */
 #include"ast.h"
 #include"generator.h"
-
 extern Node* ASTroot ;
 extern llvm::LLVMContext context ;
 extern llvm::IRBuilder<> builder(context) ;
@@ -56,22 +55,17 @@ llvm::Value *Node::irBuild(){
  */
 llvm::Value *Node::irBuildVariable(){
     int type = this->child_Node[0]->getValueType() ;
-    vector<pair<string, int>> nameList = this->child_Node[1]->getNameList(type) ;
+    vector<Variable> nameList = this->child_Node[1]->getNameList(type) ;
     llvm::Type *llvmType ;
     for (auto it : nameList) {
-        if (it.second == VAR) {
-            llvmType = getLlvmType(type, 0) ;
-        } else {
-            llvmType = getLlvmType(type + ARRAY, it.second - ARRAY) ;
-        }
+        llvmType = getLlvmType(it.getType(),it.getSize()) ;
+        // global variable
         if (generator.getStack().empty()) {
-            llvm::Value *tmp = generator.getModule()->getGlobalVariable(it.first, true) ;
-            //Undefined rule, definition of var that share the same name with outer or global code's variable
-            if(tmp != nullptr){
-                throw logic_error("Redefined Variable: " + it.first) ;
-            }
-            llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(*generator.getModule(), llvmType, false, llvm::GlobalValue::PrivateLinkage, 0, it.first);
-            if (llvmType->isArrayTy()) {
+            llvm::Value *tmp = generator.getModule()->getGlobalVariable(it.getName(), true) ;
+            if ( tmp != nullptr ) 
+                throw logic_error("Error! Redefined global variable: " + it.getName()+".") ;
+            llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(*generator.getModule(), llvmType, false, llvm::GlobalValue::PrivateLinkage, 0, it.getName());
+            if ( llvmType->isArrayTy() ) {
                 std::vector<llvm::Constant*> constArrayElem ;
                 llvm::Constant* constElem = llvm::ConstantInt::get(llvmType->getArrayElementType(), 0);
                 for (int i = 0; i < llvmType->getArrayNumElements(); i++) {
@@ -82,23 +76,20 @@ llvm::Value *Node::irBuildVariable(){
             } else {
                 globalVar->setInitializer(llvm::ConstantInt::get(llvmType, 0));
             }
-            //if (generator->module->getGlobalVariable(it.first, true) == nullptr) {
-            //    cout<<"ERROR"<<endl;
-            //}
         }
+        // local variable
         else {            
-            llvm::Value *tmp = generator.getStack().top()->getValueSymbolTable()->lookup(it.first);
-            if(tmp != nullptr){
-                throw logic_error("Redefined Variable: " + it.first);
-            }            
-            llvm::Value* alloc = CreateEntryBlockAlloca(generator.getCurFunction(), it.first, llvmType);
+            llvm::Value *tmp = generator.getStack().top()->getValueSymbolTable()->lookup(it.getName());
+            if(tmp != nullptr)
+                throw logic_error("Redefined local variable: " + it.getName()+".") ;
+            llvm::Value* alloc = CreateEntryBlockAlloca(generator.getCurFunction(), it.getName(), llvmType);
         }
     }
     return NULL;
 }
 
 
-llvm::Value *Node::irBuildExp(){
+llvm::Value *Node::irBuildExpression(){
     //TODO
 }
 
@@ -107,38 +98,75 @@ llvm::Value *Node::irBuildFunction(){
     //TODO
 }
 
-// Stmt
-llvm::Value *Node::irBuildStmt(){
+/**
+ * @brief Rename irBuildCompSt to irBuildCode
+ * FunctionCode --> Instruction FunctionCode
+ * FunctionCode --> Instruction
+ * @return llvm::Value* 
+ * modification log: 2022/5/14,21:54
+ * modificated by: Wang Hui
+ */
+llvm::Value *Node::irBuildCode(){
     //TODO
 }
 
-// WHILE LP Exp RP Stmt
+/**
+ * @brief 
+ * Instruction --> Statement
+ * 
+ * @return llvm::Value* 
+ * modification log: 2022/5/14,22:12
+ * modificated by: Wang Hui
+ */
+llvm::Value *Node::irBuildStatement(){
+    //TODO
+}
+
+/**
+ * @brief Loop while statement
+ * WHILE OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
+ * @return llvm::Value* 
+ * modification log: 2022/5/14,22:15
+ * modificated by: Wang Hui
+ */
 llvm::Value *Node::irBuildWhile(){
     //TODO
 }
 
-// IF LP Exp RP Stmt %prec LOWER_THAN_ELSE
-// IF LP Exp RP Stmt ELSE Stmt
+/**
+ * @brief If statement
+ * IF OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
+ * IF OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY ELSE OPENCURLY FunctionCode CLOSECURLY
+ * @return llvm::Value* 
+ * modification log: 2022/5/14,22:15
+ * modificated by: Wang Hui
+ */
 llvm::Value *Node::irBuildIf(){
     //TODO
 }
 
-// RETURN Exp SEMI
-// RETURN SEMI
+/**
+ * @brief Return statement in function
+ * RETURN Expression SEMI
+ * RETURN SEMI
+ * @return llvm::Value* 
+ * modification log: 2022/5/14,22:17
+ * modificated by: Wang Hui
+ */
 llvm::Value *Node::irBuildReturn(){
     //TODO
 }
 
-
-// CompSt --> LC DefList StmtList RC
-// DefList --> Def DefList
-// Def --> Specifier DecList SEMI
-// StmtList --> Stmt StmtList
-llvm::Value *Node::irBuildCompSt(){
-    //TODO
-}
-
-// Exp RELOP Exp
+/**
+ * @brief 
+ * Expression GT Expression
+ * Expression GE Expression
+ * Expression LT Expression
+ * Expression LE Expression
+ * @return llvm::Value* 
+ * modification log: 2022/5/14,22:22
+ * modificated by: Wang Hui
+ */
 llvm::Value *Node::irBuildRELOP(){
     //TODO
 }
@@ -159,9 +187,9 @@ llvm::Value *Node::irBuildScan(){
 }
 
 
-// Exp --> ID
-// Exp --> ID[Exp]
-// Exp --> ID[]
+// Expression --> ID
+// Expression --> ID[Exp]
+// Expression --> ID[]
 llvm::Value *Node::irBuildAddr(){
     //TODO
 }
