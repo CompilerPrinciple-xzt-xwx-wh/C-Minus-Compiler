@@ -2,20 +2,26 @@
  * @Author: xwxr
  * @Date: 2022-05-14 10:19:46
  * @LastEditors: xwxr
+ * @LastEditTime: 2022-05-15 18:04:44
+ * @Description: delete addition assignment operator '+='
+ */
+
+/*
+ * @Author: xwxr
+ * @Date: 2022-05-14 10:19:46
+ * @LastEditors: xwxr
  * @LastEditTime: 2022-05-14 12:56:51
  * @Description: "matrix multiplication" test for C-Minus.
  */
 
 #include <stdio.h>
 
-int maxM = 25, maxN = 25;
-
 int main()
 {
     int m1, n1, m2, n2;
     scanf("%d %d", &m1, &n1);
     int i, j;
-    int A[maxM][maxN], B[maxM][maxN];
+    int A[25][25], B[25][25];
     int num;
     for (i = 0; i < m1; i++) {
         for (j = 0; j < n1; j++) {
@@ -33,12 +39,12 @@ int main()
     if (n1 != m2) {
         printf("Incompatible Dimensions\n");
     } else {
-        int C[maxM][maxN], k;
+        int C[25][25], k;
         for (i = 0; i < m1; i++) {
             for (j = 0; j < n2; j++) {
                 C[i][j] = 0;
                 for (k = 0; k < n1; k++) {
-                    C[i][j] += A[i][k] * B[k][j];
+                    C[i][j] = C[i][j] + A[i][k] * B[k][j];
                 }
             }
         }

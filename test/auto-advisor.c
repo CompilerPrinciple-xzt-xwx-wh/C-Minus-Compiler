@@ -2,20 +2,26 @@
  * @Author: xwxr
  * @Date: 2022-05-14 10:26:11
  * @LastEditors: xwxr
+ * @LastEditTime: 2022-05-15 18:06:41
+ * @Description: delete addition assignment operator '+=' and division assignment operator '/='
+ */
+
+/*
+ * @Author: xwxr
+ * @Date: 2022-05-14 10:26:11
+ * @LastEditors: xwxr
  * @LastEditTime: 2022-05-14 23:36:07
  * @Description: "auto advisor" test for C-Minus.
  */
 
 #include <stdio.h>
 
-int maxCourse = 100;
-
 int main()
 {
-    char course[maxCourse][5], precourse[maxCourse][1000], grade[maxCourse];
-    int credit[maxCourse];
+    char course[100][5], precourse[100][1000], grade[100];
+    int credit[100];
     int i = 0, j = 0;
-    while (true) {
+    while (1) {
         char ch;
         int crd;
         scanf("%c", &ch);
@@ -25,7 +31,7 @@ int main()
             course[i][j] = ch;
             j++;
         }
-        while (true) {
+        while (1) {
             scanf("%c", &ch);
             if (ch == '|') {
                 course[i][j] = '\0';
@@ -39,7 +45,7 @@ int main()
         credit[i] = crd;
         j = 0;
         scanf("%c", &ch);
-        while (true) {
+        while (1) {
             scanf("%c", &ch);
             if (ch == '|') {
                 precourse[i][j] = '\0';
@@ -61,23 +67,23 @@ int main()
     int coursenum = i;
     int creditsAttempted = 0, creditsCompleted = 0, creditsRemain = 0;
     float GPA = 0.0;
-    int remainIndex[maxCourse], cnt = 0;
+    int remainIndex[100], cnt = 0;
     for (i = 0; i < coursenum; i++) {
         if (grade[i] != '\0') {
             if (grade[i] != 'F') {
                 remainIndex[cnt] = i;
                 cnt++;
-                creditsCompleted += credit[i];
-                GPA += credit[i] * ('A' - grade[i] + 4);
+                creditsCompleted = creditsCompleted + credit[i];
+                GPA = GPA + credit[i] * ('A' - grade[i] + 4);
             } else {
-                creditsRemain += credit[i];
+                creditsRemain = creditsRemain + credit[i];
             }
-            creditsAttempted += credit[i];
+            creditsAttempted = creditsAttempted + credit[i];
         } else {
-            creditsRemain += credit[i];
+            creditsRemain = creditsRemain + credit[i];
         }
     }
-    GPA /= creditsAttempted;
+    GPA = GPA / creditsAttempted;
     printf("GPA: %.1f\n", GPA);
     printf("Hours Attempted: %d\n", creditsAttempted);
     printf("Hours Completed: %d\n", creditsCompleted);
@@ -102,14 +108,14 @@ int main()
                 char precourseset[100];
                 j = 0;
                 int k = 0;
-                while (true) {
+                while (1) {
                     int l;
                     if (precourse[i][j] == ';' || precourse[i][j] == '\0') {
                         precourseset[k] = '\0';
                         k = 0;
                         l = 0;
                         int num = 0, flagnum = 0;
-                        while (true) {
+                        while (1) {
                             if (precourseset[k] == ',' || precourseset[k] == '\0') {
                                 precourseterm[l] = '\0';
                                 int m = 0, n = 0;
