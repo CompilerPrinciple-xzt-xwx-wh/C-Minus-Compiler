@@ -11,7 +11,7 @@
 #include<iostream>
 #include"ast.h"
 #include"type.h"
-#include"parser.yacc"
+#include"parser.y.h"
 
 int main(){
 

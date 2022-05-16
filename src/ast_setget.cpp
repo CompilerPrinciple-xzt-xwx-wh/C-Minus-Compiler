@@ -89,7 +89,7 @@ int Node::getValueType(){
     } else if ( this->node_Type == "Expression" ) {
         return this->val_Type ;
     } else 
-        return VOID ;
+        return TYPE_VOID ;
     //TODO,yet to be verified
 }
 
@@ -223,8 +223,54 @@ vector<llvm::Value *> Node::getPrintArgs(){
 vector<llvm::Value *> Node::getArgsAddr(){
     //TODO
 }
-vector<pair<string, llvm::Type*>> Node::getParam(){
-    //TODO
+
+/**
+ * @brief get function's parameters in definition of global function
+ * ParameterList --> Parameter COMMA ParameterList
+ * ParameterList --> Parameter
+ * ParameterList --> %empty
+ * @return vector<pair<string, llvm::Type*>> 
+ * modification log: 2022/5/15,20:04
+ * modificated by: Wang Hui
+ */
+vector<pair<string, llvm::Type*>> Node::getParameterList(){
+    vector<pair<string,llvm::Type*>> parameters ;
+    // ParameterList --> %empty
+    if ( this == nullptr ) 
+        return parameters ;
+    Node *list = this;
+    while (true) {
+        // list refers to ParameterList
+        // ParameterList --> Parameter COMMA ParameterList | Parameter
+        Node* para = list->child_Node[0];
+        // para refers to Parameter
+        // Parameter --> Typer FunctionVariable
+        Node* fv = para->child_Node[1] ;
+        // fv refers to FunctionVariable
+        
+        // FunctionVariable --> ID[] 
+        if (fv->child_Num == 3) {
+            llvm::Type* type = getLlvmType(ARRAY + para->child_Node[0]->getValueType(), 0) ;
+            parameters.push_back(make_pair(fv->child_Node[0]->node_Name, type ));
+        }
+        // FunctionVariable --> ID
+        else if (fv->child_Num == 1) {
+            llvm::Type* type = getLlvmType(VAR + para->child_Node[0]->getValueType(), 0) ;
+            parameters.push_back(make_pair(para->child_Node[1]->child_Node[0]->node_Name, type));
+        }
+        // FunctionVariable --> ID[][n]
+        else if (fv->child_Num == 6 ) {
+            //TODO
+        } else 
+            throw logic_error("[ERROR]Wrong var def.");
+        // ParameterList --> Parameter COMMA ParameterList
+        if (list->child_Num == 3)
+            list = list->child_Node[2];
+        // ParameterList --> Parameter
+        else
+            break;        
+    }
+    return parameters ;
 }
 
 /**

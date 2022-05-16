@@ -25,7 +25,7 @@ Json::Value Node::jsonGen(){
     if(this->node_Type == "Typer" || this->node_Type == "Exp"){
         switch (this->getValueType())
         {
-        case VOID:
+        case TYPE_VOID:
             addstr = "void"; break;
         case VAR:
             addstr = "var"; break;
@@ -56,11 +56,11 @@ Json::Value Node::jsonGen(){
         }
     }
 
-    root["name"] = *this->node_Type + (addstr == "" ? "" : ": " + addstr);
+    root["name"] = this->node_Type + (addstr == "" ? "" : ": " + addstr);
 
     for(int i = 0; i < this->child_Num; i++){
         if(this->child_Node[i]){
-            root["children"].append(this->child_Node[]->jsonGen());
+            root["children"].append(this->child_Node[i]->jsonGen());
         }
     }
     return root;

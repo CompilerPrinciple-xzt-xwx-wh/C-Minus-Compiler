@@ -13,6 +13,11 @@
 
 #include"ast.h"
 
+#ifndef _STD_H_
+#define _STD_H_
+using namespace std ;
+#endif
+
 class Variable {
 private:
     /* data */

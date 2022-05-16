@@ -32,7 +32,12 @@
 #include "type.h"
 #include "variable.h"
 
-using namespace std;
+#ifndef _STD_H_
+#define _STD_H_
+using namespace std ;
+#endif
+
+class Variable ;
 
 class Node {
 public:
@@ -165,7 +170,7 @@ public:
     vector<llvm::Value *> getArgs();
     vector<llvm::Value *> getPrintArgs();
     vector<llvm::Value *> getArgsAddr();
-    vector<pair<string, llvm::Type*>> getParam();
+    vector<pair<string, llvm::Type*>> getParameterList();
 
     /**
      * @brief for all builder functions below

@@ -31,6 +31,11 @@
 #include "ast.h"
 #include "type.h"
 
+#ifndef _STD_H_
+#define _STD_H_
+using namespace std ;
+#endif
+
 class Generator{
 
     llvm::Module *module ;
