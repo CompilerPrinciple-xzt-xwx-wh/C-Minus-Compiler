@@ -102,8 +102,9 @@ llvm::Value *Node::irBuildExpression(){
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildFunction(){
-
-    //TODO
+    Node* function = this->child_Node[1] ;
+    vector<pair<string,llvm::Type*>> parameters = function->child_Node[2]->getParameterList() ;
+    
 }
 
 /**
