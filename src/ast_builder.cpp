@@ -102,9 +102,38 @@ llvm::Value *Node::irBuildExpression(){
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildFunction(){
-    Node* function = this->child_Node[1] ;
-    vector<pair<string,llvm::Type*>> parameters = function->child_Node[2]->getParameterList() ;
+    // GlobalDefinition --> Typer Function
+    Node* funcnode = this->child_Node[1] ;
+    // funcnode refers to Function
+
+    // Function --> ID OPENPAREN ParameterList CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
+    vector<pair<string,llvm::Type*>> parameters = funcnode->child_Node[2]->getParameterList() ;
     
+    vector<llvm::Type*> argTypes;
+    for ( auto it : parameters ) 
+        argTypes.push_back(it.second);
+    Node* type = this->child_Node[0] ;
+    llvm::FunctionType *funcType = llvm::FunctionType::get(getLlvmType(type->getValueType(), 0), argTypes, false) ;
+    llvm::Function *function = llvm::Function::Create(funcType, llvm::GlobalValue::ExternalLinkage, funcnode->child_Node[0]->node_Name, generator.getModule() ) ;
+    generator.pushFunction(function) ;
+
+    //Block
+    llvm::BasicBlock *newBlock = llvm::BasicBlock::Create(context, "entrypoint", function);
+    builder.SetInsertPoint(newBlock);
+    
+    //Parameters
+    if ( !parameters.empty() ) {
+        int index = 0;
+        for ( auto &Arg : function->args() ) 
+            Arg.setName( parameters.at(index++).first ) ;
+    }
+    
+    // Construct on FunctionCode
+    funcnode->child_Node[5]->irBuildCode();
+
+    // Pop
+    generator.popFunction() ;
+    return function;
 }
 
 /**
@@ -112,11 +141,43 @@ llvm::Value *Node::irBuildFunction(){
  * FunctionCode --> Instruction FunctionCode
  * FunctionCode --> Instruction
  * @return llvm::Value* 
- * modification log: 2022/5/14,21:54
+ * modification log: 2022/5/16,22:26
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildCode(){
+    Node* totalCode = this ;
+    // totalCode refers to FunctionCode
+    while ( true ) {
+        // FunctionCode --> Instruction FunctionCode | Instruction
+        Node* inst = totalCode->child_Node[0] ;
+        inst->irBuildInstruction() ;
+        if ( totalCode->child_Num == 1 ) 
+            break;
+        else 
+            totalCode = totalCode->child_Node[1] ;
+    } 
+    return NULL;
     //TODO
+}
+
+/**
+ * @brief 
+ * Instruction --> Definition | Statement
+ * @return llvm::Value* 
+ * modification log: 2022/5/16,22:57
+ * modificated by: Wang Hui
+ */
+llvm::Value* Node::irBuildInstruction(){
+    // sonode refers to Definition or Statement
+    Node* sonode = this->child_Node[0] ;
+    // Instruction --> Definition
+    if ( sonode->node_Type == "Definition" ) {
+        sonode->irBuildVariable() ;
+    }
+    // Instruction --> Statement
+    else {
+        sonode->irBuildStatement() ;
+    }
 }
 
 /**

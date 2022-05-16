@@ -239,6 +239,15 @@ public:
     llvm::Value *irBuildAddr();
 
     /**
+     * @brief Build each instruction in Function
+     * Instruction --> Definition | Statement
+     * @return llvm::Value* 
+     * modification log: 2022/5/16,22:55
+     * modificated by: Wang Hui
+     */
+    llvm::Value* irBuildInstruction() ;
+
+    /**
      * @brief function jsonGen(), to visiualize AST
      * implemented in file visulization.cpp
      * @return Json::Value 

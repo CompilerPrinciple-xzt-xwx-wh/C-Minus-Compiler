@@ -36,7 +36,7 @@ llvm::IRBuilder<> builder(context) ;
 /**
  * @brief generator to code IR
  * extern used in ast_setget.cpp, main.cpp, ast_builder.cpp and generator.cpp
- * @return Generator* 
+ * @return Generator
  * modification log: 2022/5/14,11:37
  * modificated by: Wang Hui
  */
