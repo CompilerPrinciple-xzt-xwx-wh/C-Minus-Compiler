@@ -32,7 +32,12 @@
 #include "type.h"
 #include "variable.h"
 
-using namespace std;
+#ifndef _STD_H_
+#define _STD_H_
+using namespace std ;
+#endif
+
+class Variable ;
 
 class Node {
 public:
@@ -106,13 +111,13 @@ public:
      * @brief Construct a new Node object
      * this constructor is not suggested but still provided
      * constructor using string as nodeName's type is highly recommended
-     * @param nodeName 
+     * @param nodeName (const char*)
      * @param nodeType 
      * @param Num 
      * modification log: 2022/5/10,19:46
      * modificated by: Wang Hui
      */
-    Node(char* nodeName, string nodeType, int Num) ;
+    Node(const char* nodeName, string nodeType, int Num) ;
 
     /**
      * @brief Construct a new Node object
@@ -151,7 +156,29 @@ public:
      */
     llvm::Instruction::CastOps getCastInst(llvm::Type* src, llvm::Type* dst);
     llvm::Value *typeCast(llvm::Value* src, llvm::Type* dst);
+
+    /**
+     * @brief Get the Llvm Type object
+     * return variable of type like int, int[] ...
+     * @param type 
+     * @param arraySize 
+     * @return llvm::Type* 
+     * modification log: 2022/5/16,13:50
+     * modificated by: Wang Hui
+     */
     llvm::Type* getLlvmType(int type, int arraySize); 
+    /**
+     * @brief Get the Llvm Type object
+     * Overload the getLlvmType for define two-dimension array
+     * return type like int[len][wid] ...
+     * @param type 
+     * @param len 
+     * @param wid 
+     * @return llvm::Type* 
+     * modification log: 2022/5/16,13:48
+     * modificated by: Wang Hui
+     */
+    llvm::Type* getLlvmType(int type, int len, int wid ) ;
 
     /**
      * @brief getters for building
@@ -165,7 +192,7 @@ public:
     vector<llvm::Value *> getArgs();
     vector<llvm::Value *> getPrintArgs();
     vector<llvm::Value *> getArgsAddr();
-    vector<pair<string, llvm::Type*>> getParam();
+    vector<pair<string, llvm::Type*>> getParameterList();
 
     /**
      * @brief for all builder functions below

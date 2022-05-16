@@ -43,7 +43,7 @@ Node::Node(string nodeName, string nodeType, int lineNo) {
  * modification log: 2022/5/10,19:46
  * modificated by: Wang Hui
  */
-Node::Node(char* nodeName, string nodeType, int lineNo) {
+Node::Node(const char* nodeName, string nodeType, int lineNo) {
     this->node_Name = string(nodeName) ;
     this->node_Type = nodeType ;
     this->line_Count = lineNo ;
@@ -89,7 +89,7 @@ int Node::getValueType(){
     } else if ( this->node_Type == "Expression" ) {
         return this->val_Type ;
     } else 
-        return VOID ;
+        return TYPE_VOID ;
     //TODO,yet to be verified
 }
 
@@ -122,40 +122,73 @@ llvm::Type* Node::getLlvmType(int type, int size){
         case TYPE_INT:
             return llvm::Type::getInt32Ty(context) ;
         case TYPE_INT_ARRAY:
-            return llvm::ArrayType::get(llvm::Type::getInt32Ty(context), size) ;
-        case TYPE_INT_ARRAY_ARRAY:
-            //TODO
-            break;
-        
+            if ( size == 0 )
+                return llvm::Type::getInt32PtrTy(context) ;
+            else 
+                return llvm::ArrayType::get(llvm::Type::getInt32Ty(context), size) ;
         case TYPE_FLOAT:
             return llvm::Type::getFloatTy(context);
         case TYPE_FLOAT_ARRAY:
-            return llvm::ArrayType::get(llvm::Type::getFloatTy(context), size) ;
-        case TYPE_FLOAT_ARRAY_ARRAY:
-            //TODO
-            break; 
-
+            if ( size == 0 )
+                return llvm::Type::getFloatPtrTy(context) ;
+            else
+                return llvm::ArrayType::get(llvm::Type::getFloatTy(context), size) ;
         case TYPE_CHAR:
             return llvm::Type::getInt8Ty(context);
         case TYPE_CHAR_ARRAY:
-            return llvm::ArrayType::get(llvm::Type::getInt8Ty(context), size) ;
-        case TYPE_CHAR_ARRAY_ARRAY:
-            //TODO
-            break;
-        
+            if ( size == 0 ) 
+                return llvm::Type::getInt8PtrTy(context) ;
+            else
+                return llvm::ArrayType::get(llvm::Type::getInt8Ty(context), size) ;
         case TYPE_DOUBLE:
             return llvm::Type::getDoubleTy(context) ;
         case TYPE_DOUBLE_ARRAY:
-            return llvm::ArrayType::get(llvm::Type::getDoubleTy(context), size) ;
-        case TYPE_DOUBLE_ARRAY_ARRAY:
-            //TODO
-            break;
-
+            if ( size == 0 )
+                return llvm::Type::getDoublePtrTy(context) ;
+            else
+                return llvm::ArrayType::get(llvm::Type::getDoubleTy(context), size) ;
         default:
             break;
     }
     return llvm::Type::getVoidTy(context);
 }
+
+/**
+ * @brief Overload function getLlvmType
+ * used to create two-dimension array
+ * @param type 
+ * @param len 
+ * @param wid 
+ * @return llvm::Type* 
+ * modification log: 2022/5/16,14:22
+ * modificated by: Wang Hui
+ */
+llvm::Type* Node::getLlvmType(int type, int len, int wid ) {
+    switch ( type ) {
+        case TYPE_CHAR_ARRAY_ARRAY :
+            /* code */
+            if ( len == 0 ) 
+                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(context),wid) , 0 ) ;
+            else
+                return llvm::ArrayType::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(context),wid), len) ;
+        case TYPE_INT_ARRAY_ARRAY:
+            if ( len == 0 ) 
+                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getInt32Ty(context),wid) , 0) ;
+            else 
+                return llvm::ArrayType::get( llvm::ArrayType::get(llvm::Type::getInt32Ty(context),wid), len ) ;
+        case TYPE_FLOAT_ARRAY_ARRAY:
+            if ( len == 0 )
+                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getFloatTy(context), wid) ,0 ) ;
+            else 
+                return llvm::ArrayType::get(llvm::ArrayType::get(llvm::Type::getFloatTy(context),wid), len) ;
+        case TYPE_DOUBLE_ARRAY_ARRAY:
+            if ( len == 0 ) 
+                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getDoubleTy(context),wid),len) ;
+        default:
+            break;
+    }
+    return llvm::Type::getVoidTy(context) ;
+} 
 
 /**
  * @brief Resolve the names of VariableList to define
@@ -223,8 +256,58 @@ vector<llvm::Value *> Node::getPrintArgs(){
 vector<llvm::Value *> Node::getArgsAddr(){
     //TODO
 }
-vector<pair<string, llvm::Type*>> Node::getParam(){
-    //TODO
+
+/**
+ * @brief get function's parameters in definition of global function
+ * ParameterList --> Parameter COMMA ParameterList
+ * ParameterList --> Parameter
+ * ParameterList --> %empty
+ * @return vector<pair<string, llvm::Type*>> 
+ * modification log: 2022/5/15,20:04
+ * modificated by: Wang Hui
+ */
+vector<pair<string, llvm::Type*>> Node::getParameterList(){
+    vector<pair<string,llvm::Type*>> parameters ;
+    // ParameterList --> %empty
+    if ( this == nullptr ) 
+        return parameters ;
+    Node *list = this;
+    while (true) {
+        // list refers to ParameterList
+        // ParameterList --> Parameter COMMA ParameterList | Parameter
+        Node* para = list->child_Node[0];
+        // para refers to Parameter
+        // Parameter --> Typer FunctionVariable
+        Node* fv = para->child_Node[1] ;
+        // fv refers to FunctionVariable
+        Node* ty = para->child_Node[0] ;
+        // ty refers to Typer
+
+        // FunctionVariable --> ID[] 
+        if (fv->child_Num == 3) {
+            llvm::Type* type = getLlvmType(ARRAY + ty->getValueType(), 0) ;
+            parameters.push_back(make_pair(fv->child_Node[0]->node_Name, type ));
+        }
+        // FunctionVariable --> ID
+        else if (fv->child_Num == 1) {
+            llvm::Type* type = getLlvmType(VAR + ty->getValueType(), 0) ;
+            parameters.push_back(make_pair(fv->child_Node[0]->node_Name, type));
+        }
+        // FunctionVariable --> ID[][n]
+        else if (fv->child_Num == 6 ) {
+            int bottomSize = stoi(fv->child_Node[4]->node_Name) ;
+            llvm::Type* type = getLlvmType(ARRAY+ARRAY+ty->getValueType(), 0, bottomSize) ;
+            parameters.push_back(make_pair(fv->child_Node[0]->node_Name, type)) ;
+        } else 
+            throw logic_error("Error! Wrong parameter definition.");
+        // ParameterList --> Parameter COMMA ParameterList
+        if (list->child_Num == 3)
+            list = list->child_Node[2];
+        // ParameterList --> Parameter
+        else
+            break;        
+    }
+    return parameters ;
 }
 
 /**
@@ -235,5 +318,5 @@ vector<pair<string, llvm::Type*>> Node::getParam(){
  * modificated by: Wang Hui
  */
 // Json::Value Node::jsonGen(){
-//     //TODO
+//     //
 // }

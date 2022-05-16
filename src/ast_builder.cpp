@@ -93,9 +93,18 @@ llvm::Value *Node::irBuildExpression(){
     //TODO
 }
 
-// GlobalDefinition --> Typer Function
+/**
+ * @brief Build function in global
+ * GlobalDefinition --> Typer Function
+ * Function --> ID OPENPAREN ParameterList CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
+ * @return llvm::Value* 
+ * modification log: 2022/5/15,20:01
+ * modificated by: Wang Hui
+ */
 llvm::Value *Node::irBuildFunction(){
-    //TODO
+    Node* function = this->child_Node[1] ;
+    vector<pair<string,llvm::Type*>> parameters = function->child_Node[2]->getParameterList() ;
+    
 }
 
 /**
