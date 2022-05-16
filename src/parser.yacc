@@ -2,6 +2,14 @@
  * @Author: xwxr
  * @Date: 2022-05-09 20:00:51
  * @LastEditors: xwxr
+ * @LastEditTime: 2022-05-15 22:11:42
+ * @Description: update the representation of function parameter variables
+ */
+
+/*
+ * @Author: xwxr
+ * @Date: 2022-05-09 20:00:51
+ * @LastEditors: xwxr
  * @LastEditTime: 2022-05-15 18:12:37
  * @Description: add 2d array implementation
  */
@@ -63,8 +71,8 @@
 
 %type <node> Program GlobalDefinitionList GlobalDefinition Typer
 %type <node> GlobalVariableList GlobalVariable Function ParameterList Parameter
-%type <node> FunctionCode Instruction Definition LocalVariableList LocalVariable
-%type <node> Statement Expression Arguments
+%type <node> FunctionVariable FunctionCode Instruction Definition LocalVariableList
+%type <node> LocalVariable Statement Expression Arguments
 
 %%
 // the root of the AST
@@ -133,17 +141,9 @@ GlobalVariable
     |           ID OPENBRACKET INT CLOSEBRACKET {
                     $$ = new Node("", "GlobalVariable", 4, $1, $2, $3, $4);
                 }
-    // global one-dimensional array for function parameter
-    |           ID OPENBRACKET CLOSEBRACKET {
-                    $$ = new Node("", "GlobalVariable", 3, $1, $2, $3);
-                }
     // global two-dimensional array for definition
     |           ID OPENBRACKET INT CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET{
                     $$ = new Node("", "GlobalVariable", 7, $1, $2, $3, $4, $5, $6, $7);
-                }
-    // global two-dimensional array for function parameter
-    |           ID OPENBRACKET CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET{
-                    $$ = new Node("", "GlobalVariable", 6, $1, $2, $3, $4, $5, $6);
                 }
     // initialization assignment
     |           ID ASSIGN Expression {
@@ -176,13 +176,25 @@ ParameterList
 
 // single parameter
 Parameter
-    :           Typer LocalVariable {
-                    $$ = new Node("", "Parameter", 2, $1, $2);
-                }
-    |           Typer GlobalVariable {
+    :           Typer FunctionVariable {
                     $$ = new Node("", "Parameter", 2, $1, $2);
                 }
     ;
+
+// function parameter variables
+FunctionVariable
+    :           ID {
+                    $$ = new Node("", "FunctionVariable", 1, $1);
+                }
+    // one-dimensional array for function parameter
+    |           ID OPENBRACKET CLOSEBRACKET {
+                    $$ = new Node("", "FunctionVariable", 3, $1, $2, $3);
+                }
+    // two-dimensional array for function parameter
+    |           ID OPENBRACKET CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET{
+                    $$ = new Node("", "FunctionVariable", 6, $1, $2, $3, $4, $5, $6);
+                }
+    ;          
 
 // all the instructions in a function
 FunctionCode
@@ -233,17 +245,9 @@ LocalVariable
     |           ID OPENBRACKET INT CLOSEBRACKET {
                     $$ = new Node("", "LocalVariable", 4, $1, $2, $3, $4);
                 }
-    // local one-dimensional array for function parameter
-    |           ID OPENBRACKET CLOSEBRACKET {
-                    $$ = new Node("", "LocalVariable", 3, $1, $2, $3);
-                }
     // local two-dimensional array for definition
     |           ID OPENBRACKET INT CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET{
                     $$ = new Node("", "LocalVariable", 7, $1, $2, $3, $4, $5, $6, $7);
-                }
-    // local two-dimensional array for function parameter
-    |           ID OPENBRACKET CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET{
-                    $$ = new Node("", "LocalVariable", 6, $1, $2, $3, $4, $5, $6);
                 }
     // initialization assignment
     |           ID ASSIGN Expression {
