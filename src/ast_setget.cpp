@@ -101,11 +101,43 @@ void Node::setValueType(int type){
     this->val_Type = type ;
 }
 
-llvm::Instruction::CastOps Node::getCastInst(llvm::Type* src, llvm::Type* dst){
-    //TODO
+/**
+ * @brief Get operator used for builder to create casting process from src to dst
+ * @param src 
+ * @param dst 
+ * @return llvm::Instruction::CastOps 
+ * modification log: 2022/5/17,20:17
+ * modificated by: Wang Hui
+ */
+llvm::Instruction::CastOps Node::getCastOperator(llvm::Type* src, llvm::Type* dst){
+    if (src == llvm::Type::getFloatTy(context) && dst == llvm::Type::getInt32Ty(context)) 
+        return llvm::Instruction::FPToSI;
+    else if (src == llvm::Type::getInt32Ty(context) && dst == llvm::Type::getFloatTy(context)) 
+        return llvm::Instruction::SIToFP;
+    else if (src == llvm::Type::getInt8Ty(context) && dst == llvm::Type::getFloatTy(context)) 
+        return llvm::Instruction::UIToFP;
+    else if (src == llvm::Type::getInt8Ty(context) && dst == llvm::Type::getInt32Ty(context)) 
+        return llvm::Instruction::ZExt;
+    else if (src == llvm::Type::getInt32Ty(context) && dst == llvm::Type::getInt8Ty(context)) 
+        return llvm::Instruction::Trunc;
+    // TODO
+    // casting from shorter type to double is supposed to be supported
+    else 
+        throw logic_error("Error! Inappropriate typecast.");
 }
-llvm::Value *Node::typeCast(llvm::Value* src, llvm::Type* dst){
-    //TODO
+
+/**
+ * @brief static function in class Node
+ * cast variable src from its raw type to dsts
+ * @param src 
+ * @param dst 
+ * @return llvm::Value* 
+ * modification log: 2022/5/17,20:04
+ * modificated by: Wang Hui
+ */
+llvm::Value* Node::typeCast(llvm::Value* src, llvm::Type* dst){
+    llvm::Instruction::CastOps op = getCastOperator(src->getType(), dst);
+    return builder.CreateCast(op, src, dst, "tmptypecast");
 }
 
 /**

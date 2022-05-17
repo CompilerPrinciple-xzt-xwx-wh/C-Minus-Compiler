@@ -149,13 +149,24 @@ public:
     void setValueType(int type);
 
     /**
-     * @brief functions above and these 
+     * @brief Change access flag to static
+     * for globally access when casting var's type
      * implemented in file ast_setget.cpp
-     * modification log: 2022/5/11,20:11
+     * modification log: 2022/5/17,20:15
      * modificated by: Wang Hui
      */
-    llvm::Instruction::CastOps getCastInst(llvm::Type* src, llvm::Type* dst);
-    llvm::Value *typeCast(llvm::Value* src, llvm::Type* dst);
+    static llvm::Instruction::CastOps getCastOperator(llvm::Type* src, llvm::Type* dst) ;
+
+    /**
+     * @brief Change the access flag
+     * Designed to be static for globally access
+     * @param src 
+     * @param dst 
+     * @return llvm::Value* 
+     * modification log: 2022/5/17,20:02
+     * modificated by: Wang Hui
+     */
+    static llvm::Value *typeCast(llvm::Value* src, llvm::Type* dst) ;
 
     /**
      * @brief Get the Llvm Type object
@@ -246,6 +257,15 @@ public:
      * modificated by: Wang Hui
      */
     llvm::Value* irBuildInstruction() ;
+
+    /**
+     * @brief for(;;){}
+     * 
+     * @return llvm::Value* 
+     * modification log:2022/5/17,11:09 
+     * modificated by: Wang Hui
+     */
+    llvm::Value* irBuildFor() ;
 
     /**
      * @brief function jsonGen(), to visiualize AST

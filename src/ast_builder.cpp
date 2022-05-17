@@ -157,7 +157,6 @@ llvm::Value *Node::irBuildCode(){
             totalCode = totalCode->child_Node[1] ;
     } 
     return NULL;
-    //TODO
 }
 
 /**
@@ -181,15 +180,34 @@ llvm::Value* Node::irBuildInstruction(){
 }
 
 /**
- * @brief 
- * Instruction --> Statement
- * 
+ * @brief Statement --> ...
  * @return llvm::Value* 
- * modification log: 2022/5/14,22:12
+ * modification log: 2022/5/17,9:30
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildStatement(){
-    //TODO
+    Node* flag = this->child_Node[0] ;
+    // Statement --> Expression SEMI
+    if ( flag->node_Type == "Expression" ) 
+        flag->irBuildExpression() ;
+
+    // Statement --> RETURN Expression SEMI
+    // Statement --> RETURN SEMI
+    if ( flag->node_Name == "return" ) 
+        this->irBuildReturn() ;
+
+    // Statement --> IF ( Expression ) { FunctionCode }
+    // Statement --> IF ( Expression ) { FunctionCode } ELSE { FunctionCode }
+    if ( flag->node_Name == "if" ) 
+        this->irBuildIf() ;
+
+    // Statement --> WHILE ( Expression ) { FunctionCode }
+    if ( flag->node_Name == "while" ) 
+        this->irBuildWhile() ;
+
+    // Statement --> FOR ( Expression SEMI Expression SEMI Expression ) { FunctionCode }
+    if ( flag->node_Name == "for" ) 
+        this->irBuildFor() ;
 }
 
 /**
@@ -203,6 +221,18 @@ llvm::Value *Node::irBuildWhile(){
     //TODO
 }
 
+
+/**
+ * @brief for(;;){}
+ * FOR OPENPAREN Expression SEMI Expression SEMI Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
+ * @return llvm::Value* 
+ * modification log:2022/5/17,11:09 
+ * modificated by: Wang Hui
+ */
+llvm::Value* Node::irBuildFor() {
+
+}
+
 /**
  * @brief If statement
  * IF OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
@@ -212,7 +242,31 @@ llvm::Value *Node::irBuildWhile(){
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildIf(){
-    //TODO
+    llvm::Value *condValue = this->child_Node[2]->irBuildExpression(), *thenValue = nullptr, *elseValue = nullptr;
+    condValue = builder.CreateICmpNE(condValue, llvm::ConstantInt::get(llvm::Type::getInt1Ty(context), 0, true), "ifCond");
+
+    llvm::Function *TheFunction = generator.getCurFunction();
+    llvm::BasicBlock *thenBB = llvm::BasicBlock::Create(context, "then", TheFunction);
+    llvm::BasicBlock *elseBB = llvm::BasicBlock::Create(context, "else", TheFunction);
+    llvm::BasicBlock *mergeBB = llvm::BasicBlock::Create(context, "merge", TheFunction);
+
+    // Then
+    auto branch = builder.CreateCondBr(condValue, thenBB, elseBB);
+    
+    builder.SetInsertPoint(thenBB);
+    thenValue = this->child_Node[5]->irBuildCode();
+    builder.CreateBr(mergeBB);
+    thenBB = builder.GetInsertBlock();
+
+    // else
+    builder.SetInsertPoint(elseBB);
+    if ( this->child_Num == 11 ) 
+        elseValue = this->child_Node[9]->irBuildCode();
+    builder.CreateBr(mergeBB);
+    elseBB = builder.GetInsertBlock();
+
+    builder.SetInsertPoint(mergeBB);    
+    return branch;
 }
 
 /**
@@ -220,11 +274,18 @@ llvm::Value *Node::irBuildIf(){
  * RETURN Expression SEMI
  * RETURN SEMI
  * @return llvm::Value* 
- * modification log: 2022/5/14,22:17
+ * modification log: 2022/5/17,16:04
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildReturn(){
-    //TODO
+    // Statement --> RETURN Expression SEMI
+    if (this->child_Num == 3) {
+        auto returnInst = this->child_Node[1]->irBuildExpression();
+        return builder.CreateRet(returnInst);
+    } 
+    // Statement --> RETURN SEMI
+    else 
+        return builder.CreateRetVoid();
 }
 
 /**
@@ -234,11 +295,41 @@ llvm::Value *Node::irBuildReturn(){
  * Expression LT Expression
  * Expression LE Expression
  * @return llvm::Value* 
- * modification log: 2022/5/14,22:22
+ * modification log: 2022/5/17,19:58
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildRELOP(){
-    //TODO
+    llvm::Value * left = this->child_Node[0]->irBuildExpression() ;
+    llvm::Value * right = this->child_Node[2]->irBuildExpression() ;
+    if ( left->getType() != right->getType() ) {
+        if ( left->getType() == llvm::Type::getFloatTy(context) ) {
+            right = typeCast(right, llvm::Type::getFloatTy(context));
+        } else if ( right->getType() == llvm::Type::getFloatTy(context) ) {
+            left = typeCast(left, llvm::Type::getFloatTy(context));
+        } else {
+            if (left->getType() == llvm::Type::getInt32Ty(context)) {
+                right = typeCast(right, llvm::Type::getInt32Ty(context));
+            } else if(right->getType() == llvm::Type::getInt32Ty(context)) {
+                left = typeCast(left, llvm::Type::getInt32Ty(context));
+            } else {
+                throw logic_error("Error! Inappropriate values' type to compare.");
+            }
+        }
+    }
+    if ( this->child_Node[1]->node_Name == "==" ) 
+        return (left->getType() == llvm::Type::getFloatTy(context)) ? builder.CreateFCmpOEQ(left, right, "fcmptmp") : builder.CreateICmpEQ(left, right, "icmptmp");
+    else if ( this->child_Node[1]->node_Name == ">=" ) 
+        return (left->getType() == llvm::Type::getFloatTy(context)) ? builder.CreateFCmpOGE(left, right, "fcmptmp") : builder.CreateICmpSGE(left, right, "icmptmp");
+    else if (this->child_Node[1]->node_Name == "<=" ) 
+        return (left->getType() == llvm::Type::getFloatTy(context)) ? builder.CreateFCmpOLE(left, right, "fcmptmp") : builder.CreateICmpSLE(left, right, "icmptmp");
+    else if (this->child_Node[1]->node_Name == ">" ) 
+        return (left->getType() == llvm::Type::getFloatTy(context)) ? builder.CreateFCmpOGT(left, right, "fcmptmp") : builder.CreateICmpSGT(left, right, "icmptmp");
+    else if (this->child_Node[1]->node_Name == "<" ) 
+        return (left->getType() == llvm::Type::getFloatTy(context)) ? builder.CreateFCmpOLT(left, right, "fcmptmp") : builder.CreateICmpSLT(left, right, "icmptmp");
+    else if (this->child_Node[1]->node_Name == "!=" ) 
+        return (left->getType() == llvm::Type::getFloatTy(context)) ? builder.CreateFCmpONE(left, right, "fcmptmp") : builder.CreateICmpNE(left, right, "icmptmp");
+    else
+        return NULL;
 }
 
 // Exp --> ID LP Args RP
@@ -258,8 +349,8 @@ llvm::Value *Node::irBuildScan(){
 
 
 // Expression --> ID
-// Expression --> ID[Exp]
-// Expression --> ID[]
+// Expression --> ID [ Expression ]
+// Expression --> ID [ Expression ] [ Expression ]
 llvm::Value *Node::irBuildAddr(){
     //TODO
 }
