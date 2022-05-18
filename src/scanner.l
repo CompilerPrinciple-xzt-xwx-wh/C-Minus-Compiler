@@ -42,8 +42,8 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 
 "("               {yylval.node = new Node(yytext, "OPENPAREN", 0); return OPENPAREN;}
 ")"               {yylval.node = new Node(yytext, "CLOSEPAREN", 0); return CLOSEPAREN;}
-"]"               {yylval.node = new Node(yytext, "OPENBRACKET", 0); return OPENBRACKET;}
-"["               {yylval.node = new Node(yytext, "CLOSEBRACKET", 0); return CLOSEBRACKET;}
+"["               {yylval.node = new Node(yytext, "OPENBRACKET", 0); return OPENBRACKET;}
+"]"               {yylval.node = new Node(yytext, "CLOSEBRACKET", 0); return CLOSEBRACKET;}
 "{"               {yylval.node = new Node(yytext, "OPENCURLY", 0); return OPENCURLY;}
 "}"               {yylval.node = new Node(yytext, "CLOSECURLY", 0); return CLOSECURLY;}
 ","               {yylval.node = new Node(yytext, "COMMA", 0); return COMMA;}

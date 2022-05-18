@@ -243,7 +243,7 @@ public:
     llvm::Value *irBuildIf();
     llvm::Value *irBuildReturn();
     llvm::Value *irBuildCode();
-    llvm::Value *irBuildRELOP();
+    llvm::Value *irBuildComparer();
     llvm::Value *irBuildPrint();
     llvm::Value *irBuildPrintf();
     llvm::Value *irBuildScan();
@@ -260,12 +260,29 @@ public:
 
     /**
      * @brief for(;;){}
-     * 
      * @return llvm::Value* 
      * modification log:2022/5/17,11:09 
      * modificated by: Wang Hui
      */
     llvm::Value* irBuildFor() ;
+
+    /**
+     * @brief Build literal in code
+     * @return llvm::Value* 
+     * modification log: 2022/5/18,21:13
+     * modificated by: Wang Hui
+     */
+    llvm::Value* irBuildConst() ;
+
+    /**
+     * @brief Unary Operator includes !,++,-,&
+     *        Binary Operators are +,-,*,&&,||,=,%
+     * @return llvm::Value* 
+     * modification log: 2022/5/18,20:57
+     * modificated by: Wang Hui
+     */
+    llvm::Value* irBuildUnaryOperator() ;
+    llvm::Value* irBuildBinaryOperator() ;
 
     /**
      * @brief function jsonGen(), to visiualize AST
