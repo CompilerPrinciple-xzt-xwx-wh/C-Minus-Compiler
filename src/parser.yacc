@@ -2,7 +2,7 @@
  * @Author: xwxr
  * @Date: 2022-05-09 20:00:51
  * @LastEditors: xwxr
- * @LastEditTime: 2022-05-15 22:11:42
+ * @LastEditTime: 2022-05-18 16:14:37
  * @Description: update the representation of function parameter variables
  */
 
@@ -383,9 +383,9 @@ Expression
                     $$ = new Node("", "Expression", 4, $1, $2, $3, $4);
                     $$->setValueType($1->getValueType() - ARRAY);
                 }
-    |           ID OPENBRACKET CLOSEBRACKET {
-                    $$ = new Node("", "Expression", 3, $1, $2, $3);
-                    $$->setValueType($1->getValueType() + ARRAY);
+    |           ID OPENBRACKET Expression CLOSEBRACKET OPENBRACKET Expression CLOSEBRACKET {
+                    $$ = new Node("", "Expression", 7, $1, $2, $3, $4, $5, $6, $7);
+                    $$->setValueType($1->getValueType() - ARRAY);
                 }
     |           ID {
                     $$ = new Node("", "Expression", 1, $1);
