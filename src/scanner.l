@@ -17,6 +17,7 @@ ID      {letter}({digit}|{letter}|"_")*
 ICONST   "0"|[1-9]{digit}*
 FCONST   "0"|[1-9]{digit}*"."{digit}+
 CCONST   \'.\'|\'\\.\'  
+SCONST   \"(\\.|[^"\\])*\"
 
 COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 
@@ -68,6 +69,7 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 {ICONST}          {yylval.node = new Node(yytext, "Integer", 0); return Integer;}
 {FCONST}          {yylval.node = new Node(yytext, "Realnumber", 0); return Realnumber;}
 {CCONST}          {yylval.node = new Node(yytext, "Character", 0); return Character;}
+{SCONST}          {yylval.node = new Node(yytext, "String", 0); return String;}
 {COMMENT}         { ;}
 "\n"              {lineno = lineno + 1;}
 "\t"              { ;}
