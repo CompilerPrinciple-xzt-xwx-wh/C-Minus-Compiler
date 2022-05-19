@@ -2,6 +2,14 @@
  * @Author: xwxr
  * @Date: 2022-05-09 20:00:51
  * @LastEditors: xwxr
+ * @LastEditTime: 2022-05-19 21:47:13
+ * @Description: update the expression grammar
+ */
+
+/*
+ * @Author: xwxr
+ * @Date: 2022-05-09 20:00:51
+ * @LastEditors: xwxr
  * @LastEditTime: 2022-05-18 16:14:37
  * @Description: update the representation of function parameter variables
  */
@@ -44,19 +52,19 @@
     struct Node* node;
 }
 %token <node> CHAR INT FLOAT DOUBLE VOID
-%token <node> Integer Realnumber Character
+%token <node> Integer Realnumber Character String
 %token <node> IF ELSE FOR WHILE CONTINUE BREAK RETURN
 %token <node> ID
 %token <node> COMMA SEMI
 %token <node> PLUS MINUS MUL DIV MOD
 %token <node> ASSIGN
-%token <node> INCR
+%token <node> INCR_P INCR_M
 %token <node> ADDRESS
 %token <node> AND OR NOT
 %token <node> EQUAL NOTEQUAL GT GE LT LE
 %token <node> OPENPAREN CLOSEPAREN OPENBRACKET CLOSEBRACKET OPENCURLY CLOSECURLY
 
-%nonassoc INCR
+%nonassoc INCR_P INCR_M
 %nonassoc ELSE
 
 // define associativity
@@ -289,55 +297,78 @@ Statement
 // a single expression
 Expression
     :           Expression ASSIGN Expression {
+                    $$ = $1 = $3;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($3->getValueType());
                 }
     |           Expression AND Expression {
+                    $$ = $1 && $3;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
     |           Expression OR Expression {
+                    $$ = $1 || $3;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
     |           NOT Expression {
+                    $$ = ~$2;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType(TYPE_INT);
                 }
     |           MINUS Expression {
+                    $$ = -$2;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType($2->getValueType());
                 }
-    |           INCR Expression {
+    |           INCR_P Expression {
+                    $$ = $2 + 1;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType($2->getValueType());
                 }
-    |           Expression INCR {
+    |           Expression INCR_P {
+                    $$ = $1 + 1;
+                    $$ = new Node("", "Expression", 2, $1, $2);
+                    $$->setValueType($1->getValueType());
+                }
+    |           INCR_M Expression {
+                    $$ = $2 - 1;
+                    $$ = new Node("", "Expression", 2, $1, $2);
+                    $$->setValueType($2->getValueType());
+                }
+    |           Expression INCR_M {
+                    $$ = $1 - 1;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType($1->getValueType());
                 }
     // get the address
     |           ADDRESS Expression {
+                    $$ = &$2;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType(TYPE_INT);
                 }
     |           Expression PLUS Expression {
+                    $$ = $1 + $2;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
     |           Expression MINUS Expression {
+                    $$ = $1 - $2;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
     |           Expression MUL Expression {
+                    $$ = $1 * $2;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
     |           Expression DIV Expression {
+                    $$ = $1 / $2;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
     |           Expression MOD Expression {
+                    $$ = $1 % $2;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
@@ -402,6 +433,10 @@ Expression
     |           Character {
                     $$ = new Node("", "Expression", 1, $1);
                     $$->setValueType(TYPE_CHAR);
+                }
+    |           String {
+                    $$ = new Node("", "Expression", 1, $1);
+                    $$->setValueType(TYPE_CHAR_ARRAY);
                 }
     |           %empty {
                     $$ = nullptr;

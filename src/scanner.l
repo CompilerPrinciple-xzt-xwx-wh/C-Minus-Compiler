@@ -17,6 +17,7 @@ ID      {letter}({digit}|{letter}|"_")*
 ICONST   "0"|[1-9]{digit}*
 FCONST   "0"|[1-9]{digit}*"."{digit}+
 CCONST   \'.\'|\'\\.\'  
+SCONST   \"(\\.|[^"\\])*\"
 
 COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 
@@ -28,7 +29,8 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 "/"               {yylval.node = new Node(yytext, "DIV", 0); return DIV;}
 "%"               {yylval.node = new Node(yytext, "MOD", 0); return MOD;}
 "="               {yylval.node = new Node(yytext, "ASSIGN", 0); return ASSIGN;}
-"++"|"--"         {yylval.node = new Node(yytext, "INCR", 0); return INCR;}
+"++"              {yylval.node = new Node(yytext, "INCR_P", 0); return INCR_P;}
+"--"              {yylval.node = new Node(yytext, "INCR_M", 0); return INCR_M;}
 "&&"              {yylval.node = new Node(yytext, "AND", 0); return AND;}
 "||"              {yylval.node = new Node(yytext, "OR", 0); return OR;}
 "!"               {yylval.node = new Node(yytext, "NOT", 0); return NOT;}
@@ -67,6 +69,7 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 {ICONST}          {yylval.node = new Node(yytext, "Integer", 0); return Integer;}
 {FCONST}          {yylval.node = new Node(yytext, "Realnumber", 0); return Realnumber;}
 {CCONST}          {yylval.node = new Node(yytext, "Character", 0); return Character;}
+{SCONST}          {yylval.node = new Node(yytext, "String", 0); return String;}
 {COMMENT}         { ;}
 "\n"              {lineno = lineno + 1;}
 "\t"              { ;}
