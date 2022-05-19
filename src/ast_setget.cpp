@@ -111,17 +111,17 @@ void Node::setValueType(int type){
  */
 llvm::Instruction::CastOps Node::getCastOperator(llvm::Type* src, llvm::Type* dst){
     if (src == llvm::Type::getFloatTy(context) && dst == llvm::Type::getInt32Ty(context)) 
-        return llvm::Instruction::FPToSI;
+        return llvm::Instruction::FPToSI ;
     else if (src == llvm::Type::getInt32Ty(context) && dst == llvm::Type::getFloatTy(context)) 
-        return llvm::Instruction::SIToFP;
+        return llvm::Instruction::SIToFP ;
     else if (src == llvm::Type::getInt8Ty(context) && dst == llvm::Type::getFloatTy(context)) 
-        return llvm::Instruction::UIToFP;
+        return llvm::Instruction::UIToFP ;
     else if (src == llvm::Type::getInt8Ty(context) && dst == llvm::Type::getInt32Ty(context)) 
-        return llvm::Instruction::ZExt;
+        return llvm::Instruction::ZExt ;
     else if (src == llvm::Type::getInt32Ty(context) && dst == llvm::Type::getInt8Ty(context)) 
-        return llvm::Instruction::Trunc;
+        return llvm::Instruction::Trunc ;
     // TODO
-    // casting from shorter type to double is supposed to be supported
+    // casting from char,int,float to bool
     else 
         throw logic_error("Error! Inappropriate typecast.");
 }
@@ -279,18 +279,82 @@ vector<Variable> Node::getNameList(int type){
     }
     return namelist ;
 }
-vector<llvm::Value *> Node::getArgs(){
-    //TODO
+
+/**
+ * @brief Get the arguments of a function's call
+ * Arguments --> Expression COMMA Arguments | Expression
+ * @return vector<llvm::Value *> 
+ * modification log: 2022/5/19,20:18
+ * modificated by: Wang Hui
+ */
+vector<llvm::Value *> Node::getArgumentList() {
+    vector<llvm::Value*> args ;
+    Node* list = this ;
+    while ( true ) {
+        Node* temp = list->child_Node[0] ;
+        args.push_back( temp->irBuildExpression() ) ;
+        if ( list->child_Num == 3 )
+            list = list->child_Node[2] ;
+        else 
+            break ;
+    }
+    return args ;
 }
-vector<llvm::Value *> Node::getPrintArgs(){
-    //TODO
-}
-vector<llvm::Value *> Node::getArgsAddr(){
+
+vector<llvm::Value *> Node::getPrintArguments() {
+    return this->getArgumentList() ;
     //TODO
 }
 
 /**
- * @brief get function's parameters in definition of global function
+ * @brief Return the vector of ptrs to variable
+ * Arguments --> Expression COMMA Arguments | Expression
+ * @return vector<llvm::Value *> 
+ * modification log: 
+ * modificated by: 
+ */
+vector<llvm::Value *> Node::getInputArguments() {
+    vector<llvm::Value *> args ;
+    Node *list = this;
+    while ( true ) {
+        Node* temp = list->child_Node[0] ;
+        // temp refers to Expression
+        // Expression --> ID
+        args.push_back( temp->irBuildLeftValue() ) ;
+        if ( list->child_Num == 3 )
+            list = list->child_Node[2] ;
+        else 
+            break ;
+    }
+    return args;
+}
+
+/**
+ * @brief Get arguments when call function scanf()
+ * Return the vector of ptrs to variable
+ * Arguments --> Expression COMMA Arguments | Expression
+ * @return vector<llvm::Value*> 
+ * modification log: 2022/5/19,21:49
+ * modificated by: Wang Hui
+ */
+vector<llvm::Value*> Node::getScanfArguments() {
+    vector<llvm::Value*> args ;
+    // scanf() always has a first argument of type const string like "..."
+    args.push_back(this->child_Node[0]->irBuildExpression() ) ;
+    Node* list = this->child_Node[2] ;
+    while ( true ) {
+        Node* temp = list->child_Node[0] ;
+        args.push_back(temp->irBuildLeftValue() ) ;
+        if ( list->child_Num == 3 ) 
+            list = list->child_Node[2] ;
+        else 
+            break ;
+    }
+    return args ;
+}
+
+/**
+ * @brief Get function's parameters in definition of global function
  * ParameterList --> Parameter COMMA ParameterList
  * ParameterList --> Parameter
  * ParameterList --> %empty

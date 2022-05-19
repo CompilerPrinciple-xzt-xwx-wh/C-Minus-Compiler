@@ -41,3 +41,10 @@ llvm::IRBuilder<> builder(context) ;
  * modificated by: Wang Hui
  */
 Generator generator() ;
+
+/**
+ * @brief Environment of current code block
+ * modification log: 2022/5/19,20:31
+ * modificated by: Wang Hui
+ */
+stack<llvm::BasicBlock *> GlobalAfterBB ;
