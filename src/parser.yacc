@@ -52,7 +52,7 @@
     struct Node* node;
 }
 %token <node> CHAR INT FLOAT DOUBLE VOID
-%token <node> Integer Realnumber Character
+%token <node> Integer Realnumber Character String
 %token <node> IF ELSE FOR WHILE CONTINUE BREAK RETURN
 %token <node> ID
 %token <node> COMMA SEMI
@@ -433,6 +433,10 @@ Expression
     |           Character {
                     $$ = new Node("", "Expression", 1, $1);
                     $$->setValueType(TYPE_CHAR);
+                }
+    |           String {
+                    $$ = new Node("", "Expression", 1, $1);
+                    $$->setValueType(TYPE_CHAR_ARRAY);
                 }
     |           %empty {
                     $$ = nullptr;
