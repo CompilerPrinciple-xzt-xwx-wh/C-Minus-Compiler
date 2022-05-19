@@ -28,7 +28,8 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 "/"               {yylval.node = new Node(yytext, "DIV", 0); return DIV;}
 "%"               {yylval.node = new Node(yytext, "MOD", 0); return MOD;}
 "="               {yylval.node = new Node(yytext, "ASSIGN", 0); return ASSIGN;}
-"++"|"--"         {yylval.node = new Node(yytext, "INCR", 0); return INCR;}
+"++"              {yylval.node = new Node(yytext, "INCR_P", 0); return INCR_P;}
+"--"              {yylval.node = new Node(yytext, "INCR_M", 0); return INCR_M;}
 "&&"              {yylval.node = new Node(yytext, "AND", 0); return AND;}
 "||"              {yylval.node = new Node(yytext, "OR", 0); return OR;}
 "!"               {yylval.node = new Node(yytext, "NOT", 0); return NOT;}
