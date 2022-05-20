@@ -546,7 +546,7 @@ llvm::Value* Node::irBuildCallFunction() {
 
 /**
  * @brief Loop while statement
- * WHILE OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
+ * Statement --> WHILE OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
  * @return llvm::Value* 
  * modification log: 2022/5/19,20:35
  * modificated by: Wang Hui
@@ -594,8 +594,8 @@ llvm::Value* Node::irBuildFor() {
 
 /**
  * @brief If statement
- * IF OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
- * IF OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY ELSE OPENCURLY FunctionCode CLOSECURLY
+ * Statement --> IF OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
+ * Statement --> IF OPENPAREN Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY ELSE OPENCURLY FunctionCode CLOSECURLY
  * @return llvm::Value* 
  * modification log: 2022/5/14,22:15
  * modificated by: Wang Hui
@@ -630,8 +630,8 @@ llvm::Value *Node::irBuildIf(){
 
 /**
  * @brief Return statement in function
- * RETURN Expression SEMI
- * RETURN SEMI
+ * Expression --> RETURN Expression SEMI
+ * Expression --> RETURN SEMI
  * @return llvm::Value* 
  * modification log: 2022/5/17,16:04
  * modificated by: Wang Hui

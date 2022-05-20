@@ -11,18 +11,30 @@
 #include<iostream>
 #include"ast.h"
 #include"type.h"
-#include"parser.y.h"
+#include"generator.h"
+
+// #include"parser.y.h"
+
+extern Node* ASTroot ;
+extern Generator generator ;
+extern int yyparse() ;
 
 int main(){
 
-    // TODO
     // parse the file
+    yyparse() ;
+
 
     // TODO
     // visualize the AST
 
     // TODO
     // generate the LLVM IR
+    llvm::InitializeNativeTarget();
+    llvm::InitializeNativeTargetAsmPrinter();
+    llvm::InitializeNativeTargetAsmParser();
+
+    generator.generate( ASTroot ) ;
 
     return 0 ;
 }
