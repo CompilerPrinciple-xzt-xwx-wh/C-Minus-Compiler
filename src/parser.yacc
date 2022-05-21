@@ -2,7 +2,7 @@
  * @Author: xwxr
  * @Date: 2022-05-09 20:00:51
  * @LastEditors: xwxr
- * @LastEditTime: 2022-05-19 21:47:13
+ * @LastEditTime: 2022-05-21 16:20:56
  * @Description: update the expression grammar
  */
 
@@ -41,6 +41,7 @@
     #include <stdio.h>
     #include "ast.h"
     #include "type.h"
+    #include <string>
 
     extern Node *ASTroot;
     int yylex(void);
@@ -297,79 +298,172 @@ Statement
 // a single expression
 Expression
     :           Expression ASSIGN Expression {
-                    $$ = $1 = $3;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($3->getValueType());
                 }
     |           Expression AND Expression {
-                    $$ = $1 && $3;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
     |           Expression OR Expression {
-                    $$ = $1 || $3;
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
     |           NOT Expression {
-                    $$ = ~$2;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType(TYPE_INT);
                 }
     |           MINUS Expression {
-                    $$ = -$2;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType($2->getValueType());
                 }
     |           INCR_P Expression {
-                    $$ = $2 + 1;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType($2->getValueType());
                 }
     |           Expression INCR_P {
-                    $$ = $1 + 1;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType($1->getValueType());
                 }
     |           INCR_M Expression {
-                    $$ = $2 - 1;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType($2->getValueType());
                 }
     |           Expression INCR_M {
-                    $$ = $1 - 1;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType($1->getValueType());
                 }
     // get the address
     |           ADDRESS Expression {
-                    $$ = &$2;
                     $$ = new Node("", "Expression", 2, $1, $2);
                     $$->setValueType(TYPE_INT);
                 }
     |           Expression PLUS Expression {
-                    $$ = $1 + $2;
-                    $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    if ($1->child_num == 1 && $3->child_num == 1) {
+                        string exp1, exp2, exp;
+                        exp1 = $1->child_Node->node_Name;
+                        exp2 = $3->child_Node->node_Name;
+                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                            int n1, n2, n;
+                            n1 = stoi(exp1);
+                            n2 = stoi(exp2);
+                            n = n1 + n2;
+                            exp = to_string(n);
+                            $$ = new Node(exp, "Integer", 0);
+                        } else if ($1->child_Node->node_Type == "Realnumber" && $3->child_Node->node_Type == "Realnumber") {
+                            float f1, f2, f;
+                            f1 = stof(exp1);
+                            f2 = stof(exp2);
+                            f = f1 + f2;
+                            exp = to_string(f);
+                            $$ = new Node(exp, "Realnumber", 0);
+                        } else {
+                            $$ = new Node("", "Expression", 3, $1, $2, $3);
+                        }
+                    } else {
+                        $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    }
                     $$->setValueType($1->getValueType());
                 }
     |           Expression MINUS Expression {
-                    $$ = $1 - $2;
-                    $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    if ($1->child_num == 1 && $3->child_num == 1) {
+                        string exp1, exp2, exp;
+                        exp1 = $1->child_Node->node_Name;
+                        exp2 = $3->child_Node->node_Name;
+                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                            int n1, n2, n;
+                            n1 = stoi(exp1);
+                            n2 = stoi(exp2);
+                            n = n1 - n2;
+                            exp = to_string(n);
+                            $$ = new Node(exp, "Integer", 0);
+                        } else if ($1->child_Node->node_Type == "Realnumber" && $3->child_Node->node_Type == "Realnumber") {
+                            float f1, f2, f;
+                            f1 = stof(exp1);
+                            f2 = stof(exp2);
+                            f = f1 - f2;
+                            exp = to_string(f);
+                            $$ = new Node(exp, "Realnumber", 0);
+                        } else {
+                            $$ = new Node("", "Expression", 3, $1, $2, $3);
+                        }
+                    } else {
+                        $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    }
                     $$->setValueType($1->getValueType());
                 }
     |           Expression MUL Expression {
-                    $$ = $1 * $2;
-                    $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    if ($1->child_num == 1 && $3->child_num == 1) {
+                        string exp1, exp2, exp;
+                        exp1 = $1->child_Node->node_Name;
+                        exp2 = $3->child_Node->node_Name;
+                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                            int n1, n2, n;
+                            n1 = stoi(exp1);
+                            n2 = stoi(exp2);
+                            n = n1 * n2;
+                            exp = to_string(n);
+                            $$ = new Node(exp, "Integer", 0);
+                        } else if ($1->child_Node->node_Type == "Realnumber" && $3->child_Node->node_Type == "Realnumber") {
+                            float f1, f2, f;
+                            f1 = stof(exp1);
+                            f2 = stof(exp2);
+                            f = f1 * f2;
+                            exp = to_string(f);
+                            $$ = new Node(exp, "Realnumber", 0);
+                        } else {
+                            $$ = new Node("", "Expression", 3, $1, $2, $3);
+                        }
+                    } else {
+                        $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    }
                     $$->setValueType($1->getValueType());
                 }
     |           Expression DIV Expression {
-                    $$ = $1 / $2;
-                    $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    if ($1->child_num == 1 && $3->child_num == 1) {
+                        string exp1, exp2, exp;
+                        exp1 = $1->child_Node->node_Name;
+                        exp2 = $3->child_Node->node_Name;
+                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                            int n1, n2, n;
+                            n1 = stoi(exp1);
+                            n2 = stoi(exp2);
+                            n = n1 / n2;
+                            exp = to_string(n);
+                            $$ = new Node(exp, "Integer", 0);
+                        } else if ($1->child_Node->node_Type == "Realnumber" && $3->child_Node->node_Type == "Realnumber") {
+                            float f1, f2, f;
+                            f1 = stof(exp1);
+                            f2 = stof(exp2);
+                            f = f1 / f2;
+                            exp = to_string(f);
+                            $$ = new Node(exp, "Realnumber", 0);
+                        } else {
+                            $$ = new Node("", "Expression", 3, $1, $2, $3);
+                        }
+                    } else {
+                        $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    }
                     $$->setValueType($1->getValueType());
                 }
     |           Expression MOD Expression {
-                    $$ = $1 % $2;
-                    $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    if ($1->child_num == 1 && $3->child_num == 1) {
+                        string exp1, exp2, exp;
+                        exp1 = $1->child_Node->node_Name;
+                        exp2 = $3->child_Node->node_Name;
+                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                            int n1, n2, n;
+                            n1 = stoi(exp1);
+                            n2 = stoi(exp2);
+                            n = n1 % n2;
+                            exp = to_string(n);
+                            $$ = new Node(exp, "Integer", 0);
+                        } else {
+                            $$ = new Node("", "Expression", 3, $1, $2, $3);
+                        }
+                    } else {
+                        $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    }
                     $$->setValueType($1->getValueType());
                 }
     |           Expression EQUAL Expression {
@@ -397,7 +491,22 @@ Expression
                     $$->setValueType($1->getValueType());
                 }
     |           OPENPAREN Expression CLOSEPAREN {
-                    $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    if ($2->child_num == 1) {
+                        // if ($2->child_Node->node_Type == "Integer") {
+                        //     $$ = new Node($2->child_Node->node_Name, "Integer", 0);
+                        // } else if ($2->child_Node->node_Type == "Realnumber") {
+                        //     $$ = new Node($2->child_Node->node_Name, "Realnumber", 0);
+                        // } else if ($2->child_Node->node_Type == "Character") {
+                        //     $$ = new Node($2->child_Node->node_Name, "Character", 0);
+                        // } else if ($2->child_Node->node_Type == "String") {
+                        //     $$ = new Node($2->child_Node->node_Name, "String", 0);
+                        // } else {
+                        //     $$ = new Node("", "Expression", 3, $1, $2, $3);
+                        // }
+                        $$ = $2;
+                    } else {
+                        $$ = new Node("", "Expression", 3, $1, $2, $3);
+                    }
                     $$->setValueType($2->getValueType());
                 }
     // call function with arguments
