@@ -301,6 +301,13 @@ vector<llvm::Value *> Node::getArgumentList() {
     return args ;
 }
 
+/**
+ * @brief I suppose function print do not need special args like scanf
+ * for now, simply call function getArgumentList
+ * @return vector<llvm::Value *> 
+ * modification log: 2022/5/19,22:22
+ * modificated by: Wang Hui
+ */
 vector<llvm::Value *> Node::getPrintArguments() {
     return this->getArgumentList() ;
     //TODO

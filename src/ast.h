@@ -204,9 +204,15 @@ public:
      * modification log: 2022/5/19,20:14
      * modificated by: Wang Hui
      */
-    vector<Variable> getNameList(int type);
+    vector<Variable> getNameList(int type) ;
+    /**
+     * @brief Get arguments when call function print()
+     * Expression --> print ( Arguments )
+     * @return vector<llvm::Value *> 
+     * modification log: 2022/5/19,22:20
+     * modificated by: Wang Hui
+     */
     vector<llvm::Value *> getPrintArguments() ;
-
     /**
      * @brief Get arguments when call function input()
      * Return the vector of ptrs to variable
