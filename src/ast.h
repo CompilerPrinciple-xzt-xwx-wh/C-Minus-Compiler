@@ -62,6 +62,7 @@ public:
      *  "Function":                 node of function's definition
      *  "ParameterList":            node of list of function's parameters
      *  "Parameter":                node of single parameter
+     *  "FunctionVariable":         node of name of each parameter
      *  "FunctionCode":             node of all the instructions in a function
      *  "Instruction":              node of single instruction
      *  "Definition":               node of a definition instruction
@@ -200,11 +201,11 @@ public:
     /**
      * @brief Get then name list of variables when definition
      * @param type 
-     * @return vector<Variable> 
+     * @return vector<pair<Variable,llvm::Value*>> 
      * modification log: 2022/5/19,20:14
      * modificated by: Wang Hui
      */
-    vector<Variable> getNameList(int type) ;
+    vector<pair<Variable,llvm::Value*>> getNameList(int type) ;
     /**
      * @brief Get arguments when call function print()
      * Expression --> print ( Arguments )

@@ -22,13 +22,16 @@ void Generator::popFunction() {
     this->getStack().pop() ;
 }
 llvm::Value* Generator::findValue(const std::string & name) {
-    llvm::Value * result = this->getStack().top()->getValueSymbolTable()->lookup(name) ;
-    if (result != nullptr) 
-        return result;
-    result = this->getModule()->getGlobalVariable(name, true) ;
+    if ( !this->getStack().empty() ){
+        llvm::Value* result = this->getStack().top()->getValueSymbolTable()->lookup(name) ;
+        if (result != nullptr) 
+            return result;
+    }
+    llvm::Value* result = this->getModule()->getGlobalVariable(name, true) ;
     if (result == nullptr) 
         throw logic_error("Error! Undeclared variable: "+name+".") ;
-    return result;
+    else 
+        return result;
 }
 llvm::Function* Generator::createPrintf() {
     std::vector<llvm::Type*> arg_types;
