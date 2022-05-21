@@ -10,6 +10,7 @@
  */
 #include"ast.h"
 #include"generator.h"
+
 extern Node* ASTroot ;
 extern llvm::LLVMContext context ;
 extern llvm::IRBuilder<> builder(context) ;
@@ -31,11 +32,10 @@ llvm::Value *Node::irBuild(){
      * modificated by: Wang Hui
      */
     if (this->node_Type == "GlobalDefinition" ) {
-        if (this->child_Node[1]->node_Type == "GlobalVariableList" ) {
+        if (this->child_Node[1]->node_Type == "GlobalVariableList" ) 
             return this->irBuildVariable() ;
-        } else {
+        else 
             return this->irBuildFunction() ;
-        }
     } else if (this->node_Type == "Definition" ) {
         return this->irBuildVariable() ;
     }
@@ -54,36 +54,67 @@ llvm::Value *Node::irBuild(){
  * modification log: 2022/5/14,9:50
  * modificated by: Wang Hui
  */
-llvm::Value *Node::irBuildVariable(){
+llvm::Value* Node::irBuildVariable(){
     int type = this->child_Node[0]->getValueType() ;
-    vector<Variable> nameList = this->child_Node[1]->getNameList(type) ;
+    vector<pair<Variable,llvm::Value*>> nameList = this->child_Node[1]->getNameList(type) ;
     llvm::Type *llvmType ;
     for (auto it : nameList) {
-        llvmType = getLlvmType(it.getType(),it.getSize()) ;
+        llvmType = getLlvmType(it.first.getType(),it.first.getSize()) ;
         // global variable
         if (generator.getStack().empty()) {
-            llvm::Value *tmp = generator.getModule()->getGlobalVariable(it.getName(), true) ;
+            llvm::Value *tmp = generator.getModule()->getGlobalVariable(it.first.getName(), true) ;
             if ( tmp != nullptr ) 
-                throw logic_error("Error! Redefined global variable: " + it.getName()+".") ;
-            llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(*generator.getModule(), llvmType, false, llvm::GlobalValue::PrivateLinkage, 0, it.getName());
+                throw logic_error("Error! Redefined global variable: " + it.first.getName()+".") ;
+            llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(*generator.getModule(), llvmType, false, llvm::GlobalValue::PrivateLinkage, 0, it.first.getName()) ;
+            // Initialize the variable
+            // for multidimensional array
+            #ifdef _MULTIDIMENSIONAL_ARRAY_
+            llvm::Type* temp = llvmType ;
+            while ( temp->isArrayTy() ) {
+
+            }
+            #endif
+            // adjust two-dimensional array only
             if ( llvmType->isArrayTy() ) {
-                std::vector<llvm::Constant*> constArrayElem ;
-                llvm::Constant* constElem = llvm::ConstantInt::get(llvmType->getArrayElementType(), 0);
-                for (int i = 0; i < llvmType->getArrayNumElements(); i++) {
-                    constArrayElem.push_back(constElem);
+                vector<llvm::Constant*> constArrayElem ;
+                if ( llvmType->getArrayElementType()->isArrayTy() ) {
+                    // constArray is supposed to be array of arrays
+                    // Two-dimensional array is not initialized
+                } 
+                // one-dimension
+                else {
+                    llvm::Constant* constElem = llvm::ConstantInt::get(llvmType->getArrayElementType(), 0);
+                    for (int i = 0; i < llvmType->getArrayNumElements(); i++) 
+                        constArrayElem.push_back(constElem) ;
+                    llvm::Constant* constArray = llvm::ConstantArray::get(llvm::ArrayType::get(llvmType->getArrayElementType(), llvmType->getArrayNumElements()), constArrayElem) ;
+                    globalVar->setInitializer(constArray) ;
                 }
-                llvm::Constant* constArray = llvm::ConstantArray::get(llvm::ArrayType::get(llvmType->getArrayElementType(), llvmType->getArrayNumElements()), constArrayElem);
-                globalVar->setInitializer(constArray);
             } else {
-                globalVar->setInitializer(llvm::ConstantInt::get(llvmType, 0));
+                globalVar->setInitializer(llvm::ConstantInt::get(llvmType, 0)) ;
+            }
+            // Initial value is declared
+            // Only support variable, do not support array
+            if ( it.second != nullptr ) {
+                llvm::Value* var = generator.findValue(it.first.getName()) ;
+                llvm::Value* initial = it.second ;
+                if ( initial->getType() != llvmType ) 
+                    initial = typeCast(initial,llvmType) ;
+                builder.CreateStore(initial,var) ;
             }
         }
         // local variable
         else {            
-            llvm::Value *tmp = generator.getStack().top()->getValueSymbolTable()->lookup(it.getName());
+            llvm::Value *tmp = generator.getStack().top()->getValueSymbolTable()->lookup(it.first.getName());
             if(tmp != nullptr)
-                throw logic_error("Redefined local variable: " + it.getName()+".") ;
-            llvm::Value* alloc = CreateEntryBlockAlloca(generator.getCurFunction(), it.getName(), llvmType);
+                throw logic_error("Error! Redefined local variable: " + it.first.getName()+".") ;
+            llvm::Value* alloc = CreateEntryBlockAlloca(generator.getCurFunction(), it.first.getName(), llvmType) ;
+            if ( it.second != nullptr ) {
+                llvm::Value* var = generator.findValue(it.first.getName()) ;
+                llvm::Value* ini = it.second ;
+                if ( ini->getType() != llvmType ) 
+                    ini = typeCast(ini,llvmType) ;
+                builder.CreateStore(ini,var) ;
+            }
         }
     }
     return NULL;
@@ -456,19 +487,30 @@ llvm::Value* Node::irBuildBinaryOperator() {
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildLeftValue(){
+    llvm::Value* id = generator.findValue( this->child_Node[0]->node_Name ) ;
     if ( this->child_Num == 1 ) {
-        return generator.findValue( this->child_Node[0]->node_Name ) ;
+        return id ;
     } else if ( this->child_Num == 4 ) {
-        llvm::Value* arrayID = generator.findValue(this->child_Node[0]->node_Name) ;
-        llvm::Value* indexValue = this->child_Node[2]->irBuildExpression() ;
-        vector<llvm::Value*> indexList = { builder.getInt32(0),indexValue } ;
-        return builder.CreateInBoundsGEP( arrayID, llvm::ArrayRef<llvm::Value*>(indexList), "tmpvar" ) ;
+        llvm::Value* idx = this->child_Node[2]->irBuildExpression() ;
+        if ( idx->getType() != llvm::Type::getInt32Ty(context) ) 
+            idx = this->typeCast( idx, llvm::Type::getInt32Ty(context) ) ;
+        vector<llvm::Value*> indexList = { builder.getInt32(0),idx } ;
+        return builder.CreateInBoundsGEP( id, llvm::ArrayRef<llvm::Value*>(indexList), "tmpvar" ) ;
     } else if( this->child_Num == 7 ) {
-        llvm::Value* arrayID = generator.findValue(this->child_Node[0]->node_Name) ;
-        llvm::Value* indexOne = this->child_Node[2]->irBuildExpression() ;
-        llvm::Value* indexTwo = this->child_Node[5]->irBuildExpression() ;
-        vector<llvm::Value*> indexList = { builder.getInt32(0), indexOne, indexTwo } ;
-        return builder.CreateInBoundsGEP( arrayID, llvm::ArrayRef<llvm::Value*>(indexList), "tmpvar" ) ;
+        llvm::Value* idx1 = this->child_Node[2]->irBuildExpression() ;
+        llvm::Value* idx2 = this->child_Node[5]->irBuildExpression() ;
+
+        if ( idx1->getType() != llvm::Type::getInt32Ty(context) ) 
+            idx1 = this->typeCast( idx1, llvm::Type::getInt32Ty(context) ) ;
+        if ( idx2->getType() != llvm::Type::getInt32Ty(context)) 
+            idx2 = this->typeCast( idx2, llvm::Type::getInt32Ty(context) ) ;
+
+        vector<llvm::Value*> indexList1 = { builder.getInt32(0), idx1 } ;
+        llvm::Value* ptr_arr = builder.CreateInBoundsGEP(id, llvm::ArrayRef<llvm::Value*>(indexList1), "tmparr" ) ;
+        llvm::Value* arr = builder.CreateLoad(ptr_arr->getType()->getPointerElementType(), ptr_arr, "tmparr") ;
+        
+        vector<llvm::Value*> indexList2 = { builder.getInt32(0), idx2 } ;
+        return builder.CreateInBoundsGEP(arr, llvm::ArrayRef<llvm::Value*>(indexList2), "tmpvar" ) ;
     } else {
         //ERROR
         throw logic_error("Error! Invalid left value.") ;
@@ -512,8 +554,9 @@ llvm::Value *Node::irBuildRightValue() {
         if ( idx2->getType() != llvm::Type::getInt32Ty(context)) 
             idx2 = this->typeCast( idx2, llvm::Type::getInt32Ty(context) ) ;
         vector<llvm::Value*> indexList1 = { builder.getInt32(0), idx1 } ;
-        llvm::Value* ptr_arr = builder.CreateInBoundsGEP(id, llvm::ArrayRef<llvm::Value*>(indexList1), "tmpvar" ) ;
-        llvm::Value* arr = builder.CreateLoad(ptr_arr->getType()->getPointerElementType(), ptr_arr, "tmpvar") ;
+        llvm::Value* ptr_arr = builder.CreateInBoundsGEP(id, llvm::ArrayRef<llvm::Value*>(indexList1), "tmparr" ) ;
+        llvm::Value* arr = builder.CreateLoad(ptr_arr->getType()->getPointerElementType(), ptr_arr, "tmparr") ;
+        
         vector<llvm::Value*> indexList2 = { builder.getInt32(0), idx2 } ;
         llvm::Value* ptr_var = builder.CreateInBoundsGEP(arr, llvm::ArrayRef<llvm::Value*>(indexList2), "tmpvar" ) ;
         return builder.CreateLoad(ptr_var->getType()->getPointerElementType(), ptr_var, "tmpvar" ) ;
@@ -570,7 +613,7 @@ llvm::Value *Node::irBuildWhile(){
 
     //Loop
     builder.SetInsertPoint(loopBB);
-    this->child_Node[4]->irBuildStatement() ;
+    this->child_Node[4]->irBuildCode() ;
     builder.CreateBr(condBB);
     
     //After
