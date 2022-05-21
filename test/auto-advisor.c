@@ -2,7 +2,7 @@
  * @Author: xwxr
  * @Date: 2022-05-14 10:26:11
  * @LastEditors: xwxr
- * @LastEditTime: 2022-05-15 18:06:41
+ * @LastEditTime: 2022-05-21 23:10:12
  * @Description: delete addition assignment operator '+=' and division assignment operator '/='
  */
 
@@ -14,7 +14,6 @@
  * @Description: "auto advisor" test for C-Minus.
  */
 
-#include <stdio.h>
 
 int main()
 {
@@ -68,7 +67,8 @@ int main()
     int creditsAttempted = 0, creditsCompleted = 0, creditsRemain = 0;
     float GPA = 0.0;
     int remainIndex[100], cnt = 0;
-    for (i = 0; i < coursenum; i++) {
+    i = 0;
+    while (i < coursenum) {
         if (grade[i] != '\0') {
             if (grade[i] != 'F') {
                 remainIndex[cnt] = i;
@@ -82,6 +82,7 @@ int main()
         } else {
             creditsRemain = creditsRemain + credit[i];
         }
+        i++;
     }
     GPA = GPA / creditsAttempted;
     printf("GPA: %.1f\n", GPA);
@@ -92,8 +93,8 @@ int main()
     if (creditsRemain == 0) {
         printf("  None - Congratulations!");
     }
-    
-    for (i = 0; i < coursenum; i++) {
+    i = 0;
+    while (i < coursenum) {
         if (grade[i] == 'F' || grade[i] == '\0') {
             if (precourse[i][0] == '\0') {
                 j = 0;
@@ -120,7 +121,8 @@ int main()
                                 precourseterm[l] = '\0';
                                 int m = 0, n = 0;
                                 int innerflag;
-                                for (m = 0; m < cnt; m++) {
+                                m = 0;
+                                while (m < cnt) {
                                     innerflag = 1;
                                     n = 0;
                                     while (precourseterm[n] != '\0') {
@@ -133,6 +135,7 @@ int main()
                                     if (innerflag == 1) {
                                         break;
                                     }
+                                    m++;
                                 }
                                 // printf("  %d\n", innerflag);
                                 if (m == cnt && innerflag == 0) { flagnum--; }
@@ -170,6 +173,7 @@ int main()
                 }
             }
         }
+        i++;
     }
     
 
