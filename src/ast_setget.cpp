@@ -342,6 +342,7 @@ vector<llvm::Value *> Node::getInputArguments() {
  * @brief Get arguments when call function scanf()
  * Return the vector of ptrs to variable
  * Arguments --> Expression COMMA Arguments | Expression
+ * Expression --> ADDRESS Expression
  * @return vector<llvm::Value*> 
  * modification log: 2022/5/19,21:49
  * modificated by: Wang Hui
@@ -352,8 +353,9 @@ vector<llvm::Value*> Node::getScanfArguments() {
     args.push_back(this->child_Node[0]->irBuildExpression() ) ;
     Node* list = this->child_Node[2] ;
     while ( true ) {
-        Node* temp = list->child_Node[0] ;
-        args.push_back(temp->irBuildLeftValue() ) ;
+        // Expression --> ADDRESS Expression
+        Node* tempexp = list->child_Node[0]->child_Node[1] ;
+        args.push_back(tempexp->irBuildLeftValue() ) ;
         if ( list->child_Num == 3 ) 
             list = list->child_Node[2] ;
         else 
