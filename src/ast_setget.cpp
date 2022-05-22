@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include"ast.h"
-#include<cstdarg>
+#include "ast.h"
+#include <cstdarg>
 /**
  * @brief remove global variables from ast_setget.cpp
  * ASTroot, context and builder are defined in file globals.cpp
@@ -18,7 +18,7 @@
  */
 extern Node* ASTroot ;
 extern llvm::LLVMContext context ;
-extern llvm::IRBuilder<> builder(context) ;
+extern llvm::IRBuilder<> builder;
 
 /**
  * @brief Construct a new Node object
@@ -27,11 +27,11 @@ extern llvm::IRBuilder<> builder(context) ;
  * @param nodeType 
  * @param lineNo 
  */
-Node::Node(string nodeName, string nodeType, int lineNo) {
-    this->node_Name = nodeName ;
-    this->node_Type = nodeType ;
-    this->line_Count = lineNo ;
-}
+// Node::Node(string nodeName, string nodeType, int lineNo) {
+//     this->node_Name = nodeName ;
+//     this->node_Type = nodeType ;
+//     this->line_Count = lineNo ;
+// }
 
 /**
  * @brief Construct a new Node object
@@ -111,17 +111,17 @@ void Node::setValueType(int type){
  */
 llvm::Instruction::CastOps Node::getCastOperator(llvm::Type* src, llvm::Type* dst){
     if (src == llvm::Type::getFloatTy(context) && dst == llvm::Type::getInt32Ty(context)) 
-        return llvm::Instruction::FPToSI;
+        return llvm::Instruction::FPToSI ;
     else if (src == llvm::Type::getInt32Ty(context) && dst == llvm::Type::getFloatTy(context)) 
-        return llvm::Instruction::SIToFP;
+        return llvm::Instruction::SIToFP ;
     else if (src == llvm::Type::getInt8Ty(context) && dst == llvm::Type::getFloatTy(context)) 
-        return llvm::Instruction::UIToFP;
+        return llvm::Instruction::UIToFP ;
     else if (src == llvm::Type::getInt8Ty(context) && dst == llvm::Type::getInt32Ty(context)) 
-        return llvm::Instruction::ZExt;
+        return llvm::Instruction::ZExt ;
     else if (src == llvm::Type::getInt32Ty(context) && dst == llvm::Type::getInt8Ty(context)) 
-        return llvm::Instruction::Trunc;
+        return llvm::Instruction::Trunc ;
     // TODO
-    // casting from shorter type to double is supposed to be supported
+    // casting from char,int,float to bool
     else 
         throw logic_error("Error! Inappropriate typecast.");
 }
@@ -232,35 +232,38 @@ llvm::Type* Node::getLlvmType(int type, int len, int wid ) {
  * modification log: 2022/5/15,14:02
  * modificated by: Wang Hui
  */
-vector<Variable> Node::getNameList(int type){
-    vector<Variable> namelist ;
+vector<pair<Variable,llvm::Value*>> Node::getNameList(int type) {
+    vector<pair<Variable,llvm::Value*>> namelist ;
     Node* temp = this ;
     while ( true ) {
         Node* var = temp->child_Node[0] ;
         // Variable --> ID
         if ( var->child_Num == 1 ) {
             Variable variable(var->child_Node[0]->node_Name,type) ;
-            namelist.push_back(variable);
+            namelist.push_back(make_pair(variable,nullptr)) ;
             var->child_Node[0]->setValueType(type) ;
         }
         // Variable --> ID OPENBRACKET INT CLOSEBRACKET
         else if ( var->child_Num == 4 ) {
             int size = stoi(var->child_Node[2]->node_Name) ;
             Variable variable(var->child_Node[0]->node_Name,type+ARRAY,size) ;
-            namelist.push_back(variable) ;
+            namelist.push_back(make_pair(variable,nullptr)) ;
             var->child_Node[0]->setValueType(type+ARRAY) ;
         }
         // Variable --> ID OPENBRACKET INT CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET
         else if ( var->child_Num == 7 ) {
             int one_dimension = stoi(var->child_Node[2]->node_Name), two_dimension = stoi(var->child_Node[5]->node_Name) ;
             Variable variable(var->child_Node[0]->node_Name,type+ARRAY+ARRAY,one_dimension*two_dimension,two_dimension) ;
-            namelist.push_back(variable) ;
+            namelist.push_back(make_pair(variable,nullptr)) ;
             var->child_Node[0]->setValueType(type+ARRAY+ARRAY) ;
         }
         else if ( var->child_Num == 3 ) {
             // Variable --> ID ASSIGN Expression
             if ( var->child_Node[2]->node_Type == "Expression" ) {
-                //TODO
+                llvm::Value* ret = var->child_Node[2]->irBuildExpression() ;
+                Variable variable(var->child_Node[0]->node_Name,type) ;
+                namelist.push_back(make_pair(variable,ret)) ;
+                var->child_Node[0]->setValueType(type) ;
             } 
             // Variable --> ID OPENBRACKET CLOSEBRACKET
             else {
@@ -269,28 +272,100 @@ vector<Variable> Node::getNameList(int type){
                 throw logic_error("Error! Size-unclear array's definition.") ; 
             }
         } 
-        else {
+        else 
             throw logic_error("Error! Wrong definition.") ;
-        }
-        if ( temp->child_Num == 1 ) 
-            break;
-        else // iterative construction
+        if ( temp->child_Num == 3 ) 
             temp = temp->child_Node[2] ;
+        else 
+            break;
     }
     return namelist ;
 }
-vector<llvm::Value *> Node::getArgs(){
-    //TODO
+
+/**
+ * @brief Get the arguments of a function's call
+ * Arguments --> Expression COMMA Arguments | Expression
+ * @return vector<llvm::Value *> 
+ * modification log: 2022/5/19,20:18
+ * modificated by: Wang Hui
+ */
+vector<llvm::Value *> Node::getArgumentList() {
+    vector<llvm::Value*> args ;
+    Node* list = this ;
+    while ( true ) {
+        Node* temp = list->child_Node[0] ;
+        args.push_back( temp->irBuildExpression() ) ;
+        if ( list->child_Num == 3 )
+            list = list->child_Node[2] ;
+        else 
+            break ;
+    }
+    return args ;
 }
-vector<llvm::Value *> Node::getPrintArgs(){
-    //TODO
-}
-vector<llvm::Value *> Node::getArgsAddr(){
+
+/**
+ * @brief I suppose function print do not need special args like scanf
+ * for now, simply call function getArgumentList
+ * @return vector<llvm::Value *> 
+ * modification log: 2022/5/19,22:22
+ * modificated by: Wang Hui
+ */
+vector<llvm::Value *> Node::getPrintArguments() {
+    return this->getArgumentList() ;
     //TODO
 }
 
 /**
- * @brief get function's parameters in definition of global function
+ * @brief Return the vector of ptrs to variable
+ * Arguments --> Expression COMMA Arguments | Expression
+ * @return vector<llvm::Value *> 
+ * modification log: 
+ * modificated by: 
+ */
+vector<llvm::Value *> Node::getInputArguments() {
+    vector<llvm::Value *> args ;
+    Node *list = this;
+    while ( true ) {
+        Node* temp = list->child_Node[0] ;
+        // temp refers to Expression
+        // Expression --> ID
+        args.push_back( temp->irBuildLeftValue() ) ;
+        if ( list->child_Num == 3 )
+            list = list->child_Node[2] ;
+        else 
+            break ;
+    }
+    return args;
+}
+
+/**
+ * @brief Get arguments when call function scanf()
+ * Return the vector of ptrs to variable
+ * Arguments --> Expression COMMA Arguments | Expression
+ * Expression --> ADDRESS Expression
+ * @return vector<llvm::Value*> 
+ * modification log: 2022/5/19,21:49
+ * modificated by: Wang Hui
+ */
+vector<llvm::Value*> Node::getScanfArguments() {
+    vector<llvm::Value*> args ;
+    // scanf() always has a first argument of type const string like "..."
+    args.push_back(this->child_Node[0]->irBuildExpression() ) ;
+    Node* list = this->child_Node[2] ;
+    while ( true ) {
+        // Expression --> ADDRESS Expression
+        Node* tempexp = list->child_Node[0]->child_Node[1] ;
+        args.push_back(tempexp->irBuildLeftValue() ) ;
+        if ( list->child_Num == 3 ) 
+            list = list->child_Node[2] ;
+        else 
+            break ;
+    }
+    return args ;
+}
+
+/**
+ * @brief Get function's parameters in definition of global function
  * ParameterList --> Parameter COMMA ParameterList
  * ParameterList --> Parameter
  * ParameterList --> %empty
@@ -352,3 +427,18 @@ vector<pair<string, llvm::Type*>> Node::getParameterList(){
 // Json::Value Node::jsonGen(){
 //     //
 // }
+
+/**
+ * @brief Create a Entry Block Alloca object
+ * Copied from project of last year
+ * @param TheFunction 
+ * @param VarName 
+ * @param type 
+ * @return llvm::AllocaInst* 
+ * modification log: 2022/5/21,19:25
+ * modificated by: Wang Hui
+ */
+llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction, llvm::StringRef VarName, llvm::Type* type) {
+    llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
+    return TmpB.CreateAlloca(type, nullptr, VarName);
+}

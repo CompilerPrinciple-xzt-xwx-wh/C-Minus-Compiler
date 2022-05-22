@@ -62,6 +62,7 @@ public:
      *  "Function":                 node of function's definition
      *  "ParameterList":            node of list of function's parameters
      *  "Parameter":                node of single parameter
+     *  "FunctionVariable":         node of name of each parameter
      *  "FunctionCode":             node of all the instructions in a function
      *  "Instruction":              node of single instruction
      *  "Definition":               node of a definition instruction
@@ -105,7 +106,7 @@ public:
      * @param nodeType 
      * @param lineNo
      */
-    Node(string nodeName, string nodeType, int lineNo);
+    //Node(string nodeName, string nodeType, int lineNo);
 
     /**
      * @brief Construct a new Node object
@@ -194,15 +195,54 @@ public:
     /**
      * @brief getters for building
      * retype the return value, remove the pointer to vector
-     * @param type 
-     * @return vector<variable> 
      * modification log: 2022/5/14,10:05
      * modificated by: Wang Hui
      */
-    vector<Variable> getNameList(int type);
-    vector<llvm::Value *> getArgs();
-    vector<llvm::Value *> getPrintArgs();
-    vector<llvm::Value *> getArgsAddr();
+    /**
+     * @brief Get then name list of variables when definition
+     * @param type 
+     * @return vector<pair<Variable,llvm::Value*>> 
+     * modification log: 2022/5/19,20:14
+     * modificated by: Wang Hui
+     */
+    vector<pair<Variable,llvm::Value*>> getNameList(int type) ;
+    /**
+     * @brief Get arguments when call function print()
+     * Expression --> print ( Arguments )
+     * @return vector<llvm::Value *> 
+     * modification log: 2022/5/19,22:20
+     * modificated by: Wang Hui
+     */
+    vector<llvm::Value *> getPrintArguments() ;
+    /**
+     * @brief Get arguments when call function input()
+     * Return the vector of ptrs to variable
+     * @return vector<llvm::Value *> 
+     * modification log: 2022/5/19,21:23
+     * modificated by: Wang Hui
+     */
+    vector<llvm::Value *> getInputArguments() ;
+    /**
+     * @brief Get arguments when call function scanf()
+     * Return the vector of ptrs to variable
+     * @return vector<llvm::Value*> 
+     * modification log: 2022/5/19,21:49
+     * modificated by: Wang Hui
+     */
+    vector<llvm::Value*> getScanfArguments() ;
+    /**
+     * @brief Get the arguments for function's call
+     * @return vector<llvm::Value *> 
+     * modification log: 2022/5/19,20:15
+     * modificated by: Wang Hui
+     */
+    vector<llvm::Value *> getArgumentList() ;
+    /**
+     * @brief Get the parameter list of a function for definition
+     * @return vector<pair<string, llvm::Type*>> 
+     * modification log: 2022/5/19,20:14
+     * modificated by: Wang Hui
+     */
     vector<pair<string, llvm::Type*>> getParameterList();
 
     /**
@@ -232,7 +272,7 @@ public:
     llvm::Value *irBuildFunction();
     /**
      * @brief Rename functions
-     * irBuildExp --> irBuildExpression, irBuildStmt --> irBuildStatement, irBuildCompSt --> irBuildCode
+     * irBuildExp ~ irBuildExpression, irBuildStmt ~ irBuildStatement, irBuildCompSt ~ irBuildCode, irBuildRELOP ~ irBuildComparer
      * @return llvm::Value* 
      * modification log: 2022/5/14,22:27
      * modificated by: Wang Hui
@@ -244,10 +284,36 @@ public:
     llvm::Value *irBuildReturn();
     llvm::Value *irBuildCode();
     llvm::Value *irBuildComparer();
-    llvm::Value *irBuildPrint();
-    llvm::Value *irBuildPrintf();
-    llvm::Value *irBuildScan();
-    llvm::Value *irBuildAddr();
+
+    /**
+     * @brief print() and input() are like the way in python
+     * 
+     * @return llvm::Value* 
+     * modification log: 2022/5/19,21:39
+     * modificated by: Wang Hui
+     */
+    llvm::Value* irBuildPrint();
+    llvm::Value* irBuildInput();
+    /**
+     * @brief printf() and scanf() are supported
+     * 
+     * @return llvm::Value* 
+     * modification log: 2022/5/19,21:38
+     * modificated by: Wang Hui
+     */
+    llvm::Value* irBuildPrintf() ;
+    llvm::Value* irBuildScanf() ;
+    
+    /**
+     * @brief Expression --> ID ...
+     * LeftValue get the pointer when assign expression to a left_value
+     * RightValue get the value of ID,ID[n],ID[n][m]
+     * @return llvm::Value* 
+     * modification log: 2022/5/19,16:56
+     * modificated by: Wang Hui
+     */
+    llvm::Value* irBuildLeftValue() ;
+    llvm::Value* irBuildRightValue() ;
 
     /**
      * @brief Build each instruction in Function
@@ -283,6 +349,14 @@ public:
      */
     llvm::Value* irBuildUnaryOperator() ;
     llvm::Value* irBuildBinaryOperator() ;
+    
+    /**
+     * @brief Build function's call
+     * @return llvm::Value* 
+     * modification log: 2022/5/19,19:26
+     * modificated by: Wang Hui
+     */
+    llvm::Value* irBuildCallFunction() ;
 
     /**
      * @brief function jsonGen(), to visiualize AST

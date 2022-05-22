@@ -1,4 +1,4 @@
-#include"variable.h"
+#include "variable.h"
 
 Variable::Variable(/* args */string n, int t, int s ) {
     this->Name = n ;

@@ -2,10 +2,9 @@
  * @Author: xwxr
  * @Date: 2022-05-12 10:53:03
  * @LastEditors: xwxr
- * @LastEditTime: 2022-05-12 12:55:25
+ * @LastEditTime: 2022-05-21 22:47:31
  * @Description: "quicksort" test for C-Minus.
  */
-#include <stdio.h>
 
 int MAXN = 1000;
 /**
@@ -18,7 +17,7 @@ int MAXN = 1000;
 int partition( int array[], int left, int right )
 {
 	int pivot = array[(left+right)/2], i = left, j = right;
-	for(; i <= j; ) {
+	while (i <= j) {
 		while ( array[i] < pivot ) { i++; }
 		while ( array[j] > pivot ) { j--; }
 		if ( i <= j ) {
@@ -60,12 +59,16 @@ int main()
     scanf("%d", &N);
     int i;
     int array[MAXN];
-    for (i = 0; i < N; i++) {
-        scanf("%d", &array[i]);
-    }
+	i = 0;
+	while (i < N) {
+		scanf("%d", &array[i]);
+		i++;
+	}
 	sort(array, 0, N - 1);
-	for (i = 0; i < N; i++) {
+	i = 0;
+	while (i < N) {
 		printf("%d\n", array[i]);
+		i++;
 	}
 
 	return 0;

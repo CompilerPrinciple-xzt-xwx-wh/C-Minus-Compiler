@@ -1,27 +1,55 @@
-#include"generator.h"
+/**
+ * @file generator.cpp
+ * @brief Implement the IR generator's function
+ * @author Wang Hui (3190105609@zju.edu.cn)
+ * @version 1.0
+ * @date 2022-05-20
+ * @copyright Copyright (c) 2022
+ * 
+ */
+#include "generator.h"
 
-extern llvm::LLVMContext context ;
+llvm::LLVMContext context;
+llvm::IRBuilder<> builder(context);
+Generator generator = Generator();
 
 llvm::Function* Generator::getCurFunction() {
-    //TODO
+    return this->getStack().top() ;
 }
 void Generator::pushFunction(llvm::Function* func) {
-    //TODO
+    this->getStack().push(func) ;
 }
 void Generator::popFunction() {
-    //TODO
+    this->getStack().pop() ;
 }
 llvm::Value* Generator::findValue(const std::string & name) {
-    //TODO
+    if ( !this->getStack().empty() ){
+        llvm::Value* result = this->getStack().top()->getValueSymbolTable()->lookup(name) ;
+        if (result != nullptr) 
+            return result;
+    }
+    llvm::Value* result = this->getModule()->getGlobalVariable(name, true) ;
+    if (result == nullptr) 
+        throw logic_error("Error! Undeclared variable: "+name+".") ;
+    else 
+        return result;
 }
 llvm::Function* Generator::createPrintf() {
-    //TODO
+    std::vector<llvm::Type*> arg_types;
+    arg_types.push_back(builder.getInt8PtrTy());
+    auto printf_type = llvm::FunctionType::get(builder.getInt32Ty(), llvm::makeArrayRef(arg_types), true);
+    auto func = llvm::Function::Create(printf_type, llvm::Function::ExternalLinkage, llvm::Twine("printf"), this->module);
+    func->setCallingConv(llvm::CallingConv::C);
+    return func;
 }
 llvm::Function* Generator::createScanf() {
-    //TODO
+    auto scanf_type = llvm::FunctionType::get(builder.getInt32Ty(), true);
+    auto func = llvm::Function::Create(scanf_type, llvm::Function::ExternalLinkage, llvm::Twine("scanf"), this->module);
+    func->setCallingConv(llvm::CallingConv::C);
+    return func;
 }
 void Generator::generate(Node *root) {
-    //TODO
+    root->irBuild() ;
 }
 
 /**

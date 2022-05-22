@@ -8,21 +8,45 @@
  * 
  */
 
-#include<iostream>
-#include"ast.h"
-#include"type.h"
-#include"parser.y.h"
+#include <iostream>
+#include <fstream>
+#include "ast.h"
+#include "type.h"
+#include "generator.h"
 
-int main(){
+// #include"parser.y.h"
 
-    // TODO
+extern Node *ASTroot;
+extern Generator generator;
+extern int yyparse();
+
+int main()
+{
+    printf("0\n");
     // parse the file
+    yyparse();
 
+    printf("1\n");
     // TODO
-    // visualize the AST
-
+    auto root = ASTroot->jsonGen();
+    string jsonFile = "./ast_tree.json";
+    std::ofstream astJson(jsonFile);
+    if (astJson.is_open())
+    {
+        astJson << root;
+        astJson.close();
+        //cout << "json write to " << jsonFile << endl;
+    }
+    printf("2\n");
     // TODO
     // generate the LLVM IR
-
-    return 0 ;
+    llvm::InitializeNativeTarget();
+    llvm::InitializeNativeTargetAsmPrinter();
+    llvm::InitializeNativeTargetAsmParser();
+    printf("3\n");
+    generator = Generator();
+    printf("4\n");
+    generator.generate(ASTroot);
+    printf("5\n");
+    return 0;
 }
