@@ -346,10 +346,12 @@ Expression
                         exp2 = $3->child_Node[0]->node_Name;
                         if ($1->child_Node[0]->node_Type == "Integer" && $3->child_Node[0]->node_Type == "Integer") {
                             int n1, n2, n;
+                            cout << exp1 << " " << exp2 << endl ;
                             n1 = stoi(exp1);
                             n2 = stoi(exp2);
                             n = n1 + n2;
                             exp = to_string(n);
+                            cout << exp << endl ;
                             $$ = new Node(exp, "Integer", 0);
                         } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;
@@ -427,10 +429,12 @@ Expression
                         exp2 = $3->child_Node[0]->node_Name;
                         if ($1->child_Node[0]->node_Type == "Integer" && $3->child_Node[0]->node_Type == "Integer") {
                             int n1, n2, n;
+                            // cout << exp1 << " " << exp2 << endl ;
                             n1 = stoi(exp1);
                             n2 = stoi(exp2);
                             n = n1 / n2;
                             exp = to_string(n);
+                            // cout<< exp << endl ;
                             $$ = new Node(exp, "Integer", 0);
                         } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;

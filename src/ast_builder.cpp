@@ -27,7 +27,7 @@ extern stack<llvm::BasicBlock *> GlobalAfterBB ;
 llvm::Value *Node::irBuild(){
     /**
      * @brief 
-     * first code implementation for IR builder
+     * first code implementation for IR builderl
      * modification log: 2022/5/14,9:45
      * modificated by: Wang Hui
      */

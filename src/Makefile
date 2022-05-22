@@ -1,11 +1,11 @@
 
 OBJS = scanner.o parser.o generator.o ast_builder.o ast_setget.o variable.o globals.o main.o
-CC = /usr/bin/clang++-13
-LLVM_AS = /usr/lib/llvm-13/bin/llvm-as 
-LLI = /usr/lib/llvm-13/bin/lli
+CC = /usr/bin/clang++-10
+LLVM_AS = /usr/lib/llvm-10/bin/llvm-as 
+LLI = /usr/lib/llvm-10/bin/lli
 
-LLVM_INCLUDE = -I /usr/lib/llvm-13/include
-LLVM_LIBS = -L /usr/lib/llvm-13/lib
+LLVM_INCLUDE = -I /usr/lib/llvm-10/include
+LLVM_LIBS = -L /usr/lib/llvm-10/lib
 LD_FLAGS = -lpthread -ldl -lz -lncurses -rdynamic -L/usr/local/lib -ljsoncpp
 
 .PHONY: build clean test

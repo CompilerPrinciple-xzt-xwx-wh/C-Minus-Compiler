@@ -636,11 +636,42 @@ llvm::Value *Node::irBuildExpression(){
 
 ###### 3.3.6 类型匹配和转换
 
-在语义分析的部分，我们希望能够完成对所有只含常数的表达式的直接计算，这样优化可以减少部分表达式的编译代码。在表达式计算的过程中，有以下这些情况需要我们进行类型的自动转换：
+在语义分析的部分，我们希望能够完成对所有只含常数的表达式的直接计算，这样的优化可以减少部分表达式的编译代码。在表达式计算的过程中，有以下这些情况需要我们进行类型的自动转换：
 
 1. 表达式中有常数类型不一致的计算；
-2. 赋值运算左值和右值类型不一致；
-3. 调用参数的类型和传递的类型不一致。
+2. 赋值运算左值和右值类型不一致。
+
+对于表达式中类型不一致的常数，考虑到我们只生成整型和浮点型的字面量，所以可以直接转换为`float`类型的数据进行计算，这个过程可以在语法分析的过程中完成，生成的结果也被当作浮点型字面量以继续递归地调用来完成整个常数字面量表达式的计算。对于赋值运算的左值类型和右值类型不一致的情况，则把右值转换成左值进行赋值。赋值的类型转换不同于表达式中的类型转换，因为左值可以向`float`转换，也可以反过来由`float`转换成`int`，LLVM提供了部分定义良好的操作符来实现转换：
+
+```C++
+// Cast operators ...
+// NOTE: The order matters here because CastInst::isEliminableCastPair
+// NOTE: (see Instructions.cpp) encodes a table based on this ordering.
+ FIRST_CAST_INST(38)
+HANDLE_CAST_INST(38, Trunc   , TruncInst   )  // Truncate integers
+HANDLE_CAST_INST(39, ZExt    , ZExtInst    )  // Zero extend integers
+HANDLE_CAST_INST(40, SExt    , SExtInst    )  // Sign extend integers
+HANDLE_CAST_INST(41, FPToUI  , FPToUIInst  )  // floating point -> UInt
+HANDLE_CAST_INST(42, FPToSI  , FPToSIInst  )  // floating point -> SInt
+HANDLE_CAST_INST(43, UIToFP  , UIToFPInst  )  // UInt -> floating point
+HANDLE_CAST_INST(44, SIToFP  , SIToFPInst  )  // SInt -> floating point
+HANDLE_CAST_INST(45, FPTrunc , FPTruncInst )  // Truncate floating point
+HANDLE_CAST_INST(46, FPExt   , FPExtInst   )  // Extend floating point
+HANDLE_CAST_INST(47, PtrToInt, PtrToIntInst)  // Pointer -> Integer
+HANDLE_CAST_INST(48, IntToPtr, IntToPtrInst)  // Integer -> Pointer
+HANDLE_CAST_INST(49, BitCast , BitCastInst )  // Type cast
+HANDLE_CAST_INST(50, AddrSpaceCast, AddrSpaceCastInst)  // addrspace cast
+  LAST_CAST_INST(50)
+```
+
+考虑到`Trunc`运算符直接截断操作数再赋值的特点，在需要转换成较短的结果时最好通过特别的代码来实现而不是截断。利用这些转换的操作符，在`Node`类中实现了静态方法来完成类型转换的工作：
+
+```C++
+llvm::Value* Node::typeCast(llvm::Value* src, llvm::Type* dst){
+    llvm::Instruction::CastOps op = getCastOperator(src->getType(), dst);
+    return builder.CreateCast(op, src, dst, "tmptypecast");
+}
+```
 
 
 
