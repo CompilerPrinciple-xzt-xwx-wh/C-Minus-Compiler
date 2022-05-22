@@ -241,7 +241,7 @@ extern Node *ASTroot;
 
 ###### 2.3.2 规则部分
 
-按自顶向下的顺序构造语法树，部分文法如下：
+按自底向上的顺序构造语法树，部分文法如下：
 
 ```c++
 Program
@@ -390,7 +390,7 @@ Arguments
 
 除此之外还有很多没有考虑到的以及实际实现中可能会发生的问题，好在后来我们了解到更适合开发C语言的编译器的架构——LLVM，我们可以把它理解成实现在C语言的基础上的虚拟机，当然之前考虑class格式时的一些问题都不存在了。
 
-我们采用了LLVM作为中间代码生成的工具，基于此以及其他未能说明的各种各样的问题的阻挠，我们实现的C语言的编译器终究只是一个部分成品，我们并不寄希望于实现能够分别编译出在Linux、Windows乃至MacOs上可继续链接和运行的中间代码，但我们希望作为“中间商”的LLVM能帮我们做到这一点。作为在如今编译器架构领域占有领先地位的编译器架构工具链技术，LLVM成为了很多开发语言编译工具的选择，包括LLVM自研的C编译器Clang，Rust语言以及苹果生态的swift语言。它极大地方便了我们在已经构造好的抽象语法树的基础上做后续的工作，并且通过LLVM库的api生成的LLVM IR也是一种个平台兼容的可移植的中间代码，这一点与我起初企图构造Java编译器的目标class文件的初衷是一致的。
+我们采用了LLVM作为中间代码生成的工具，基于此以及其他未能说明的各种各样的问题的阻挠，我们实现的C语言的编译器终究只是一个部分成品，我们并不寄希望于实现能够分别编译出在Linux、Windows乃至MacOs上可继续链接和运行的中间代码，但我们希望作为“中间商”的LLVM能帮我们做到这一点。作为在如今编译器架构领域占有领先地位的编译器架构工具链技术，LLVM成为了很多开发语言编译工具的选择，包括LLVM自研的C编译器Clang，Rust语言以及苹果生态的swift语言。它极大地方便了我们在已经构造好的抽象语法树的基础上做后续的工作，并且通过LLVM库的api生成的LLVM IR也是一种平台兼容的可移植的中间代码，这一点与我起初企图构造Java编译器的目标class文件的初衷是一致的。
 
 选择了LLVM工具后，为方便我们从根到叶子构建起代码的实际语义和中间代码，我们仍然做了很多基于我们有限的时间和精力范畴的对C语言的“阉割”，其中部分我认为虽然是“阉割”，但其实似乎更适合现在编程语言的规范。毕竟作为高级语言中“最不高级”的编程语言，C在很多方面赋予程序员的权限和自由现在看来在某些场合下似乎是有些多余了。
 
@@ -449,7 +449,118 @@ LLVM IR是LLVM虚拟机工作的中间代码，LLVM将其转化为其他架构�
 
 ###### 3.3.2 IR生成过程
 
-不同于语法分析时自底向上的建立抽象语法树的过程，进行语义分析时我们采取自顶向下的顺序。
+不同于语法分析时自底向上的建立抽象语法树的过程，进行语义分析时我们采取自顶向下的顺序。在语法分析步骤中我们已经建立起以`Program`为根的抽象语法树，我们遍历树从而建立每一部分的具体语义。具体的我们实现了下列这些方法来供构造过程调用，他们中有些可以从语法分析的生成规则中理解，有些则需要结合C语言的表达式规则作出解释。
+
+```C++
+	// 遍历的起点的调用
+    llvm::Value *irBuild();
+    // 生成变量的过程
+    llvm::Value *irBuildVariable();
+    // 生成函数的过程
+    llvm::Value *irBuildFunction();
+    // 生成C表达式的过程
+    llvm::Value *irBuildExpression();
+	// 生成以分号结尾的C的命令
+    llvm::Value *irBuildStatement();
+	// while循环结构
+    llvm::Value *irBuildWhile();
+	// if分支结构
+    llvm::Value *irBuildIf();
+	// return命令
+    llvm::Value *irBuildReturn();
+	// 构造完整的函数内代码的过程
+    llvm::Value *irBuildCode();
+	// 用于生成逻辑运算的结果
+    llvm::Value *irBuildComparer();
+
+    // 调用原生函数print和input时发生
+    llvm::Value* irBuildPrint();
+    llvm::Value* irBuildInput();
+    // 即使在不引用标准头文件的代码中依然希望能正常使用标准格式的打印和输入
+    llvm::Value* irBuildPrintf() ;
+    llvm::Value* irBuildScanf() ;
+    
+    // 为了构造赋值运算的表达式我们需要构造左值和右值的概念
+    llvm::Value* irBuildLeftValue() ;
+    llvm::Value* irBuildRightValue() ;
+
+    // 单条指令的构造函数，又可以分别生成变量定义和statement两种语句，在构造过程中他们将分别调用irBuildStatement和		  irBuildVariable两个方法
+    llvm::Value* irBuildInstruction() ;
+
+    // 处理代码中出现的字面量，包括Integer，Float和String
+    llvm::Value* irBuildConst() ;
+
+    // 分别处理如负号、取反等的一元运算符和加减乘除的二元运算符
+    llvm::Value* irBuildUnaryOperator() ;
+    llvm::Value* irBuildBinaryOperator() ;
+    
+    // 单独处理函数调用的命令
+    llvm::Value* irBuildCallFunction() ;
+```
+
+此外，IR中间代码的生成依赖LLVM提供的一些运行时环境的搭建，为了使我们的项目结构更加清晰，我们把编译器的全局变量都定义在文件`globals.cpp`中：
+
+```c++
+// 语法分析的根节点
+Node* ASTroot ;
+// 上下文环境
+llvm::LLVMContext context ;
+llvm::IRBuilder<> builder(context) ;
+// 全局Generator，实际上我们以单例模式设计了Generator，但是规避了static这样的声明
+Generator generator() ;
+// 用于存储分支结构的跳出地址的栈
+stack<llvm::BasicBlock *> GlobalAfterBB ;
+```
+
+参考一些开源的项目结构，我们类似地构造了类Generator来帮助我们实现这一过程，在IR的生成过程中，Generator主要提供了这样一些方法帮助我们获得当前运行环境的函数及变量表：
+
+```C++
+	// 得到当前代码环境位于的函数
+	llvm::Function* getCurFunction() ;
+	// 发生函数调用时的入栈
+    void pushFunction(llvm::Function* func) ;
+	// 发生函数返回时的出栈
+    void popFunction() ;
+	// 在当前环境寻找变量名
+    llvm::Value* findValue(const string & name) ;
+	// 为打印和输入服务
+    llvm::Function* createPrintf() ;
+    llvm::Function* createScanf() ;
+	// 语法分析完成后为生成IR的起点函数
+    void generate(Node *root) ;
+    //  得到IR对应的Module
+    llvm::Module* getModule() ;
+```
+
+对于LLVM的开发环境而言，它事实上提供了`llvm::getGlobalVariable(const string name)`等等方法来帮助完成一些变量的插入和查找，我们实现的`findValue`希望能在当前环境查找不到时再去全局中寻找，这反映了我们对于C变量环境语义的修改。而局部变量的定义则依赖于当前`function`的符号表，我们以LLVM提供的一些方法去完成这些工作。
+
+###### 3.3.3 类型设计
+
+关于数组的类型设计源于一些开源代码的灵感，我们设计了三类数据结构：`int,float,char`，尽管设计`bool`类型的变量对于现代很多编程语言而言已经是现状，但我们保留了C的代码习惯，选择`while(1)`而不是`while(true)`这样的表达式来完成`bool`变量的功能，因为无论是哪种编程语言`bool`类型的变量在内部实现时都实际上放在了32位的`int`大小的变量里。
+
+```C
+#define TYPE_VOID (-1)
+#define VAR 0
+#define ARRAY 1
+#define FUN 2
+#define TYPE_INT 10
+#define TYPE_INT_ARRAY 11
+#define TYPE_INT_ARRAY_ARRAY 12
+#define TYPE_FLOAT 20
+#define TYPE_FLOAT_ARRAY 21
+#define TYPE_FLOAT_ARRAY_ARRAY 22
+#define TYPE_CHAR 30
+#define TYPE_CHAR_ARRAY 31
+#define TYPE_CHAR_ARRAY_ARRAY 32
+```
+
+关于为什么这些定义的数值是这么大，这就和class文件中为什么文件标识符是`“CAFEBABE”`一样任性，尽管我们目前只做到了二维数组的定义和使用，但是以长远的目光来看，将类型和对应的数组类型以`ARRAY=1`为单位增加也能让我们使用到这些类型宏的代码更加清晰，并且保留了足够高的维度来定义，当我试图定义3维、4维甚至9维数组时我仍然可以正常使用这些类型，若有10维及以上的数组则需要修改这些宏了。
+
+设计这些宏的初衷仅仅是为了完善树的结点的构造时写得更加方便，LLVM并不认识这些类的宏，当我们要获得LLVM中代表类型的对象时我们需要根据这些类型来生成对应的LLVM中的对象，函数`llvm::Type* getLlvmType()`实现了这一目标，在最多生成二维数组的情况下，我设计重载该函数来分别生成一维数组和二维数组的`Type`对象，在完善生成更高维的数组的时候，我们可以采取可变个数的参数来实现他们。
+
+###### 3.3.4 全局的定义
+
+我们可以简单的把C的代码看作是由很多个全局的定义组成，有的是变量，有的是函数，编译链接后他们都在当前程序的全局可被访问和调用。定义变量和定义函数一样都从一个类型名开始，所以我们把一个定义的单元作为语法生成的一个规则，不同的是由于代码的自由，我们可以在一条变量定义里定义多个变量，甚至定义不同类型的变量（比如`int a,b[10] ;`这样既有变量又有数组的定义），但是一个函数定义就只对应了一个函数。
 
 ## 第四章 代码生成
 
