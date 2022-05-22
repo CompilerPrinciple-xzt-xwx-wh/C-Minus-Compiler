@@ -108,7 +108,7 @@ llvm::Value* Node::irBuildVariable(){
                 if ( initial->getType() != llvmType ) 
                     initial = typeCast(initial,llvmType) ;
                 cout << "!!" << endl;
-                cout<< var->isPointerTy() << endl ;
+                // cout<< var->isPointerTy() << endl ;
                 builder.CreateStore(initial,var) ;
             }
             cout << "Global success2" << endl ;
