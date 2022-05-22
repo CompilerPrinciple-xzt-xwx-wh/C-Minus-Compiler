@@ -560,7 +560,89 @@ stack<llvm::BasicBlock *> GlobalAfterBB ;
 
 ###### 3.3.4 全局的定义
 
-我们可以简单的把C的代码看作是由很多个全局的定义组成，有的是变量，有的是函数，编译链接后他们都在当前程序的全局可被访问和调用。定义变量和定义函数一样都从一个类型名开始，所以我们把一个定义的单元作为语法生成的一个规则，不同的是由于代码的自由，我们可以在一条变量定义里定义多个变量，甚至定义不同类型的变量（比如`int a,b[10] ;`这样既有变量又有数组的定义），但是一个函数定义就只对应了一个函数。
+我们可以简单的把C的代码看作是由很多个全局的定义组成，有的是变量，有的是函数，编译链接后他们都在当前程序的全局可被访问和调用。定义变量和定义函数一样都从一个类型名开始，所以我们把一个定义的单元作为语法生成的一个规则，不同的是由于代码的自由，我们可以在一条变量定义里定义多个变量，甚至定义不同类型的变量（比如`int a,b[10] ;`这样既有变量又有数组的定义），但是一个函数定义就只对应了一个函数。对于全局变量，通过LLVM的全局变量的类`llvm::GlobalVariable`的构造方法构造，对于函数则通过静态方法`llvm::Function::Create()`生成。
+
+###### 3.3.5 函数内代码的结构
+
+函数生成规则`Function --> ID ( ParameterList ) { FunctionCode }`中的`FunctionCode`通过生成函数`irBuildCode()`来实现IR的生成。`FunctionCode`由若干条`Instruction`组成，`Instruction`又可以分为变量定义命令和其他的命令。函数内变量的定义和全局变量的定义调用的实际上都是`irBuildVariable()`函数，生成变量时我会判断当前的代码运行时环境是全局还是某个函数内，这一点有赖于上文提及到的`llvm::LLVMContext context`以及对应的由`context`构造的`llvm::IRBuilder<> builder(context)`这两个全局变量。除了变量定义以外的语句都通过`Statement`生成，每一个Statement以分号结尾，并且又可以生成表达式、while循环、if判断分支和返回这些语句。
+
+构造表达式的过程是较为复杂的，通过多种多样的表达式我们能够写出功能复杂的C代码，为了使代码结构更加简洁明了我们又大致地对这些表达式做了一些区分来分别生成：
+
+```c++
+llvm::Value *Node::irBuildExpression(){
+    // Expression --> %empty
+    if ( this == nullptr ) 
+        return NULL ;
+    // Expression --> Integer | Realnumber | Character
+    if ( this->child_Num == 1 )
+        return this->irBuildConst() ;
+    /**
+     * Expression --> NOT Expression 
+     * Expression --> MINUS Expression 
+     * Expression --> INCR Expression
+     * Expression --> ADDRESS Expression 
+     * Expression --> Expression INCR 
+     */
+    if ( this->child_Num == 2 ) 
+       return this->irBuildUnaryOperator() ;
+    /**
+     *  Expression --> Expression EQUAL Expression
+     *  Expression --> Expression NOTEQUAL Expression
+     *  Expression --> Expression GT Expression 
+     *  Expression --> Expression GE Expression
+     *  Expression --> Expression LT Expression
+     *  Expression --> Expression LE Expression
+     */
+    if ( this->child_Num == 3 && 
+            ( this->child_Node[1]->node_Type == "EQUAL" || 
+              this->child_Node[1]->node_Type == "NOTEQUAL" || 
+              this->child_Node[1]->node_Type == "GT" || 
+              this->child_Node[1]->node_Type == "GE" || 
+              this->child_Node[1]->node_Type == "LT" ||
+              this->child_Node[1]->node_Type == "LE" ) )
+        return this->irBuildComparer() ;
+    /**
+     * Expression --> Expression ASSIGN Expression
+     * Expression --> Expression AND Expression
+     * Expression --> Expression OR Expression 
+     * Expression --> Expression PLUS Expression 
+     * Expression --> Expression MINUS Expression 
+     * Expression --> Expression MUL Expression 
+     * Expression --> Expression DIV Expression 
+     * Expression --> Expression MOD Expression 
+     */
+    if ( this->child_Num == 3 && this->child_Node[2]->node_Type == "Expression" && this->child_Node[0]->node_Type == "Expression" ) 
+        return this->irBuildBinaryOperator() ;
+    // Expression --> OPENPAREN Expression CLOSEPAREN 
+    if ( this->child_Num == 3 && this->child_Node[1]->node_Type == "Expression" ) 
+        return child_Node[1]->irBuildExpression() ;
+    /**
+     * Expression --> ID OPENBRACKET Expression CLOSEPAREN OPENBRACKET Expression CLOSEPAREN
+     * Expression --> ID OPENBRACKET Expression CLOSEPAREN 
+     * Expression --> ID 
+     */
+    if ( this->child_Node[0]->node_Type == "ID" && ( this->child_Num == 1 || this->child_Node[1]->node_Type == "OPENBRACKET" ) ) 
+        return this->irBuildRightValue() ;
+    /**
+     * Expression --> ID OPENPAREN Arguments CLOSEPAREN 
+     * Expression --> ID OPENPAREN CLOSEPAREN 
+     */
+    if ( this->child_Node[0]->node_Type == "ID" && this->child_Node[1]->node_Type == "OPENPAREN" ) 
+        return this->irBuildCallFunction() ;
+}
+```
+
+这里具体实现的函数不再一一赘述，对于`irBuildRightValue()`做一些简要的说明，因为与之相应的我也实现了左值的生成函数用来实现赋值运算。从字面意义理解，左值便是可以出现在赋值符号左侧的表达式，右值即可以出现在赋值符号右侧的表达式。对于C语言而言，除了变量名以外，基础运算的表达式和函数调用都只能出现在赋值符号右侧，而左值则只能为变量或者一些取地址取值之类的表达式。考虑到指针的运算没有涉及到，我们处理的左值便只包含`ID`、`ID[Expression]`和`ID[Expression][Expression]`，乍一看似乎和右值的情况无异，但是注意到我们的`Expression`并不包含直接生成左值，但是包含直接生成右值，这是因为右值运算生成的结果可以被直接作为结果返回，而左值生成的结果并不是表达式的计算结果，而是`ID`、`ID[Expression]`和`ID[Expression][Expression]`的存储单元的“地址”，他们只会在赋值运算中使用到，将右值的结果`store`到左值的地址中。
+
+###### 3.3.6 类型匹配和转换
+
+在语义分析的部分，我们希望能够完成对所有只含常数的表达式的直接计算，这样优化可以减少部分表达式的编译代码。在表达式计算的过程中，有以下这些情况需要我们进行类型的自动转换：
+
+1. 表达式中有常数类型不一致的计算；
+2. 赋值运算左值和右值类型不一致；
+3. 调用参数的类型和传递的类型不一致。
+
+
 
 ## 第四章 代码生成
 

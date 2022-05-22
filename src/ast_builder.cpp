@@ -13,7 +13,7 @@
 
 extern Node* ASTroot ;
 extern llvm::LLVMContext context ;
-extern llvm::IRBuilder<> builder(context) ;
+extern llvm::IRBuilder<> builder ;
 extern Generator generator ;
 extern stack<llvm::BasicBlock *> GlobalAfterBB ;
 
