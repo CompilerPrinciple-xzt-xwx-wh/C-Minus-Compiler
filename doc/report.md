@@ -125,6 +125,114 @@
 
 ## 第一章 词法分析
 
+#### 1.1 flex介绍
+
+Flex(快速词法分析器生成器)是lex的免费开源软件替代品，它是生成词法分析器的计算机程序，词法分析器是识别文本中的词汇模式的程序。flex程序读取给定的输入文件，生成一个C源文件作为输出。flex的输入文件称为lex源文件，它内含正规表达式和对相应模式处理的C语言代码。lex源文件的扩展名习惯上用.l表示。flex通过对源文件的扫描自动生成相应的词法分析函数int yylex()，并将之输出到名规定为lex.yy.c的文件中。实用时，可将其改名为lexyy.c。该文件即为lex的输出文件或输出的词法分析器。也可将int yylex()加入自已的工程文件中使用。
+
+lex对源文件的格式要求非常严格，比如若将要求顶行书写的语句变成非顶行书写就会产生致命错误。而lex本身的查错能力很弱，所以书写时一定要注意。
+
+lex的源文件由三个部份组成，每个部分之间用顶行的“%%”分割，其格式如下：
+
+```markdown
+{definitions}
+%%
+{rules}
+%%
+{subroutines}
+```
+
+#### 1.2 具体实现
+
+词法分析是编译器实现的第一步，我们所需要做的就是将输入转化为一些列的token然后传给yacc。本项目中定义的token一共包括：加减乘除等运算符、关系运算符、取地址符号、括号、逗号、句号、C语言关键字、用户自定义的标识符ID、整型常量、浮点型常量、字符常量、字符串常量、换行空格等其它符号等。
+
+我们需要在parser.yacc中先声明这些token，然后再scanner.l中定义相关token的操作。
+
+token共分为以下几种情况：
+
+- **关键字**
+
+```markdown
+"char"            {yylval.node = new Node(yytext, "CHAR", 0); return CHAR;}
+"int"             {yylval.node = new Node(yytext, "INT", 0); return INT;}
+"float"           {yylval.node = new Node(yytext, "FLOAT", 0); return FLOAT;}
+"double"          {yylval.node = new Node(yytext, "DOUBLE", 0); return DOUBLE;}
+"void"            {yylval.node = new Node(yytext, "VOID", 0); return VOID;}
+"if"              {yylval.node = new Node(yytext, "IF", 0); return IF;}
+"else"            {yylval.node = new Node(yytext, "ELSE", 0); return ELSE;}
+"for"             {yylval.node = new Node(yytext, "FOR", 0); return FOR;}
+"while"           {yylval.node = new Node(yytext, "WHILE", 0); return WHILE;}
+"continue"        {yylval.node = new Node(yytext, "CONTINUE", 0); return CONTINUE;}
+"break"           {yylval.node = new Node(yytext, "BREAK", 0); return BREAK;}
+"return"          {yylval.node = new Node(yytext, "RETURN", 0); return RETURN;}
+```
+
+- **各种运算符**
+
+```markdown
+"+"               {yylval.node = new Node(yytext, "PLUS", 0); return PLUS;}
+"-"               {yylval.node = new Node(yytext, "MINUS", 0); return MINUS;}
+"*"               {yylval.node = new Node(yytext, "MUL", 0); return MUL;}
+"/"               {yylval.node = new Node(yytext, "DIV", 0); return DIV;}
+"%"               {yylval.node = new Node(yytext, "MOD", 0); return MOD;}
+"="               {yylval.node = new Node(yytext, "ASSIGN", 0); return ASSIGN;}
+"++"              {yylval.node = new Node(yytext, "INCR_P", 0); return INCR_P;}
+"--"              {yylval.node = new Node(yytext, "INCR_M", 0); return INCR_M;}
+"&&"              {yylval.node = new Node(yytext, "AND", 0); return AND;}
+"||"              {yylval.node = new Node(yytext, "OR", 0); return OR;}
+"!"               {yylval.node = new Node(yytext, "NOT", 0); return NOT;}
+"=="              {yylval.node = new Node(yytext, "EQUAL", 0); return EQUAL;}
+"!="              {yylval.node = new Node(yytext, "NOTEQUAL", 0); return NOTEQUAL;}
+">"               {yylval.node = new Node(yytext, "GT", 0); return GT;}
+">="              {yylval.node = new Node(yytext, "GE", 0); return GE;}
+"<"               {yylval.node = new Node(yytext, "LT", 0); return LT;}
+"<="              {yylval.node = new Node(yytext, "LE", 0); return LE;}
+"&"               {yylval.node = new Node(yytext, "ADDRESS", 0); return ADDRESS;}
+```
+
+- **括号及标点**
+
+```markdown
+"("               {yylval.node = new Node(yytext, "OPENPAREN", 0); return OPENPAREN;}
+")"               {yylval.node = new Node(yytext, "CLOSEPAREN", 0); return CLOSEPAREN;}
+"["               {yylval.node = new Node(yytext, "OPENBRACKET", 0); return OPENBRACKET;}
+"]"               {yylval.node = new Node(yytext, "CLOSEBRACKET", 0); return CLOSEBRACKET;}
+"{"               {yylval.node = new Node(yytext, "OPENCURLY", 0); return OPENCURLY;}
+"}"               {yylval.node = new Node(yytext, "CLOSECURLY", 0); return CLOSECURLY;}
+","               {yylval.node = new Node(yytext, "COMMA", 0); return COMMA;}
+";"               {yylval.node = new Node(yytext, "SEMI", 0); return SEMI;}
+```
+
+- 用户自定义变量以及常量
+
+```markdown
+digit   [0-9]
+letter   [a-zA-Z]
+ID      {letter}({digit}|{letter}|"_")*
+
+ICONST   "0"|[1-9]{digit}*
+FCONST   "0"|[1-9]{digit}*"."{digit}+
+CCONST   \'.\'|\'\\.\'  
+SCONST   \"(\\.|[^"\\])*\"
+%%
+{ID}              {yylval.node = new Node(yytext, "ID", 0); return ID;}
+{ICONST}          {yylval.node = new Node(yytext, "Integer", 0); return Integer;}
+{FCONST}          {yylval.node = new Node(yytext, "Realnumber", 0); return Realnumber;}
+{CCONST}          {yylval.node = new Node(yytext, "Character", 0); return Character;}
+{SCONST}          {yylval.node = new Node(yytext, "String", 0); return String;}
+```
+
+- 注释以及其它转义符
+
+```markdown
+COMMENT ("//"[^\n]*)
+%%
+{COMMENT}         { ;}
+"\n"              {lineno = lineno + 1;}
+"\t"              { ;}
+" "               { }
+.                 {yyerror("Unrecognized character!\n");}
+```
+
 
 
 ## 第二章 语法分析
@@ -360,7 +468,69 @@ Arguments
 
 #### 2.4 抽象语法树可视化
 
-<h5 align = "center">这里没写</h5>
+在本项目中，通过visulization.cpp中定义的Json::Value Node::jsonGen()可以对抽象语法树的根节点进行前序遍历并输出到ast_tree.json中，随后利用pytm-cli树图渲染命令行工具将Json数据生成对应的HTML格式的树图即可可视化抽象语法树。
+
+jsonGen()函数：
+
+```c++
+Json::Value Node::jsonGen(){
+    Json::Value root;
+    string addstr = "";
+    if(this->node_Type == "Typer" || this->node_Type == "Exp"){
+        switch (this->getValueType())
+        {
+        case TYPE_VOID:
+            addstr = "void"; break;
+        case VAR:
+            addstr = "var"; break;
+        case ARRAY:
+            addstr = "array"; break;
+        case FUN:
+            addstr = "function"; break;
+        case TYPE_INT:
+            addstr = "int"; break;
+        case TYPE_INT_ARRAY:
+            addstr = "int_Array"; break;
+        case TYPE_FLOAT:
+            addstr = "float"; break;
+        case TYPE_FLOAT_ARRAY:
+            addstr = "float_Array"; break;
+        case TYPE_CHAR:
+            addstr = "char"; break;
+        case TYPE_CHAR_ARRAY:
+            addstr = "char_Array"; break;
+        case TYPE_DOUBLE:
+            addstr = "double"; break;
+        case TYPE_DOUBLE_ARRAY:
+            addstr = "double_Array"; break;
+        case POINTER:
+            addstr = "pointer"; break;
+        default:
+            break;
+        }
+    }
+
+    root["name"] = this->node_Type + (addstr == "" ? "" : ": " + addstr);
+
+    for(int i = this->child_Num - 1; i >= 0; i--){
+        if(this->child_Node[i]){
+            root["children"].append(this->child_Node[i]->jsonGen());
+        }
+    }
+    return root;
+}
+```
+
+生成的抽象语法树示例：
+
+```c++
+int a=1;
+float b=2.0;
+```
+
+
+
+![](..\image\AST.png)
 
 
 
