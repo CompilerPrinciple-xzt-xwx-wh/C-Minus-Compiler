@@ -40,11 +40,7 @@ Node* ASTroot ;
  * modification log: 2022/5/14,11:37
  * modificated by: Wang Hui
  */
-<<<<<<< HEAD
 extern Generator generator;
-=======
-Generator generator() ;
->>>>>>> f18219f66fd4ee16ed30b6aeb40faabe064cd852
 
 /**
  * @brief Environment of current code block
