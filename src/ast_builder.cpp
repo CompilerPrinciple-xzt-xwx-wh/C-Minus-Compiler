@@ -8,13 +8,13 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include"ast.h"
-#include"generator.h"
+#include "ast.h"
+#include "generator.h"
 
 extern Node* ASTroot ;
 extern llvm::LLVMContext context ;
-extern llvm::IRBuilder<> builder ;
-extern Generator generator ;
+extern llvm::IRBuilder<> builder;
+extern Generator generator;
 extern stack<llvm::BasicBlock *> GlobalAfterBB ;
 
 /**
@@ -32,8 +32,10 @@ llvm::Value *Node::irBuild(){
      * modificated by: Wang Hui
      */
     if (this->node_Type == "GlobalDefinition" ) {
-        if (this->child_Node[1]->node_Type == "GlobalVariableList" ) 
+        if (this->child_Node[1]->node_Type == "GlobalVariableList" ){
+            printf("here\n");
             return this->irBuildVariable() ;
+        }
         else 
             return this->irBuildFunction() ;
     } else if (this->node_Type == "Definition" ) {
@@ -56,7 +58,10 @@ llvm::Value *Node::irBuild(){
  */
 llvm::Value* Node::irBuildVariable(){
     int type = this->child_Node[0]->getValueType() ;
+    printf("type:%d\n", type);
     vector<pair<Variable,llvm::Value*>> nameList = this->child_Node[1]->getNameList(type) ;
+    for ( auto it : nameList ) 
+        cout<< it.first.getName() << ": " << it.first.getSize() << endl ;
     llvm::Type *llvmType ;
     for (auto it : nameList) {
         llvmType = getLlvmType(it.first.getType(),it.first.getSize()) ;
@@ -66,6 +71,7 @@ llvm::Value* Node::irBuildVariable(){
             if ( tmp != nullptr ) 
                 throw logic_error("Error! Redefined global variable: " + it.first.getName()+".") ;
             llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(*generator.getModule(), llvmType, false, llvm::GlobalValue::PrivateLinkage, 0, it.first.getName()) ;
+            cout << "Global success" << endl ;
             // Initialize the variable
             // for multidimensional array
             #ifdef _MULTIDIMENSIONAL_ARRAY_
@@ -92,6 +98,8 @@ llvm::Value* Node::irBuildVariable(){
             } else {
                 globalVar->setInitializer(llvm::ConstantInt::get(llvmType, 0)) ;
             }
+
+            cout << "Global success1" << endl ;
             // Initial value is declared
             // Only support variable, do not support array
             if ( it.second != nullptr ) {
@@ -99,8 +107,11 @@ llvm::Value* Node::irBuildVariable(){
                 llvm::Value* initial = it.second ;
                 if ( initial->getType() != llvmType ) 
                     initial = typeCast(initial,llvmType) ;
+                cout << "!!" << endl;
+                // cout<< var->isPointerTy() << endl ;
                 builder.CreateStore(initial,var) ;
             }
+            cout << "Global success2" << endl ;
         }
         // local variable
         else {            
@@ -117,6 +128,7 @@ llvm::Value* Node::irBuildVariable(){
             }
         }
     }
+    cout << "Global success3" << endl ;
     return NULL;
 }
 

@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include"ast.h"
-#include<cstdarg>
+#include "ast.h"
+#include <cstdarg>
 /**
  * @brief remove global variables from ast_setget.cpp
  * ASTroot, context and builder are defined in file globals.cpp
@@ -18,7 +18,7 @@
  */
 extern Node* ASTroot ;
 extern llvm::LLVMContext context ;
-extern llvm::IRBuilder<> builder(context) ;
+extern llvm::IRBuilder<> builder;
 
 /**
  * @brief Construct a new Node object
@@ -27,11 +27,11 @@ extern llvm::IRBuilder<> builder(context) ;
  * @param nodeType 
  * @param lineNo 
  */
-Node::Node(string nodeName, string nodeType, int lineNo) {
-    this->node_Name = nodeName ;
-    this->node_Type = nodeType ;
-    this->line_Count = lineNo ;
-}
+// Node::Node(string nodeName, string nodeType, int lineNo) {
+//     this->node_Name = nodeName ;
+//     this->node_Type = nodeType ;
+//     this->line_Count = lineNo ;
+// }
 
 /**
  * @brief Construct a new Node object

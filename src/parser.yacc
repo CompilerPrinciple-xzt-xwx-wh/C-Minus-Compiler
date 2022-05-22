@@ -41,6 +41,7 @@
     #include <stdio.h>
     #include "ast.h"
     #include "type.h"
+    #include "parser.hpp"
     #include <string>
 
     extern Node *ASTroot;
@@ -339,18 +340,18 @@ Expression
                     $$->setValueType(TYPE_INT);
                 }
     |           Expression PLUS Expression {
-                    if ($1->child_num == 1 && $3->child_num == 1) {
+                    if ($1->child_Num == 1 && $3->child_Num == 1) {
                         string exp1, exp2, exp;
-                        exp1 = $1->child_Node->node_Name;
-                        exp2 = $3->child_Node->node_Name;
-                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                        exp1 = $1->child_Node[0]->node_Name;
+                        exp2 = $3->child_Node[0]->node_Name;
+                        if ($1->child_Node[0]->node_Type == "Integer" && $3->child_Node[0]->node_Type == "Integer") {
                             int n1, n2, n;
                             n1 = stoi(exp1);
                             n2 = stoi(exp2);
                             n = n1 + n2;
                             exp = to_string(n);
                             $$ = new Node(exp, "Integer", 0);
-                        } else if ($1->child_Node->node_Type == "Realnumber" && $3->child_Node->node_Type == "Realnumber") {
+                        } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;
                             f1 = stof(exp1);
                             f2 = stof(exp2);
@@ -366,18 +367,18 @@ Expression
                     $$->setValueType($1->getValueType());
                 }
     |           Expression MINUS Expression {
-                    if ($1->child_num == 1 && $3->child_num == 1) {
+                    if ($1->child_Num == 1 && $3->child_Num == 1) {
                         string exp1, exp2, exp;
-                        exp1 = $1->child_Node->node_Name;
-                        exp2 = $3->child_Node->node_Name;
-                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                        exp1 = $1->child_Node[0]->node_Name;
+                        exp2 = $3->child_Node[0]->node_Name;
+                        if ($1->child_Node[0]->node_Type == "Integer" && $3->child_Node[0]->node_Type == "Integer") {
                             int n1, n2, n;
                             n1 = stoi(exp1);
                             n2 = stoi(exp2);
                             n = n1 - n2;
                             exp = to_string(n);
                             $$ = new Node(exp, "Integer", 0);
-                        } else if ($1->child_Node->node_Type == "Realnumber" && $3->child_Node->node_Type == "Realnumber") {
+                        } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;
                             f1 = stof(exp1);
                             f2 = stof(exp2);
@@ -393,18 +394,18 @@ Expression
                     $$->setValueType($1->getValueType());
                 }
     |           Expression MUL Expression {
-                    if ($1->child_num == 1 && $3->child_num == 1) {
+                    if ($1->child_Num == 1 && $3->child_Num == 1) {
                         string exp1, exp2, exp;
-                        exp1 = $1->child_Node->node_Name;
-                        exp2 = $3->child_Node->node_Name;
-                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                        exp1 = $1->child_Node[0]->node_Name;
+                        exp2 = $3->child_Node[0]->node_Name;
+                        if ($1->child_Node[0]->node_Type == "Integer" && $3->child_Node[0]->node_Type == "Integer") {
                             int n1, n2, n;
                             n1 = stoi(exp1);
                             n2 = stoi(exp2);
                             n = n1 * n2;
                             exp = to_string(n);
                             $$ = new Node(exp, "Integer", 0);
-                        } else if ($1->child_Node->node_Type == "Realnumber" && $3->child_Node->node_Type == "Realnumber") {
+                        } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;
                             f1 = stof(exp1);
                             f2 = stof(exp2);
@@ -420,18 +421,18 @@ Expression
                     $$->setValueType($1->getValueType());
                 }
     |           Expression DIV Expression {
-                    if ($1->child_num == 1 && $3->child_num == 1) {
+                    if ($1->child_Num == 1 && $3->child_Num == 1) {
                         string exp1, exp2, exp;
-                        exp1 = $1->child_Node->node_Name;
-                        exp2 = $3->child_Node->node_Name;
-                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                        exp1 = $1->child_Node[0]->node_Name;
+                        exp2 = $3->child_Node[0]->node_Name;
+                        if ($1->child_Node[0]->node_Type == "Integer" && $3->child_Node[0]->node_Type == "Integer") {
                             int n1, n2, n;
                             n1 = stoi(exp1);
                             n2 = stoi(exp2);
                             n = n1 / n2;
                             exp = to_string(n);
                             $$ = new Node(exp, "Integer", 0);
-                        } else if ($1->child_Node->node_Type == "Realnumber" && $3->child_Node->node_Type == "Realnumber") {
+                        } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;
                             f1 = stof(exp1);
                             f2 = stof(exp2);
@@ -447,11 +448,11 @@ Expression
                     $$->setValueType($1->getValueType());
                 }
     |           Expression MOD Expression {
-                    if ($1->child_num == 1 && $3->child_num == 1) {
+                    if ($1->child_Num == 1 && $3->child_Num == 1) {
                         string exp1, exp2, exp;
-                        exp1 = $1->child_Node->node_Name;
-                        exp2 = $3->child_Node->node_Name;
-                        if ($1->child_Node->node_Type == "Integer" && $3->child_Node->node_Type == "Integer") {
+                        exp1 = $1->child_Node[0]->node_Name;
+                        exp2 = $3->child_Node[0]->node_Name;
+                        if ($1->child_Node[0]->node_Type == "Integer" && $3->child_Node[0]->node_Type == "Integer") {
                             int n1, n2, n;
                             n1 = stoi(exp1);
                             n2 = stoi(exp2);
@@ -491,7 +492,7 @@ Expression
                     $$->setValueType($1->getValueType());
                 }
     |           OPENPAREN Expression CLOSEPAREN {
-                    if ($2->child_num == 1) {
+                    if ($2->child_Num == 1) {
                         // if ($2->child_Node->node_Type == "Integer") {
                         //     $$ = new Node($2->child_Node->node_Name, "Integer", 0);
                         // } else if ($2->child_Node->node_Type == "Realnumber") {

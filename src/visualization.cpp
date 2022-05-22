@@ -58,7 +58,7 @@ Json::Value Node::jsonGen(){
 
     root["name"] = this->node_Type + (addstr == "" ? "" : ": " + addstr);
 
-    for(int i = 0; i < this->child_Num; i++){
+    for(int i = this->child_Num - 1; i >= 0; i--){
         if(this->child_Node[i]){
             root["children"].append(this->child_Node[i]->jsonGen());
         }

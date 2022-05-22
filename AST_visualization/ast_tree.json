@@ -1,0 +1,57 @@
+{
+	"children" : 
+	[
+		{
+			"children" : 
+			[
+				{
+					"children" : 
+					[
+						{
+							"name" : "SEMI"
+						},
+						{
+							"children" : 
+							[
+								{
+									"children" : 
+									[
+										{
+											"children" : 
+											[
+												{
+													"name" : "Integer"
+												}
+											],
+											"name" : "Expression"
+										},
+										{
+											"name" : "ASSIGN"
+										},
+										{
+											"name" : "ID"
+										}
+									],
+									"name" : "GlobalVariable"
+								}
+							],
+							"name" : "GlobalVariableList"
+						},
+						{
+							"children" : 
+							[
+								{
+									"name" : "INT"
+								}
+							],
+							"name" : "Typer: int"
+						}
+					],
+					"name" : "GlobalDefinition"
+				}
+			],
+			"name" : "GlobalDefinitionList"
+		}
+	],
+	"name" : "Program"
+}

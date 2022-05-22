@@ -106,7 +106,7 @@ public:
      * @param nodeType 
      * @param lineNo
      */
-    Node(string nodeName, string nodeType, int lineNo);
+    //Node(string nodeName, string nodeType, int lineNo);
 
     /**
      * @brief Construct a new Node object

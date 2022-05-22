@@ -7,8 +7,8 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include"ast.h"
-#include"generator.h"
+#include "ast.h"
+#include "generator.h"
 
 /**
  * @brief rename root as ASTroot
@@ -30,8 +30,8 @@ Node* ASTroot ;
  * modification log: 2022/5/14,10:30
  * modificated by: Wang Hui
  */
-llvm::LLVMContext context ;
-llvm::IRBuilder<> builder(context) ;
+// llvm::LLVMContext context ;
+// llvm::IRBuilder<> builder(context) ;
 
 /**
  * @brief generator to code IR
@@ -40,7 +40,7 @@ llvm::IRBuilder<> builder(context) ;
  * modification log: 2022/5/14,11:37
  * modificated by: Wang Hui
  */
-Generator generator() ;
+extern Generator generator;
 
 /**
  * @brief Environment of current code block

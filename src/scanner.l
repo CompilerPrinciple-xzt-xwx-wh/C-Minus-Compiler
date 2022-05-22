@@ -5,9 +5,10 @@
 #include <string.h>
 #include <math.h>
 #include "ast.h"
+#include "parser.hpp"
 
 int lineno = 1;
-void yyerror();
+void yyerror(const char*);
 %}
 /*TOKEN definitions*/
 digit   [0-9]
@@ -19,7 +20,7 @@ FCONST   "0"|[1-9]{digit}*"."{digit}+
 CCONST   \'.\'|\'\\.\'  
 SCONST   \"(\\.|[^"\\])*\"
 
-COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
+COMMENT ("//"[^\n]*)
 
 /*REGULAR EXPRESSIONS defining the tokens*/
 %%
@@ -49,7 +50,6 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 "{"               {yylval.node = new Node(yytext, "OPENCURLY", 0); return OPENCURLY;}
 "}"               {yylval.node = new Node(yytext, "CLOSECURLY", 0); return CLOSECURLY;}
 ","               {yylval.node = new Node(yytext, "COMMA", 0); return COMMA;}
-"."               {yylval.node = new Node(yytext, "DOT", 0); return DOT;}
 ";"               {yylval.node = new Node(yytext, "SEMI", 0); return SEMI;}
 
 "char"            {yylval.node = new Node(yytext, "CHAR", 0); return CHAR;}
@@ -73,5 +73,10 @@ COMMENT ("/*"([^\*]|(\*)*[^\*/])*(\*)*"*\")|("//"[^\n]*)
 {COMMENT}         { ;}
 "\n"              {lineno = lineno + 1;}
 "\t"              { ;}
-.                 {yyerror("Unrecognized character: %s\n", yytext);}
+" "               { }
+.                 {yyerror("Unrecognized character!\n");}
 %%
+
+int yywrap(){
+    return 1; 
+}

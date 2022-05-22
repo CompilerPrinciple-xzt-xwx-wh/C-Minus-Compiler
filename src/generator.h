@@ -1,5 +1,5 @@
-#ifndef _GENERATOR_
-#define _GENERATOR_
+#ifndef _GENERATOR_H_
+#define _GENERATOR_H_
 
 #include <iostream>
 #include <stack>
@@ -43,6 +43,14 @@ class Generator{
     stack<llvm::Function*> funcStack ;
 
 public:
+    /**
+     * @brief Construct a new Generator object
+     * initialize the module, printf, scanf and funStack
+     * modification log: 2022/5/14,11:23
+     * modificated by: Wang Hui
+     */
+    Generator();
+
     llvm::Function* getCurFunction() ;
     void pushFunction(llvm::Function* func) ;
     void popFunction() ;
@@ -61,14 +69,6 @@ public:
     llvm::Function* getPrint() ;
     llvm::Function* getScan() ;
     stack<llvm::Function*>& getStack() ;
-
-    /**
-     * @brief Construct a new Generator object
-     * initialize the module, printf, scanf and funStack
-     * modification log: 2022/5/14,11:23
-     * modificated by: Wang Hui
-     */
-    Generator() ;
 } ;
 
 #endif

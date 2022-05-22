@@ -7,10 +7,11 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include"generator.h"
+#include "generator.h"
 
-extern llvm::LLVMContext context ;
-extern llvm::IRBuilder<> builder(context) ;
+llvm::LLVMContext context;
+llvm::IRBuilder<> builder(context);
+Generator generator = Generator();
 
 llvm::Function* Generator::getCurFunction() {
     return this->getStack().top() ;
