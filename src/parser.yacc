@@ -96,10 +96,10 @@ Program
 // list of all the function and global var's definition
 GlobalDefinitionList
     :           GlobalDefinition GlobalDefinitionList {
-                    $$ = new Node("", "GlobalDefinitionList", 2, $1, $2);
+                    $$ = new Node("", "GlobalDefinitionList", 2, $1, $2 ) ;
                 }
-    |           %empty {
-                    $$ = nullptr;
+    |           GlobalDefinition {
+                    $$ = new Node("", "GlobalDefinition", 1, $1 ) ;
                 }
     ;
 
@@ -148,11 +148,12 @@ GlobalVariable
                     $$ = new Node("", "GlobalVariable", 1, $1);
                 }
     // global one-dimensional array for definition
-    |           ID OPENBRACKET INT CLOSEBRACKET {
+    |           ID OPENBRACKET Integer CLOSEBRACKET {
+                    cout << $3->node_Name << endl ;
                     $$ = new Node("", "GlobalVariable", 4, $1, $2, $3, $4);
                 }
     // global two-dimensional array for definition
-    |           ID OPENBRACKET INT CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET{
+    |           ID OPENBRACKET Integer CLOSEBRACKET OPENBRACKET Integer CLOSEBRACKET{
                     $$ = new Node("", "GlobalVariable", 7, $1, $2, $3, $4, $5, $6, $7);
                 }
     // initialization assignment
@@ -201,7 +202,7 @@ FunctionVariable
                     $$ = new Node("", "FunctionVariable", 3, $1, $2, $3);
                 }
     // two-dimensional array for function parameter
-    |           ID OPENBRACKET CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET{
+    |           ID OPENBRACKET CLOSEBRACKET OPENBRACKET Integer CLOSEBRACKET{
                     $$ = new Node("", "FunctionVariable", 6, $1, $2, $3, $4, $5, $6);
                 }
     ;          
@@ -252,11 +253,11 @@ LocalVariable
                     $$ = new Node("", "LocalVariable", 1, $1);
                 }
     //local one-dimensional array for definition
-    |           ID OPENBRACKET INT CLOSEBRACKET {
+    |           ID OPENBRACKET Integer CLOSEBRACKET {
                     $$ = new Node("", "LocalVariable", 4, $1, $2, $3, $4);
                 }
     // local two-dimensional array for definition
-    |           ID OPENBRACKET INT CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET{
+    |           ID OPENBRACKET Integer CLOSEBRACKET OPENBRACKET Integer CLOSEBRACKET{
                     $$ = new Node("", "LocalVariable", 7, $1, $2, $3, $4, $5, $6, $7);
                 }
     // initialization assignment
@@ -340,7 +341,9 @@ Expression
                     $$->setValueType(TYPE_INT);
                 }
     |           Expression PLUS Expression {
-                    if ($1->child_Num == 1 && $3->child_Num == 1) {
+                    if ( $1->child_Num == 1 && $3->child_Num == 1 && 
+                    ( $1->child_Node[0]->node_Type == "Integer" || $1->child_Node[0]->node_Type == "Realnumber" ) && 
+                    ( $3->child_Node[0]->node_Type == "Integer" || $3->child_Node[0]->node_Type == "Realnumber" ) ) {
                         string exp1, exp2, exp;
                         exp1 = $1->child_Node[0]->node_Name;
                         exp2 = $3->child_Node[0]->node_Name;
@@ -352,24 +355,26 @@ Expression
                             n = n1 + n2;
                             exp = to_string(n);
                             cout << exp << endl ;
-                            $$ = new Node(exp, "Integer", 0);
-                        } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
+                            $$ = new Node( $1->child_Node[0]->line_Count, exp, "Integer" ) ;
+                        } else if ($1->child_Node[0]->node_Type == "Realnumber" || $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;
                             f1 = stof(exp1);
                             f2 = stof(exp2);
                             f = f1 + f2;
                             exp = to_string(f);
-                            $$ = new Node(exp, "Realnumber", 0);
+                            $$ = new Node( $1->child_Node[0]->line_Count, exp, "Realnumber" ) ;
                         } else {
                             $$ = new Node("", "Expression", 3, $1, $2, $3);
                         }
                     } else {
                         $$ = new Node("", "Expression", 3, $1, $2, $3);
                     }
-                    $$->setValueType($1->getValueType());
+                    $$->setValueType( ($1->getValueType()>$3->getValueType() ? $1->getValueType() : $3->getValueType() ) ) ;
                 }
     |           Expression MINUS Expression {
-                    if ($1->child_Num == 1 && $3->child_Num == 1) {
+                    if ( $1->child_Num == 1 && $3->child_Num == 1 && 
+                    ( $1->child_Node[0]->node_Type == "Integer" || $1->child_Node[0]->node_Type == "Realnumber" ) && 
+                    ( $3->child_Node[0]->node_Type == "Integer" || $3->child_Node[0]->node_Type == "Realnumber" ) ) {
                         string exp1, exp2, exp;
                         exp1 = $1->child_Node[0]->node_Name;
                         exp2 = $3->child_Node[0]->node_Name;
@@ -379,24 +384,26 @@ Expression
                             n2 = stoi(exp2);
                             n = n1 - n2;
                             exp = to_string(n);
-                            $$ = new Node(exp, "Integer", 0);
-                        } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
+                            $$ = new Node( $1->child_Node[0]->line_Count, exp, "Integer" ) ;
+                        } else if ($1->child_Node[0]->node_Type == "Realnumber" || $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;
                             f1 = stof(exp1);
                             f2 = stof(exp2);
                             f = f1 - f2;
                             exp = to_string(f);
-                            $$ = new Node(exp, "Realnumber", 0);
+                            $$ = new Node( $1->child_Node[0]->line_Count, exp, "Realnumber" ) ;
                         } else {
                             $$ = new Node("", "Expression", 3, $1, $2, $3);
                         }
                     } else {
                         $$ = new Node("", "Expression", 3, $1, $2, $3);
                     }
-                    $$->setValueType($1->getValueType());
+                    $$->setValueType( ($1->getValueType()>$3->getValueType() ? $1->getValueType() : $3->getValueType() ) );
                 }
     |           Expression MUL Expression {
-                    if ($1->child_Num == 1 && $3->child_Num == 1) {
+                    if ( $1->child_Num == 1 && $3->child_Num == 1 && 
+                    ( $1->child_Node[0]->node_Type == "Integer" || $1->child_Node[0]->node_Type == "Realnumber" ) && 
+                    ( $3->child_Node[0]->node_Type == "Integer" || $3->child_Node[0]->node_Type == "Realnumber" ) ) {
                         string exp1, exp2, exp;
                         exp1 = $1->child_Node[0]->node_Name;
                         exp2 = $3->child_Node[0]->node_Name;
@@ -406,24 +413,26 @@ Expression
                             n2 = stoi(exp2);
                             n = n1 * n2;
                             exp = to_string(n);
-                            $$ = new Node(exp, "Integer", 0);
-                        } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
+                            $$ = new Node( $1->child_Node[0]->line_Count, exp, "Integer" ) ; 
+                        } else if ($1->child_Node[0]->node_Type == "Realnumber" || $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;
                             f1 = stof(exp1);
                             f2 = stof(exp2);
                             f = f1 * f2;
                             exp = to_string(f);
-                            $$ = new Node(exp, "Realnumber", 0);
+                            $$ = new Node( $1->child_Node[0]->line_Count, exp, "Realnumber" ) ;
                         } else {
                             $$ = new Node("", "Expression", 3, $1, $2, $3);
                         }
                     } else {
                         $$ = new Node("", "Expression", 3, $1, $2, $3);
                     }
-                    $$->setValueType($1->getValueType());
+                    $$->setValueType( ($1->getValueType()>$3->getValueType() ? $1->getValueType() : $3->getValueType() ) );
                 }
     |           Expression DIV Expression {
-                    if ($1->child_Num == 1 && $3->child_Num == 1) {
+                    if ( $1->child_Num == 1 && $3->child_Num == 1 && 
+                    ( $1->child_Node[0]->node_Type == "Integer" || $1->child_Node[0]->node_Type == "Realnumber" ) && 
+                    ( $3->child_Node[0]->node_Type == "Integer" || $3->child_Node[0]->node_Type == "Realnumber" ) )  {
                         string exp1, exp2, exp;
                         exp1 = $1->child_Node[0]->node_Name;
                         exp2 = $3->child_Node[0]->node_Name;
@@ -435,21 +444,21 @@ Expression
                             n = n1 / n2;
                             exp = to_string(n);
                             // cout<< exp << endl ;
-                            $$ = new Node(exp, "Integer", 0);
-                        } else if ($1->child_Node[0]->node_Type == "Realnumber" && $3->child_Node[0]->node_Type == "Realnumber") {
+                            $$ = new Node( $1->child_Node[0]->line_Count, exp, "Integer" ) ;
+                        } else if ($1->child_Node[0]->node_Type == "Realnumber" || $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;
                             f1 = stof(exp1);
                             f2 = stof(exp2);
                             f = f1 / f2;
                             exp = to_string(f);
-                            $$ = new Node(exp, "Realnumber", 0);
+                            $$ = new Node( $1->child_Node[0]->line_Count, exp, "Realnumber" ) ;
                         } else {
                             $$ = new Node("", "Expression", 3, $1, $2, $3);
                         }
                     } else {
                         $$ = new Node("", "Expression", 3, $1, $2, $3);
                     }
-                    $$->setValueType($1->getValueType());
+                    $$->setValueType( ($1->getValueType()>$3->getValueType() ? $1->getValueType() : $3->getValueType() ) );
                 }
     |           Expression MOD Expression {
                     if ($1->child_Num == 1 && $3->child_Num == 1) {
@@ -462,7 +471,7 @@ Expression
                             n2 = stoi(exp2);
                             n = n1 % n2;
                             exp = to_string(n);
-                            $$ = new Node(exp, "Integer", 0);
+                            $$ = new Node( $1->child_Node[0]->line_Count, exp, "Integer" ) ;
                         } else {
                             $$ = new Node("", "Expression", 3, $1, $2, $3);
                         }
@@ -496,7 +505,7 @@ Expression
                     $$->setValueType($1->getValueType());
                 }
     |           OPENPAREN Expression CLOSEPAREN {
-                    if ($2->child_Num == 1) {
+                    if ( $2->child_Num == 1 ) {
                         // if ($2->child_Node->node_Type == "Integer") {
                         //     $$ = new Node($2->child_Node->node_Name, "Integer", 0);
                         // } else if ($2->child_Node->node_Type == "Realnumber") {
@@ -526,11 +535,11 @@ Expression
                 }
     |           ID OPENBRACKET Expression CLOSEPAREN {
                     $$ = new Node("", "Expression", 4, $1, $2, $3, $4);
-                    $$->setValueType($1->getValueType() - ARRAY);
+                    $$->setValueType($1->getValueType() );
                 }
     |           ID OPENBRACKET Expression CLOSEBRACKET OPENBRACKET Expression CLOSEBRACKET {
                     $$ = new Node("", "Expression", 7, $1, $2, $3, $4, $5, $6, $7);
-                    $$->setValueType($1->getValueType() - ARRAY);
+                    $$->setValueType($1->getValueType() );
                 }
     |           ID {
                     $$ = new Node("", "Expression", 1, $1);

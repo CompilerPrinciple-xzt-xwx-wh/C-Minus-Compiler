@@ -43,10 +43,18 @@ extern llvm::IRBuilder<> builder;
  * modification log: 2022/5/10,19:46
  * modificated by: Wang Hui
  */
-Node::Node(const char* nodeName, string nodeType, int lineNo) {
+Node::Node( int lineNo, const char* nodeName, string nodeType) {
     this->node_Name = string(nodeName) ;
     this->node_Type = nodeType ;
+    this->child_Num = 0 ;
     this->line_Count = lineNo ;
+}
+
+Node::Node(int Num, string nodeName, string nodeType ) {
+    this->node_Name = nodeName ;
+    this->node_Type = nodeType ;
+    this->child_Num = 0 ;
+    this->line_Count = Num ;
 }
 
 /**
@@ -65,9 +73,37 @@ Node::Node(string nodeName, string nodeType, int childNum, ...){
     va_list args ;
     va_start(args, childNum) ;
     for ( int i = 0; i < childNum; ++i ) 
+        this->child_Node[i] = va_arg(args, Node*) ;
+    this->line_Count = this->child_Node[0]->line_Count ;
+    va_end(args) ;
+    if ( childNum > 0 ) 
+        this->line_Count = this->child_Node[0]->line_Count ;
+}
+
+/**
+ * @brief Construct a new Node:: Node object
+ * overload the constructor for parsing the nodeName as type of const char*
+ * @param nodeName 
+ * @param nodeType 
+ * @param lineNo 
+ * @param childNum 
+ * @param ... 
+ * modification log: 2022/5/24,18:58
+ * modificated by: Wang Hui
+ */
+Node::Node(const char* nodeName, string nodeType, int childNum, ...){
+    this->node_Name = string(nodeName) ;
+    this->node_Type = nodeType ;
+    this->child_Num = childNum ;
+    this->child_Node = new Node*[childNum] ;
+    va_list args ;
+    va_start(args, childNum) ;
+    for ( int i = 0; i < childNum; ++i ) 
         this->child_Node[i] = va_arg(args, Node*);
     this->line_Count = this->child_Node[0]->line_Count ;
     va_end(args);
+    if ( childNum > 0 ) 
+        this->line_Count = this->child_Node[0]->line_Count ;
 }
 
 /**
@@ -243,14 +279,14 @@ vector<pair<Variable,llvm::Value*>> Node::getNameList(int type) {
             namelist.push_back(make_pair(variable,nullptr)) ;
             var->child_Node[0]->setValueType(type) ;
         }
-        // Variable --> ID OPENBRACKET INT CLOSEBRACKET
+        // Variable --> ID OPENBRACKET Integer CLOSEBRACKET
         else if ( var->child_Num == 4 ) {
             int size = stoi(var->child_Node[2]->node_Name) ;
             Variable variable(var->child_Node[0]->node_Name,type+ARRAY,size) ;
             namelist.push_back(make_pair(variable,nullptr)) ;
             var->child_Node[0]->setValueType(type+ARRAY) ;
         }
-        // Variable --> ID OPENBRACKET INT CLOSEBRACKET OPENBRACKET INT CLOSEBRACKET
+        // Variable --> ID OPENBRACKET Integer CLOSEBRACKET OPENBRACKET Integer CLOSEBRACKET
         else if ( var->child_Num == 7 ) {
             int one_dimension = stoi(var->child_Node[2]->node_Name), two_dimension = stoi(var->child_Node[5]->node_Name) ;
             Variable variable(var->child_Node[0]->node_Name,type+ARRAY+ARRAY,one_dimension*two_dimension,two_dimension) ;
@@ -376,8 +412,8 @@ vector<llvm::Value*> Node::getScanfArguments() {
 vector<pair<string, llvm::Type*>> Node::getParameterList(){
     vector<pair<string,llvm::Type*>> parameters ;
     // ParameterList --> %empty
-    if ( this == nullptr ) 
-        return parameters ;
+    // if ( this == nullptr ) 
+    //     return parameters ;
     Node *list = this;
     while (true) {
         // list refers to ParameterList

@@ -114,20 +114,26 @@ public:
      * constructor using string as nodeName's type is highly recommended
      * @param nodeName (const char*)
      * @param nodeType 
-     * @param Num 
+     * @param Num refers to the code's line number
      * modification log: 2022/5/10,19:46
      * modificated by: Wang Hui
      */
-    Node(const char* nodeName, string nodeType, int Num) ;
+    Node(int Num, const char* nodeName, string nodeType ) ;
+    Node(int Num, string nodeName, string nodeType ) ;
 
     /**
      * @brief Construct a new Node object
+     * add a parameter that refers to code's line number
      * @param nodeName 
      * @param nodeType 
+     * @param Num 
      * @param childNum 
      * @param ... 
+     * modification log: 2022/5/24,18:53
+     * modificated by: Wang Hui
      */
-    Node(string nodeName, string nodeType, int childNum, ...);
+    Node(string nodeName, string nodeType, int childNum, ...) ;
+    Node(const char* nodeName, string nodeType, int childNum, ...) ;
 
     /**
      * @brief delete the customization of destructor

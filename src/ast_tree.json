@@ -8,6 +8,183 @@
 					"children" : 
 					[
 						{
+							"children" : 
+							[
+								{
+									"children" : 
+									[
+										{
+											"children" : 
+											[
+												{
+													"name" : "CLOSECURLY"
+												},
+												{
+													"children" : 
+													[
+														{
+															"children" : 
+															[
+																{
+																	"children" : 
+																	[
+																		{
+																			"children" : 
+																			[
+																				{
+																					"name" : "SEMI"
+																				},
+																				{
+																					"children" : 
+																					[
+																						{
+																							"name" : "Integer"
+																						}
+																					],
+																					"name" : "Expression"
+																				},
+																				{
+																					"name" : "RETURN"
+																				}
+																			],
+																			"name" : "Statement"
+																		}
+																	],
+																	"name" : "Instruction"
+																}
+															],
+															"name" : "FunctionCode"
+														},
+														{
+															"children" : 
+															[
+																{
+																	"children" : 
+																	[
+																		{
+																			"name" : "SEMI"
+																		},
+																		{
+																			"children" : 
+																			[
+																				{
+																					"children" : 
+																					[
+																						{
+																							"name" : "Realnumber"
+																						},
+																						{
+																							"name" : "ASSIGN"
+																						},
+																						{
+																							"name" : "ID"
+																						}
+																					],
+																					"name" : "LocalVariable"
+																				}
+																			],
+																			"name" : "LocalVariableList"
+																		},
+																		{
+																			"children" : 
+																			[
+																				{
+																					"name" : "FLOAT"
+																				}
+																			],
+																			"name" : "Typer: float"
+																		}
+																	],
+																	"name" : "Definition"
+																}
+															],
+															"name" : "Instruction"
+														}
+													],
+													"name" : "FunctionCode"
+												},
+												{
+													"name" : "OPENCURLY"
+												},
+												{
+													"name" : "CLOSEPAREN"
+												},
+												{
+													"name" : "OPENPAREN"
+												},
+												{
+													"name" : "ID"
+												}
+											],
+											"name" : "Function"
+										},
+										{
+											"children" : 
+											[
+												{
+													"name" : "INT"
+												}
+											],
+											"name" : "Typer: int"
+										}
+									],
+									"name" : "GlobalDefinition"
+								}
+							],
+							"name" : "GlobalDefinition"
+						},
+						{
+							"children" : 
+							[
+								{
+									"name" : "SEMI"
+								},
+								{
+									"children" : 
+									[
+										{
+											"children" : 
+											[
+												{
+													"children" : 
+													[
+														{
+															"name" : "Realnumber"
+														}
+													],
+													"name" : "Expression"
+												},
+												{
+													"name" : "ASSIGN"
+												},
+												{
+													"name" : "ID"
+												}
+											],
+											"name" : "GlobalVariable"
+										}
+									],
+									"name" : "GlobalVariableList"
+								},
+								{
+									"children" : 
+									[
+										{
+											"name" : "INT"
+										}
+									],
+									"name" : "Typer: int"
+								}
+							],
+							"name" : "GlobalDefinition"
+						}
+					],
+					"name" : "GlobalDefinitionList"
+				},
+				{
+					"children" : 
+					[
+						{
 							"name" : "SEMI"
 						},
 						{

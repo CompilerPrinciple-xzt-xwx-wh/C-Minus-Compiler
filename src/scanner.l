@@ -24,57 +24,56 @@ COMMENT ("//"[^\n]*)
 
 /*REGULAR EXPRESSIONS defining the tokens*/
 %%
-"+"               {yylval.node = new Node(yytext, "PLUS", 0); return PLUS;}
-"-"               {yylval.node = new Node(yytext, "MINUS", 0); return MINUS;}
-"*"               {yylval.node = new Node(yytext, "MUL", 0); return MUL;}
-"/"               {yylval.node = new Node(yytext, "DIV", 0); return DIV;}
-"%"               {yylval.node = new Node(yytext, "MOD", 0); return MOD;}
-"="               {yylval.node = new Node(yytext, "ASSIGN", 0); return ASSIGN;}
-"++"              {yylval.node = new Node(yytext, "INCR_P", 0); return INCR_P;}
-"--"              {yylval.node = new Node(yytext, "INCR_M", 0); return INCR_M;}
-"&&"              {yylval.node = new Node(yytext, "AND", 0); return AND;}
-"||"              {yylval.node = new Node(yytext, "OR", 0); return OR;}
-"!"               {yylval.node = new Node(yytext, "NOT", 0); return NOT;}
-"=="              {yylval.node = new Node(yytext, "EQUAL", 0); return EQUAL;}
-"!="              {yylval.node = new Node(yytext, "NOTEQUAL", 0); return NOTEQUAL;}
-">"               {yylval.node = new Node(yytext, "GT", 0); return GT;}
-">="              {yylval.node = new Node(yytext, "GE", 0); return GE;}
-"<"               {yylval.node = new Node(yytext, "LT", 0); return LT;}
-"<="              {yylval.node = new Node(yytext, "LE", 0); return LE;}
-"&"               {yylval.node = new Node(yytext, "ADDRESS", 0); return ADDRESS;}
+"+"               {yylval.node = new Node( lineno, yytext, "PLUS"); return PLUS;}
+"-"               {yylval.node = new Node( lineno, yytext, "MINUS"); return MINUS;}
+"*"               {yylval.node = new Node( lineno, yytext, "MUL"); return MUL;}
+"/"               {yylval.node = new Node( lineno, yytext, "DIV"); return DIV;}
+"%"               {yylval.node = new Node(lineno, yytext, "MOD"); return MOD;}
+"="               {yylval.node = new Node(lineno, yytext, "ASSIGN" ); return ASSIGN;}
+"++"              {yylval.node = new Node(lineno, yytext, "INCR_P"); return INCR_P;}
+"--"              {yylval.node = new Node(lineno, yytext, "INCR_M"); return INCR_M;}
+"&&"              {yylval.node = new Node(lineno, yytext, "AND"); return AND;}
+"||"              {yylval.node = new Node(lineno, yytext, "OR"); return OR;}
+"!"               {yylval.node = new Node(lineno, yytext, "NOT"); return NOT;}
+"=="              {yylval.node = new Node(lineno, yytext, "EQUAL"); return EQUAL;}
+"!="              {yylval.node = new Node(lineno, yytext, "NOTEQUAL"); return NOTEQUAL;}
+">"               {yylval.node = new Node(lineno, yytext, "GT"); return GT;}
+">="              {yylval.node = new Node(lineno, yytext, "GE"); return GE;}
+"<"               {yylval.node = new Node(lineno, yytext, "LT"); return LT;}
+"<="              {yylval.node = new Node(lineno, yytext, "LE"); return LE;}
+"&"               {yylval.node = new Node(lineno, yytext, "ADDRESS"); return ADDRESS;}
 
-"("               {yylval.node = new Node(yytext, "OPENPAREN", 0); return OPENPAREN;}
-")"               {yylval.node = new Node(yytext, "CLOSEPAREN", 0); return CLOSEPAREN;}
-"["               {yylval.node = new Node(yytext, "OPENBRACKET", 0); return OPENBRACKET;}
-"]"               {yylval.node = new Node(yytext, "CLOSEBRACKET", 0); return CLOSEBRACKET;}
-"{"               {yylval.node = new Node(yytext, "OPENCURLY", 0); return OPENCURLY;}
-"}"               {yylval.node = new Node(yytext, "CLOSECURLY", 0); return CLOSECURLY;}
-","               {yylval.node = new Node(yytext, "COMMA", 0); return COMMA;}
-";"               {yylval.node = new Node(yytext, "SEMI", 0); return SEMI;}
+"("               {yylval.node = new Node(lineno, yytext, "OPENPAREN"); return OPENPAREN;}
+")"               {yylval.node = new Node(lineno, yytext, "CLOSEPAREN"); return CLOSEPAREN;}
+"["               {yylval.node = new Node(lineno, yytext, "OPENBRACKET"); return OPENBRACKET;}
+"]"               {yylval.node = new Node(lineno, yytext, "CLOSEBRACKET"); return CLOSEBRACKET;}
+"{"               {yylval.node = new Node(lineno, yytext, "OPENCURLY"); return OPENCURLY;}
+"}"               {yylval.node = new Node(lineno, yytext, "CLOSECURLY"); return CLOSECURLY;}
+","               {yylval.node = new Node(lineno, yytext, "COMMA"); return COMMA;}
+";"               {yylval.node = new Node(lineno, yytext, "SEMI"); return SEMI;}
 
-"char"            {yylval.node = new Node(yytext, "CHAR", 0); return CHAR;}
-"int"             {yylval.node = new Node(yytext, "INT", 0); return INT;}
-"float"           {yylval.node = new Node(yytext, "FLOAT", 0); return FLOAT;}
-"double"          {yylval.node = new Node(yytext, "DOUBLE", 0); return DOUBLE;}
-"void"            {yylval.node = new Node(yytext, "VOID", 0); return VOID;}
-"if"              {yylval.node = new Node(yytext, "IF", 0); return IF;}
-"else"            {yylval.node = new Node(yytext, "ELSE", 0); return ELSE;}
-"for"             {yylval.node = new Node(yytext, "FOR", 0); return FOR;}
-"while"           {yylval.node = new Node(yytext, "WHILE", 0); return WHILE;}
-"continue"        {yylval.node = new Node(yytext, "CONTINUE", 0); return CONTINUE;}
-"break"           {yylval.node = new Node(yytext, "BREAK", 0); return BREAK;}
-"return"          {yylval.node = new Node(yytext, "RETURN", 0); return RETURN;}
+"char"            {yylval.node = new Node(lineno, yytext, "CHAR"); return CHAR;}
+"int"             {yylval.node = new Node(lineno, yytext, "INT"); return INT;}
+"float"           {yylval.node = new Node(lineno, yytext, "FLOAT"); return FLOAT;}
+"double"          {yylval.node = new Node(lineno, yytext, "DOUBLE"); return DOUBLE;}
+"void"            {yylval.node = new Node(lineno, yytext, "VOID"); return VOID;}
+"if"              {yylval.node = new Node(lineno, yytext, "IF"); return IF;}
+"else"            {yylval.node = new Node(lineno, yytext, "ELSE"); return ELSE;}
+"for"             {yylval.node = new Node(lineno, yytext, "FOR"); return FOR;}
+"while"           {yylval.node = new Node(lineno, yytext, "WHILE"); return WHILE;}
+"continue"        {yylval.node = new Node(lineno, yytext, "CONTINUE"); return CONTINUE;}
+"break"           {yylval.node = new Node(lineno, yytext, "BREAK"); return BREAK;}
+"return"          {yylval.node = new Node(lineno, yytext, "RETURN"); return RETURN;}
 
-{ID}              {yylval.node = new Node(yytext, "ID", 0); return ID;}
-{ICONST}          {yylval.node = new Node(yytext, "Integer", 0); return Integer;}
-{FCONST}          {yylval.node = new Node(yytext, "Realnumber", 0); return Realnumber;}
-{CCONST}          {yylval.node = new Node(yytext, "Character", 0); return Character;}
-{SCONST}          {yylval.node = new Node(yytext, "String", 0); return String;}
+{ID}              {yylval.node = new Node(lineno, yytext, "ID"); return ID;}
+{ICONST}          {yylval.node = new Node(lineno, yytext, "Integer"); return Integer;}
+{FCONST}          {yylval.node = new Node(lineno, yytext, "Realnumber"); return Realnumber;}
+{CCONST}          {yylval.node = new Node(lineno, yytext, "Character"); return Character;}
+{SCONST}          {yylval.node = new Node(lineno, yytext, "String"); return String;}
 {COMMENT}         { ;}
 "\n"              {lineno = lineno + 1;}
 "\t"              { ;}
 " "               { }
-.                 {yyerror("Unrecognized character!\n");}
 %%
 
 int yywrap(){
