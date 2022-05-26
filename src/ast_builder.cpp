@@ -19,29 +19,31 @@ extern stack<llvm::BasicBlock *> GlobalAfterBB ;
 
 /**
  * @brief 
- * building process of all nodes in the global
+ * building process of root node Program
  * @return llvm::Value* 
- * modification log: 2022/5/12,9:06
+ * modification log: 2022/5/26,11:06
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuild(){
     /**
      * @brief 
-     * first code implementation for IR builderl
-     * modification log: 2022/5/14,9:45
+     * build Program
+     * modification log: 2022/5/26,11:05
      * modificated by: Wang Hui
      */
-    if (this->node_Type == "GlobalDefinition" ) {
-        if (this->child_Node[1]->node_Type == "GlobalVariableList" )
-            return this->irBuildVariable() ;
+    // Program --> GlobalDefinitionList
+    Node* list = this->child_Node[0] ;
+    while ( true ) {
+        // GlobalDefinitionList --> GlobalDefinition GlobalDefinitionList | GlobalDefinition
+        Node* def = list->child_Node[0] ;
+        if ( def->child_Num == 3 ) 
+            def->irBuildVariable() ;
+        else
+            def->irBuildFunction() ;
+        if ( list->child_Num == 2 ) 
+            list = list->child_Node[1] ;
         else 
-            return this->irBuildFunction() ;
-    } else if (this->node_Type == "Definition" ) {
-        return this->irBuildVariable() ;
-    }
-    for ( int i = 0; i < this->child_Num; i++) {
-        if (this->child_Node[i] != nullptr)
-            this->child_Node[i]->irBuild() ;
+            break ;
     }
     return NULL ;
 }
@@ -57,8 +59,8 @@ llvm::Value *Node::irBuild(){
 llvm::Value* Node::irBuildVariable(){
     int type = this->child_Node[0]->getValueType() ;
     vector<pair<Variable,llvm::Value*>> nameList = this->child_Node[1]->getNameList(type) ;
-    for ( auto it : nameList ) 
-        cout<< it.first.getName() << ": " << it.second->getValueID() << endl ;
+    // for ( auto it : nameList ) 
+    //     cout<< it.first.getName() << ": " << it.second->getValueID() << endl ;
     llvm::Type *llvmType ;
     for (auto it : nameList) {
         llvmType = getLlvmType(it.first.getType(),it.first.getSize()) ;
@@ -120,7 +122,7 @@ llvm::Value* Node::irBuildVariable(){
         }
     }
     cout << "Variable success!" << endl ;
-    return NULL;
+    return nullptr ;
 }
 
 
@@ -132,12 +134,13 @@ llvm::Value* Node::irBuildVariable(){
  * modification log: 2022/5/15,20:01
  * modificated by: Wang Hui
  */
-llvm::Value *Node::irBuildFunction(){
+llvm::Function *Node::irBuildFunction(){
 
     cout << "Into function!" << endl ;
     // GlobalDefinition --> Typer Function
+    Node* type = this->child_Node[0] ;
     Node* funcnode = this->child_Node[1] ;
-    // funcnode refers to Function
+    // funcnode refers to Function, type refers to typer
 
     // Function --> ID OPENPAREN ParameterList CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
     vector<pair<string,llvm::Type*>> parameters ;
@@ -149,16 +152,21 @@ llvm::Value *Node::irBuildFunction(){
     vector<llvm::Type*> argTypes;
     for ( auto it : parameters ) 
         argTypes.push_back(it.second);
-    Node* type = this->child_Node[0] ;
-    llvm::FunctionType *funcType = llvm::FunctionType::get(getLlvmType(type->getValueType(), 0), argTypes, false) ;
-    llvm::Function *function = llvm::Function::Create(funcType, llvm::GlobalValue::ExternalLinkage, funcnode->child_Node[0]->node_Name, generator.getModule() ) ;
+    llvm::FunctionType *functionType = llvm::FunctionType::get(getLlvmType(type->getValueType(), 0), argTypes, false) ;
+    llvm::Function *function = llvm::Function::Create(functionType, llvm::GlobalValue::ExternalLinkage, funcnode->child_Node[0]->node_Name, generator.getModule() ) ;
+    // Check if Redifine function of the same name
+    if ( function->getName() != funcnode->child_Node[0]->node_Name ) {
+        function->eraseFromParent() ;
+        function = generator.getModule()->getFunction(funcnode->child_Node[0]->node_Name) ;
+    }
+    
+    cout << "Function declared!" << endl ;
     generator.pushFunction(function) ;
 
-    //Block
     llvm::BasicBlock *newBlock = llvm::BasicBlock::Create(context, "entrypoint", function) ;
     builder.SetInsertPoint(newBlock) ;
     
-    //Parameters
+    // Set parameters's name
     if ( !parameters.empty() ) {
         int index = 0 ;
         for ( auto &Arg : function->args() ) 
@@ -191,12 +199,13 @@ llvm::Value *Node::irBuildCode(){
         Node* inst = totalCode->child_Node[0] ;
         cout << "Running at " << inst->line_Count << endl ;
         inst->irBuildInstruction() ;
+        cout << "Running at " << inst->line_Count << "End!" << endl ;
         if ( totalCode->child_Num == 1 ) 
             break;
-        else 
+        else if ( totalCode->child_Num == 2 )
             totalCode = totalCode->child_Node[1] ;
     } 
-    return NULL;
+    return nullptr ;
 }
 
 /**
@@ -217,6 +226,7 @@ llvm::Value* Node::irBuildInstruction(){
     else {
         sonode->irBuildStatement() ;
     }
+    return nullptr ;
 }
 
 /**
@@ -231,25 +241,27 @@ llvm::Value *Node::irBuildStatement(){
         return nullptr ;
     // Statement --> Expression SEMI
     if ( flag->node_Type == "Expression" ) 
-        flag->irBuildExpression() ;
+        return flag->irBuildExpression() ;
 
     // Statement --> RETURN Expression SEMI
     // Statement --> RETURN SEMI
     if ( flag->node_Name == "return" ) 
-        this->irBuildReturn() ;
+        return this->irBuildReturn() ;
 
     // Statement --> IF ( Expression ) { FunctionCode }
     // Statement --> IF ( Expression ) { FunctionCode } ELSE { FunctionCode }
     if ( flag->node_Name == "if" ) 
-        this->irBuildIf() ;
+        return this->irBuildIf() ;
 
     // Statement --> WHILE ( Expression ) { FunctionCode }
     if ( flag->node_Name == "while" ) 
-        this->irBuildWhile() ;
+        return this->irBuildWhile() ;
 
     // Statement --> FOR ( Expression SEMI Expression SEMI Expression ) { FunctionCode }
     if ( flag->node_Name == "for" ) 
-        this->irBuildFor() ;
+        return this->irBuildFor() ;
+    
+    return nullptr ;
 }
 
 /**
@@ -341,7 +353,8 @@ llvm::Value *Node::irBuildExpression(){
      */
     if ( this->child_Node[0]->node_Type == "ID" && this->child_Node[1]->node_Type == "OPENPAREN" ) 
         return this->irBuildCallFunction() ;
-
+    
+    return nullptr ;
 }
 
 /**
@@ -388,10 +401,11 @@ llvm::Value* Node::irBuildConst() {
                 return builder.getInt8('\"');
             else if (this->child_Node[0]->node_Name == "'\\0'" ) 
                 return builder.getInt8('\0');
-             else 
+            else 
                 throw logic_error("Error! Invalid char: " + this->child_Node[0]->node_Name+"." ) ;
         }
     }
+    return nullptr ;
 }
 
 /**
@@ -425,6 +439,7 @@ llvm::Value* Node::irBuildUnaryOperator() {
     if ( this->child_Node[1]->node_Type == "INCR" ) {
         //TODO
     }
+    return nullptr ;
 }
 
 /**
@@ -489,6 +504,8 @@ llvm::Value* Node::irBuildBinaryOperator() {
     // Expression --> Expression DIV Expression
     if ( this->child_Node[1]->node_Type == "DIV" )
         return (left->getType() == llvm::Type::getFloatTy(context)) ? builder.CreateFDiv(left, right, "addtmpf") : builder.CreateSDiv(left, right, "addtmpi") ;
+    
+    return nullptr ;
 }
 
 /**
@@ -529,7 +546,7 @@ llvm::Value *Node::irBuildLeftValue(){
         //ERROR
         throw logic_error("Error! Invalid left value.") ;
     }
-    return NULL;
+    return nullptr ;
 }
 
 /**
@@ -575,6 +592,8 @@ llvm::Value *Node::irBuildRightValue() {
         llvm::Value* ptr_var = builder.CreateInBoundsGEP(arr, llvm::ArrayRef<llvm::Value*>(indexList2), "tmpvar" ) ;
         return builder.CreateLoad(ptr_var->getType()->getPointerElementType(), ptr_var, "tmpvar" ) ;
     }
+
+    return nullptr ;
 }
 
 /**
@@ -752,7 +771,7 @@ llvm::Value *Node::irBuildComparer() {
     else if (this->child_Node[1]->node_Name == "<" ) 
         return (left->getType() == llvm::Type::getFloatTy(context)) ? builder.CreateFCmpOLT(left, right, "fcmptmp") : builder.CreateICmpSLT(left, right, "icmptmp");
     else
-        return NULL;
+        return nullptr ;
 }
 
 /**
@@ -763,16 +782,18 @@ llvm::Value *Node::irBuildComparer() {
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildPrint(){
+    // cout << "Into print function!" << endl ;
     string formatStr = "";
     vector<llvm::Value *> args = this->child_Node[2]->getPrintArguments() ;
+    cout << "Print arguments get!" << endl ;
     for (auto & arg : args) {
-        if (arg->getType() == builder.getInt32Ty()) 
+        if (arg->getType() == llvm::Type::getInt32Ty(context) ) 
             formatStr += "%d";
-        else if (arg->getType() == builder.getInt8Ty()) 
+        else if (arg->getType() == llvm::Type::getInt8Ty(context) ) 
             formatStr += "%c";
-        else if (arg->getType() == builder.getFloatTy()) 
+        else if (arg->getType() == llvm::Type::getFloatTy(context) ) 
             formatStr += "%f";
-        else if (arg->getType() == builder.getInt8PtrTy()) 
+        else if (arg->getType() == llvm::Type::getInt8PtrTy(context) ) 
             formatStr += "%s";
         else if (arg->getType()->getPointerElementType()->isArrayTy() && arg->getType()->getPointerElementType()->getArrayElementType() == builder.getInt8Ty()) {
             formatStr += "%s";
@@ -792,7 +813,8 @@ llvm::Value *Node::irBuildPrint(){
     llvm::Constant* indices[] = {zero, zero};
     auto varRef = llvm::ConstantExpr::getGetElementPtr(formatStrVar->getType()->getElementType(), formatStrVar, indices);
     args.insert(args.begin(), varRef);
-    return builder.CreateCall(generator.getPrint(), args, "printf");
+    cout << "Before CreateCall!" << endl ;
+    return builder.CreateCall(generator.getPrint(), args, "print");
 }
 
 /**
@@ -820,7 +842,7 @@ llvm::Value *Node::irBuildInput() {
             throw logic_error("Error! Invalid type to read.") ;
     }
     args.insert(args.begin(), builder.CreateGlobalStringPtr(formatStr)) ;
-    return builder.CreateCall(generator.getScan(), args, "scanf") ;
+    return builder.CreateCall(generator.getScan(), args, "input") ;
 }
 
 /**

@@ -124,9 +124,8 @@ int Node::getValueType(){
             return TYPE_CHAR ;
     } else if ( this->node_Type == "Expression" ) {
         return this->val_Type ;
-    } else 
-        return TYPE_VOID ;
-    //TODO,yet to be verified
+    }
+    return TYPE_VOID ;
 }
 
 /**

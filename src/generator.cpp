@@ -9,9 +9,9 @@
  */
 #include "generator.h"
 
-llvm::LLVMContext context;
-llvm::IRBuilder<> builder(context);
-Generator generator = Generator();
+llvm::LLVMContext context ;
+llvm::IRBuilder<> builder(context) ;
+Generator generator = Generator() ;
 
 llvm::Function* Generator::getCurFunction() {
     return this->getStack().top() ;
@@ -37,13 +37,13 @@ llvm::Value* Generator::findValue(const std::string & name) {
 llvm::Function* Generator::createPrintf() {
     std::vector<llvm::Type*> arg_types;
     arg_types.push_back(builder.getInt8PtrTy());
-    auto printf_type = llvm::FunctionType::get(builder.getInt32Ty(), llvm::makeArrayRef(arg_types), true);
+    auto printf_type = llvm::FunctionType::get(llvm::Type::getInt32Ty(context), llvm::makeArrayRef(arg_types), true);
     auto func = llvm::Function::Create(printf_type, llvm::Function::ExternalLinkage, llvm::Twine("printf"), this->module);
     func->setCallingConv(llvm::CallingConv::C);
     return func;
 }
 llvm::Function* Generator::createScanf() {
-    auto scanf_type = llvm::FunctionType::get(builder.getInt32Ty(), true);
+    auto scanf_type = llvm::FunctionType::get(llvm::Type::getInt32Ty(context), true);
     auto func = llvm::Function::Create(scanf_type, llvm::Function::ExternalLinkage, llvm::Twine("scanf"), this->module);
     func->setCallingConv(llvm::CallingConv::C);
     return func;

@@ -271,11 +271,12 @@ public:
     /**
      * @brief rename function irBuildFun()
      * irBuildFunction() build the function in the global
-     * @return llvm::Value* 
-     * modification log: 2022/5/14,10:01
+     * modify the return type
+     * @return llvm::Function* 
+     * modification log: 2022/5/26,11:09
      * modificated by: Wang Hui
      */
-    llvm::Value *irBuildFunction();
+    llvm::Function *irBuildFunction();
     /**
      * @brief Rename functions
      * irBuildExp ~ irBuildExpression, irBuildStmt ~ irBuildStatement, irBuildCompSt ~ irBuildCode, irBuildRELOP ~ irBuildComparer

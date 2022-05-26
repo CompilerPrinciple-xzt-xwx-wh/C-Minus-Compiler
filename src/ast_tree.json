@@ -14,11 +14,11 @@
 									"children" : 
 									[
 										{
+											"name" : "CLOSECURLY"
+										},
+										{
 											"children" : 
 											[
-												{
-													"name" : "CLOSECURLY"
-												},
 												{
 													"children" : 
 													[
@@ -38,13 +38,49 @@
 																					"children" : 
 																					[
 																						{
-																							"name" : "Integer"
+																							"name" : "CLOSEPAREN"
+																						},
+																						{
+																							"children" : 
+																							[
+																								{
+																									"children" : 
+																									[
+																										{
+																											"children" : 
+																											[
+																												{
+																													"name" : "ID"
+																												}
+																											],
+																											"name" : "Expression"
+																										}
+																									],
+																									"name" : "Arguments"
+																								},
+																								{
+																									"name" : "COMMA"
+																								},
+																								{
+																									"children" : 
+																									[
+																										{
+																											"name" : "String"
+																										}
+																									],
+																									"name" : "Expression"
+																								}
+																							],
+																							"name" : "Arguments"
+																						},
+																						{
+																							"name" : "OPENPAREN"
+																						},
+																						{
+																							"name" : "ID"
 																						}
 																					],
 																					"name" : "Expression"
-																				},
-																				{
-																					"name" : "RETURN"
 																				}
 																			],
 																			"name" : "Statement"
@@ -68,34 +104,34 @@
 																			"children" : 
 																			[
 																				{
+																					"name" : "CLOSEPAREN"
+																				},
+																				{
 																					"children" : 
 																					[
 																						{
-																							"name" : "Realnumber"
-																						},
-																						{
-																							"name" : "ASSIGN"
-																						},
-																						{
-																							"name" : "ID"
+																							"children" : 
+																							[
+																								{
+																									"name" : "ID"
+																								}
+																							],
+																							"name" : "Expression"
 																						}
 																					],
-																					"name" : "LocalVariable"
-																				}
-																			],
-																			"name" : "LocalVariableList"
-																		},
-																		{
-																			"children" : 
-																			[
+																					"name" : "Arguments"
+																				},
 																				{
-																					"name" : "FLOAT"
+																					"name" : "OPENPAREN"
+																				},
+																				{
+																					"name" : "ID"
 																				}
 																			],
-																			"name" : "Typer: float"
+																			"name" : "Expression"
 																		}
 																	],
-																	"name" : "Definition"
+																	"name" : "Statement"
 																}
 															],
 															"name" : "Instruction"
@@ -104,67 +140,73 @@
 													"name" : "FunctionCode"
 												},
 												{
-													"name" : "OPENCURLY"
-												},
-												{
-													"name" : "CLOSEPAREN"
-												},
-												{
-													"name" : "OPENPAREN"
-												},
-												{
-													"name" : "ID"
-												}
-											],
-											"name" : "Function"
-										},
-										{
-											"children" : 
-											[
-												{
-													"name" : "INT"
-												}
-											],
-											"name" : "Typer: int"
-										}
-									],
-									"name" : "GlobalDefinition"
-								}
-							],
-							"name" : "GlobalDefinition"
-						},
-						{
-							"children" : 
-							[
-								{
-									"name" : "SEMI"
-								},
-								{
-									"children" : 
-									[
-										{
-											"children" : 
-											[
-												{
 													"children" : 
 													[
 														{
-															"name" : "Realnumber"
+															"children" : 
+															[
+																{
+																	"name" : "SEMI"
+																},
+																{
+																	"children" : 
+																	[
+																		{
+																			"children" : 
+																			[
+																				{
+																					"children" : 
+																					[
+																						{
+																							"name" : "Integer"
+																						}
+																					],
+																					"name" : "Expression"
+																				},
+																				{
+																					"name" : "ASSIGN"
+																				},
+																				{
+																					"name" : "ID"
+																				}
+																			],
+																			"name" : "LocalVariable"
+																		}
+																	],
+																	"name" : "LocalVariableList"
+																},
+																{
+																	"children" : 
+																	[
+																		{
+																			"name" : "INT"
+																		}
+																	],
+																	"name" : "Typer: int"
+																}
+															],
+															"name" : "Definition"
 														}
 													],
-													"name" : "Expression"
-												},
-												{
-													"name" : "ASSIGN"
-												},
-												{
-													"name" : "ID"
+													"name" : "Instruction"
 												}
 											],
-											"name" : "GlobalVariable"
+											"name" : "FunctionCode"
+										},
+										{
+											"name" : "OPENCURLY"
+										},
+										{
+											"name" : "CLOSEPAREN"
+										},
+										{
+											"name" : "OPENPAREN"
+										},
+										{
+											"name" : "ID"
 										}
 									],
-									"name" : "GlobalVariableList"
+									"name" : "Function"
 								},
 								{
 									"children" : 
@@ -179,7 +221,7 @@
 							"name" : "GlobalDefinition"
 						}
 					],
-					"name" : "GlobalDefinitionList"
+					"name" : "GlobalDefinition"
 				},
 				{
 					"children" : 
