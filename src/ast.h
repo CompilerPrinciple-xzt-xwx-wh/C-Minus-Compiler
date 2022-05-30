@@ -21,6 +21,8 @@
 #include <llvm/IR/IRPrintingPasses.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/GlobalVariable.h>
+#include <llvm/IR/Instruction.h>
+#include <llvm/ADT/APFloat.h>
 #include <json/json.h>
 
 #include <iostream>

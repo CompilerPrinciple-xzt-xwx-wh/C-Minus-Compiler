@@ -149,7 +149,7 @@ GlobalVariable
                 }
     // global one-dimensional array for definition
     |           ID OPENBRACKET Integer CLOSEBRACKET {
-                    cout << $3->node_Name << endl ;
+                    // cout << $3->node_Name << endl ;
                     $$ = new Node("", "GlobalVariable", 4, $1, $2, $3, $4);
                 }
     // global two-dimensional array for definition
@@ -349,12 +349,12 @@ Expression
                         exp2 = $3->child_Node[0]->node_Name;
                         if ($1->child_Node[0]->node_Type == "Integer" && $3->child_Node[0]->node_Type == "Integer") {
                             int n1, n2, n;
-                            cout << exp1 << " " << exp2 << endl ;
+                            // cout << exp1 << " " << exp2 << endl ;
                             n1 = stoi(exp1);
                             n2 = stoi(exp2);
                             n = n1 + n2;
                             exp = to_string(n);
-                            cout << exp << endl ;
+                            // cout << exp << endl ;
                             $$ = new Node( $1->child_Node[0]->line_Count, exp, "Integer" ) ;
                         } else if ($1->child_Node[0]->node_Type == "Realnumber" || $3->child_Node[0]->node_Type == "Realnumber") {
                             float f1, f2, f;

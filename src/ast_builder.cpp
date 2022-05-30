@@ -662,15 +662,57 @@ llvm::Value *Node::irBuildWhile(){
 
 
 /**
- * @brief for(;;){}
+ * @brief For ( Expression ; Expression ; Expression ) { FunctionCode }
  * FOR OPENPAREN Expression SEMI Expression SEMI Expression CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
  * @return llvm::Value* 
  * modification log:2022/5/17,11:09 
  * modificated by: Wang Hui
  */
 llvm::Value* Node::irBuildFor() {
+    // Emit the start code first, without 'variable' in scope.
+    llvm::Value* StartExp = this->child_Node[2]->irBuildExpression() ;
+    Node* CodeBody = this->child_Node[9] ;
+
+    // Make the new basic block for the loop header, inserting after current
+    // block.
+    llvm::Function *TheFunction = builder.GetInsertBlock()->getParent() ;
+    llvm::BasicBlock *PreheaderBB = builder.GetInsertBlock();
+    llvm::BasicBlock *CondBB = llvm::BasicBlock::Create(context, "cond", TheFunction) ;
+    llvm::BasicBlock *LoopBB = llvm::BasicBlock::Create(context, "loop", TheFunction) ;
+    llvm::BasicBlock* AfterBB = llvm::BasicBlock::Create( context, "afterloop", TheFunction);
+    
+    GlobalAfterBB.push(AfterBB) ;
+
+    // Insert an explicit fall through from the current block to the LoopBB.
+    builder.CreateBr(CondBB) ;
+    // Start insertion in LoopBB.
+    builder.SetInsertPoint(CondBB) ;
+
+    llvm::Value* EndExp = this->child_Node[4]->irBuildExpression() ;
+    // Convert condition to a bool by comparing non-equal to 0.0.
+    llvm::Value* EndCond = builder.CreateICmpNE(
+        EndExp, llvm::ConstantInt::get(llvm::Type::getInt1Ty(context), 0, true), "forCond") ;
+
+    // Insert the conditional branch into the end of LoopEndBB.
+    builder.CreateCondBr(EndCond, LoopBB, AfterBB);
+
+    CondBB = builder.GetInsertBlock();
+
+    //Loop
+    builder.SetInsertPoint(LoopBB);
+    // Emit the body of the loop.  This, like any other expr, can change the
+    // current BB.  Note that we ignore the value computed by the body, but don't
+    // allow an error.
+    CodeBody->irBuildCode() ;
+    // Emit the step value.
+    llvm::Value* StepExp = this->child_Node[6]->irBuildExpression() ;
+    builder.CreateBr(CondBB);
+
+    // Any new code will be inserted in AfterBB.
+    builder.SetInsertPoint(AfterBB);
+    GlobalAfterBB.pop() ;
+    // for expr always returns 0.0.
     return nullptr ;
-    //TODO
 }
 
 /**
@@ -682,8 +724,46 @@ llvm::Value* Node::irBuildFor() {
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildIf(){
+    // llvm::Value *condValue = this->child_Node[2]->irBuildExpression() ;
+    // condValue = builder.CreateICmpNE(condValue, llvm::ConstantInt::get(llvm::Type::getInt1Ty(context), 0, true), "ifCond");
+
+    // llvm::Function *TheFunction = generator.getCurFunction();
+    // llvm::BasicBlock *thenBB = llvm::BasicBlock::Create(context, "then", TheFunction);
+    // llvm::BasicBlock *elseBB = llvm::BasicBlock::Create(context, "else") ;
+    // llvm::BasicBlock *mergeBB = llvm::BasicBlock::Create(context, "merge") ;
+
+    // auto branch = builder.CreateCondBr(condValue, thenBB, elseBB);
+
+    // llvm::PHINode* PN =
+    //     builder.CreatePHI(llvm::Type::getDoubleTy(context), 2, "iftmp") ;
+
+    // // Then
+
+    // builder.SetInsertPoint(thenBB);
+    // llvm::Value* thenValue = this->child_Node[5]->irBuildCode();
+    // builder.CreateBr(mergeBB);
+    // thenBB = builder.GetInsertBlock();
+    // PN->addIncoming(thenValue, thenBB) ;
+
+    // // else
+    
+    // if ( this->child_Num == 11 ) {
+    //     TheFunction->getBasicBlockList().push_back(elseBB) ;
+    //     builder.SetInsertPoint(elseBB) ;
+    //     llvm::Value* elseValue = this->child_Node[9]->irBuildCode() ;
+    //     builder.CreateBr(mergeBB) ;
+    //     elseBB = builder.GetInsertBlock() ;
+    //     PN->addIncoming(elseValue, elseBB) ;
+    // }
+
+    // TheFunction->getBasicBlockList().push_back(mergeBB) ;
+    // builder.SetInsertPoint(mergeBB);    
+    
+    // return PN;
     llvm::Value *condValue = this->child_Node[2]->irBuildExpression(), *thenValue = nullptr, *elseValue = nullptr;
     condValue = builder.CreateICmpNE(condValue, llvm::ConstantInt::get(llvm::Type::getInt1Ty(context), 0, true), "ifCond");
+
+    cout << "Branch Notation!" << endl ;
 
     llvm::Function *TheFunction = generator.getCurFunction();
     llvm::BasicBlock *thenBB = llvm::BasicBlock::Create(context, "then", TheFunction);
@@ -697,13 +777,15 @@ llvm::Value *Node::irBuildIf(){
     thenValue = this->child_Node[5]->irBuildCode();
     builder.CreateBr(mergeBB);
     thenBB = builder.GetInsertBlock();
+    cout << "Branch Then!" << endl ;
 
     // else
     builder.SetInsertPoint(elseBB);
     if ( this->child_Num == 11 ) 
         elseValue = this->child_Node[9]->irBuildCode();
-    builder.CreateBr(mergeBB);
     elseBB = builder.GetInsertBlock();
+    builder.CreateBr(mergeBB);
+    cout << "Branch Else!" << endl ;
 
     builder.SetInsertPoint(mergeBB);    
     return branch;
