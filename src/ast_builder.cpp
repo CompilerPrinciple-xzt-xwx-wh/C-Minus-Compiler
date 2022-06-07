@@ -277,7 +277,7 @@ llvm::Value *Node::irBuildExpression(){
     //     return NULL ;
 
     // Expression --> Integer | Realnumber | Character
-    if ( this->child_Num == 1 )
+    if ( this->child_Num == 1 && this->child_Node[0]->node_Type != "ID" )
         return this->irBuildConst() ;
 
     /**

@@ -44,124 +44,43 @@
 																							"children" : 
 																							[
 																								{
-																									"name" : "CLOSEPAREN"
-																								},
-																								{
 																									"children" : 
 																									[
 																										{
 																											"children" : 
 																											[
 																												{
-																													"children" : 
-																													[
-																														{
-																															"name" : "ID"
-																														}
-																													],
-																													"name" : "Expression"
+																													"name" : "Integer"
 																												}
 																											],
-																											"name" : "Arguments"
+																											"name" : "Expression"
 																										},
 																										{
-																											"name" : "COMMA"
+																											"name" : "PLUS"
 																										},
 																										{
 																											"children" : 
 																											[
 																												{
-																													"name" : "String"
+																													"name" : "ID"
 																												}
 																											],
 																											"name" : "Expression"
 																										}
 																									],
-																									"name" : "Arguments"
+																									"name" : "Expression"
 																								},
 																								{
-																									"name" : "OPENPAREN"
-																								},
-																								{
-																									"name" : "ID"
-																								}
-																							],
-																							"name" : "Expression"
-																						}
-																					],
-																					"name" : "Statement"
-																				}
-																			],
-																			"name" : "Instruction"
-																		}
-																	],
-																	"name" : "FunctionCode"
-																},
-																{
-																	"name" : "OPENCURLY"
-																},
-																{
-																	"name" : "ELSE"
-																},
-																{
-																	"name" : "CLOSECURLY"
-																},
-																{
-																	"children" : 
-																	[
-																		{
-																			"children" : 
-																			[
-																				{
-																					"children" : 
-																					[
-																						{
-																							"name" : "SEMI"
-																						},
-																						{
-																							"children" : 
-																							[
-																								{
-																									"name" : "CLOSEPAREN"
+																									"name" : "ASSIGN"
 																								},
 																								{
 																									"children" : 
 																									[
 																										{
-																											"children" : 
-																											[
-																												{
-																													"children" : 
-																													[
-																														{
-																															"name" : "ID"
-																														}
-																													],
-																													"name" : "Expression"
-																												}
-																											],
-																											"name" : "Arguments"
-																										},
-																										{
-																											"name" : "COMMA"
-																										},
-																										{
-																											"children" : 
-																											[
-																												{
-																													"name" : "String"
-																												}
-																											],
-																											"name" : "Expression"
+																											"name" : "ID"
 																										}
 																									],
-																									"name" : "Arguments"
-																								},
-																								{
-																									"name" : "OPENPAREN"
-																								},
-																								{
-																									"name" : "ID"
+																									"name" : "Expression"
 																								}
 																							],
 																							"name" : "Expression"
@@ -194,7 +113,7 @@
 																			"name" : "Expression"
 																		},
 																		{
-																			"name" : "EQUAL"
+																			"name" : "LT"
 																		},
 																		{
 																			"children" : 
@@ -212,7 +131,7 @@
 																	"name" : "OPENPAREN"
 																},
 																{
-																	"name" : "IF"
+																	"name" : "WHILE"
 																}
 															],
 															"name" : "Statement"
