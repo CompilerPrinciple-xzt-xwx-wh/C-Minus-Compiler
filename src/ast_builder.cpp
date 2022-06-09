@@ -121,7 +121,7 @@ llvm::Value* Node::irBuildVariable(){
             }
         }
     }
-    cout << "Variable success!" << endl ;
+    // cout << "Variable success!" << endl ;
     return nullptr ;
 }
 
@@ -197,9 +197,9 @@ llvm::Value *Node::irBuildCode(){
     while ( true ) {
         // FunctionCode --> Instruction FunctionCode | Instruction
         Node* inst = totalCode->child_Node[0] ;
-        cout << "Running at " << inst->line_Count << endl ;
+        // cout << "Running at " << inst->line_Count << endl ;
         inst->irBuildInstruction() ;
-        cout << "Running at " << inst->line_Count << "End!" << endl ;
+        // cout << "Running at " << inst->line_Count << "End!" << endl ;
         if ( totalCode->child_Num == 1 ) 
             break;
         else if ( totalCode->child_Num == 2 )
@@ -773,7 +773,7 @@ llvm::Value *Node::irBuildIf(){
     llvm::Value *condValue = this->child_Node[2]->irBuildExpression(), *thenValue = nullptr, *elseValue = nullptr;
     condValue = builder.CreateICmpNE(condValue, llvm::ConstantInt::get(llvm::Type::getInt1Ty(context), 0, true), "ifCond");
 
-    cout << "Branch Notation!" << endl ;
+    // cout << "Branch Notation!" << endl ;
 
     llvm::Function *TheFunction = generator.getCurFunction();
     llvm::BasicBlock *thenBB = llvm::BasicBlock::Create(context, "then", TheFunction);
@@ -787,7 +787,7 @@ llvm::Value *Node::irBuildIf(){
     thenValue = this->child_Node[5]->irBuildCode();
     builder.CreateBr(mergeBB);
     thenBB = builder.GetInsertBlock();
-    cout << "Branch Then!" << endl ;
+    // cout << "Branch Then!" << endl ;
 
     // else
     builder.SetInsertPoint(elseBB);
@@ -795,7 +795,7 @@ llvm::Value *Node::irBuildIf(){
         elseValue = this->child_Node[9]->irBuildCode();
     elseBB = builder.GetInsertBlock();
     builder.CreateBr(mergeBB);
-    cout << "Branch Else!" << endl ;
+    // cout << "Branch Else!" << endl ;
 
     builder.SetInsertPoint(mergeBB);    
     return branch;
@@ -893,7 +893,7 @@ llvm::Value *Node::irBuildPrint(){
     // cout << "Into print function!" << endl ;
     string formatStr = "";
     vector<llvm::Value *> args = this->child_Node[2]->getPrintArguments() ;
-    cout << "Print arguments get!" << endl ;
+    // cout << "Print arguments get!" << endl ;
     for (auto & arg : args) {
         if (arg->getType() == llvm::Type::getInt32Ty(context) ) 
             formatStr += "%d";
@@ -921,7 +921,7 @@ llvm::Value *Node::irBuildPrint(){
     llvm::Constant* indices[] = {zero, zero};
     auto varRef = llvm::ConstantExpr::getGetElementPtr(formatStrVar->getType()->getElementType(), formatStrVar, indices);
     args.insert(args.begin(), varRef);
-    cout << "Before CreateCall!" << endl ;
+    // cout << "Before CreateCall!" << endl ;
     return builder.CreateCall(generator.getPrint(), args, "print");
 }
 

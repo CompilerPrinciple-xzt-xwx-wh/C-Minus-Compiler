@@ -28,7 +28,7 @@ int main()
         if (ch == '\n') { break; }
         else {
             course[i][j] = ch;
-            j++;
+            j=j+1;;
         }
         while (1) {
             scanf("%c", &ch);
@@ -37,7 +37,7 @@ int main()
                 break;
             } else {
                 course[i][j] = ch;
-                j++;
+                j=j+1;;
             }
         }
         scanf("%d", &crd);
@@ -51,7 +51,7 @@ int main()
                 break;
             } else {
                 precourse[i][j] = ch;
-                j++;
+                j=j+1;;
             }
         }
         scanf("%c", &ch);
@@ -61,7 +61,7 @@ int main()
             grade[i] = ch;
             scanf("%c", &ch);
         }
-        i++;
+        i=i+1;;
     }
     int coursenum = i;
     int creditsAttempted = 0, creditsCompleted = 0, creditsRemain = 0;
@@ -72,7 +72,7 @@ int main()
         if (grade[i] != '\0') {
             if (grade[i] != 'F') {
                 remainIndex[cnt] = i;
-                cnt++;
+                cnt=cnt+1;
                 creditsCompleted = creditsCompleted + credit[i];
                 GPA = GPA + credit[i] * ('A' - grade[i] + 4);
             } else {
@@ -82,7 +82,7 @@ int main()
         } else {
             creditsRemain = creditsRemain + credit[i];
         }
-        i++;
+        i=i+1;;
     }
     GPA = GPA / creditsAttempted;
     printf("GPA: %.1f\n", GPA);
@@ -101,7 +101,7 @@ int main()
                 printf("  ");
                 while (course[i][j] != '\0') {
                     printf("%c", course[i][j]);
-                    j++;
+                    j=j+1;;
                 }
                 printf("\n");
             } else {
@@ -129,51 +129,51 @@ int main()
                                         if (course[remainIndex[m]][n] != precourseterm[n]) {
                                             innerflag = 0;
                                         }
-                                        n++;
+                                        n=n+1;
                                     }
                                     if (course[remainIndex[m]][n] != '\0') { innerflag = 0; }
                                     if (innerflag == 1) {
                                         break;
                                     }
-                                    m++;
+                                    m=m+1;
                                 }
                                 // printf("  %d\n", innerflag);
-                                if (m == cnt && innerflag == 0) { flagnum--; }
-                                flagnum++;
-                                num++;
+                                if (m == cnt && innerflag == 0) { flagnum=flagnum-1; }
+                                flagnum=flagnum+1;
+                                num=num+1;
                                 l = 0;
-                                k++;
+                                k=k+1;;
                                 if (precourseset[k-1] == '\0') {
                                     break;
                                 }
                             }
                             
                             precourseterm[l] = precourseset[k];
-                            l++;
-                            k++;
+                            l=l+1;;
+                            k=k+1;;
                         }
                         if (num == flagnum) {
                             int p = 0;
                             printf("  ");
                             while (course[i][p] != '\0') {
                                 printf("%c", course[i][p]);
-                                p++;
+                                p=p+1;;
                             }
                             printf("\n");
                             break;
                         }
                         k = 0;
-                        j++;
+                        j=j+1;;
                         if (precourse[i][j-1] == '\0') { break; }
                     }
                     precourseset[k] = precourse[i][j];
-                    j++;
-                    k++;
+                    j=j+1;;
+                    k=k+1;;
                     
                 }
             }
         }
-        i++;
+        i=i+1;;
     }
     
 

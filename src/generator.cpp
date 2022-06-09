@@ -50,6 +50,7 @@ llvm::Function* Generator::createScanf() {
 }
 void Generator::generate(Node *root) {
     root->irBuild() ;
+    this->module->print(llvm::outs(), nullptr);
 }
 
 /**

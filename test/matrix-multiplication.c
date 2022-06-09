@@ -1,23 +1,9 @@
-/*
- * @Author: xwxr
- * @Date: 2022-05-14 10:19:46
- * @LastEditors: xwxr
- * @LastEditTime: 2022-05-21 22:57:11
- * @Description: delete addition assignment operator '+='
- */
-
-/*
- * @Author: xwxr
- * @Date: 2022-05-14 10:19:46
- * @LastEditors: xwxr
- * @LastEditTime: 2022-05-14 12:56:51
- * @Description: "matrix multiplication" test for C-Minus.
- */
 
 int main()
 {
     int m1, n1, m2, n2;
-    scanf("%d %d", &m1, &n1);
+    input(m1);
+    input(n1);
     int i, j;
     int A[25][25], B[25][25];
     int num;
@@ -25,22 +11,22 @@ int main()
     while (i < m1) {
         j = 0;
         while (j < n1) {
-            scanf("%6d", &num);
+            input(num);
             A[i][j] = num;
-            j++;
+            j=j+1;
         }
-        i++;
+        i=i+1;
     }
-    scanf("%d %d", &m2, &n2);
+    input(m2, n2);
     i = 0;
     while (i < m2) {
         j = 0;
         while (j < n2) {
-            scanf("%6d", &num);
+            input(num);
             B[i][j] = num;
-            j++;
+            j=j+1;
         }
-        i++;
+        i=i+1;
     }
     if (n1 != m2) {
         printf("Incompatible Dimensions\n");
@@ -54,21 +40,22 @@ int main()
                 k = 0;
                 while (k < n1) {
                     C[i][j] = C[i][j] + A[i][k] * B[k][j];
-                    k++;
+                    k=k+1;
                 }
-                j++;
+                j=j+1;
             }
-            i++;
+            i=i+1;
         }
         i = 0;
         while (i < m1) {
             j = 0;
             while (j < n2) {
-                printf("%10d", C[i][j]);
-                j++;
+                // printf("%10d", C[i][j]);
+                printf("%d", C[i][j]);
+                j=j+1;
             }
             printf("\n");
-            i++;
+            i=i+1;
         }
     }
 
