@@ -328,8 +328,10 @@ vector<llvm::Value *> Node::getArgumentList() {
     vector<llvm::Value*> args ;
     Node* list = this ;
     while ( true ) {
-        Node* temp = list->child_Node[0] ;
-        args.push_back( temp->irBuildExpression() ) ;
+        llvm::Value * temp = list->child_Node[0]->irBuildExpression() ;
+        if (temp->getType() == llvm::Type::getFloatTy(context))
+            temp = builder.CreateFPExt(temp, llvm::Type::getDoubleTy(context), "tempdouble");
+        args.push_back( temp ) ;
         if ( list->child_Num == 3 )
             list = list->child_Node[2] ;
         else 
