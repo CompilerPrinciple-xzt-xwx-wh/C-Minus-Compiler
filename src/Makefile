@@ -43,6 +43,7 @@ temp_test:
 	cat ../test/test0.c | ./parse > ../test/test0.ll
 	llvm-as ../test/test0.ll -o ../test/test0.bc
 	$(CC) ../test/test0.bc -o ../test/test0_exe
+	../test/test0_exe
 
 clean:
 	$(RM) -rf $(OBJS) parser.cpp parser.hpp parse scanner.cpp 
