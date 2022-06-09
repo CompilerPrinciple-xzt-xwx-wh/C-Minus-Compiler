@@ -533,9 +533,9 @@ Expression
                     $$ = new Node("", "Expression", 3, $1, $2, $3);
                     $$->setValueType($1->getValueType());
                 }
-    |           ID OPENBRACKET Expression CLOSEPAREN {
+    |           ID OPENBRACKET Expression CLOSEBRACKET {
                     $$ = new Node("", "Expression", 4, $1, $2, $3, $4);
-                    $$->setValueType($1->getValueType() );
+                    $$->setValueType($1->getValueType());
                 }
     |           ID OPENBRACKET Expression CLOSEBRACKET OPENBRACKET Expression CLOSEBRACKET {
                     $$ = new Node("", "Expression", 7, $1, $2, $3, $4, $5, $6, $7);
