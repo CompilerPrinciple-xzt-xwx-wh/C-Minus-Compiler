@@ -522,6 +522,7 @@ llvm::Value *Node::irBuildLeftValue(){
     if ( this->child_Num == 1 ) {
         return id ;
     } else if ( this->child_Num == 4 ) {
+        cout << "Into address array" << endl ;
         llvm::Value* idx = this->child_Node[2]->irBuildExpression() ;
         if ( idx->getType() != llvm::Type::getInt32Ty(context) ) 
             idx = this->typeCast( idx, llvm::Type::getInt32Ty(context) ) ;
@@ -569,6 +570,7 @@ llvm::Value *Node::irBuildRightValue() {
     }
     // Expression --> ID [ Expression ]
     if ( this->child_Num == 4 ) {
+        cout << "Into right value of array" << endl ;
         llvm::Value* index = this->child_Node[2]->irBuildExpression() ;
         if ( index->getType() != llvm::Type::getInt32Ty(context)) 
             index = this->typeCast( index, llvm::Type::getInt32Ty(context) ) ;
@@ -644,18 +646,18 @@ llvm::Value *Node::irBuildWhile(){
     builder.SetInsertPoint(condBB);
     // WHILE LP Exp RP Stmt
     llvm::Value *condValue = this->child_Node[2]->irBuildExpression() ;
-    cout<< "while 1" << endl ;
+    // cout<< "while 1" << endl ;
     condValue = builder.CreateICmpNE(condValue, llvm::ConstantInt::get(llvm::Type::getInt1Ty(context), 0, true), "whileCond");
     
     builder.CreateCondBr(condValue, loopBB, afterBB);
     // builder.SetInsertPoint(condBB) ;
     condBB = builder.GetInsertBlock();
-    cout << "Into BodyCode" << endl ;
+    // cout << "Into BodyCode" << endl ;
     //Loop
     builder.SetInsertPoint(loopBB);
     this->child_Node[5]->irBuildCode() ;
     builder.CreateBr(condBB);
-    cout<< "loop after" << endl ;
+    // cout<< "loop after" << endl ;
     //After
     builder.SetInsertPoint(afterBB);
     //this->backward(generator);
