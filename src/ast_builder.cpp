@@ -60,7 +60,7 @@ llvm::Value* Node::irBuildVariable(){
     int type = this->child_Node[0]->getValueType() ;
     vector<pair<Variable,llvm::Value*>> nameList = this->child_Node[1]->getNameList(type) ;
     // for ( auto it : nameList ) 
-    //     cout<< it.first.getName() << ": " << it.second->getValueID() << endl ;
+    //     // cout<< it.first.getName() << ": " << it.second->getValueID() << endl ;
     llvm::Type *llvmType ;
     for (auto it : nameList) {
         llvmType = getLlvmType(it.first.getType(),it.first.getSize()) ;
@@ -70,7 +70,7 @@ llvm::Value* Node::irBuildVariable(){
             if ( tmp != nullptr ) 
                 throw logic_error("Error! Redefined global variable: " + it.first.getName()+".") ;
             llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(*generator.getModule(), llvmType, false, llvm::GlobalValue::PrivateLinkage, 0, it.first.getName()) ;
-            // cout << "Global Variable Success!" << endl ;
+            // // cout << "Global Variable Success!" << endl ;
         /*
             // Initialize the variable
             // adjust two-dimensional array only
@@ -99,9 +99,9 @@ llvm::Value* Node::irBuildVariable(){
                 llvm::Value* initial = it.second ;
                 if ( initial->getType() != llvmType ) 
                     initial = typeCast(initial,llvmType) ;
-                // cout<< var->isPointerTy() << endl ;
+                // // cout<< var->isPointerTy() << endl ;
                 builder.CreateStore(initial,var) ;
-                // cout << "Global Variable Initialized!" << endl ;
+                // // cout << "Global Variable Initialized!" << endl ;
             }
         }
         // local variable
@@ -110,18 +110,18 @@ llvm::Value* Node::irBuildVariable(){
             if(tmp != nullptr)
                 throw logic_error("Error! Redefined local variable: " + it.first.getName()+".") ;
             llvm::Value* alloc = CreateEntryBlockAlloca(generator.getCurFunction(), it.first.getName(), llvmType) ;
-            // cout << "Local Variable Success!" << endl ;
+            // // cout << "Local Variable Success!" << endl ;
             if ( it.second != nullptr ) {
                 llvm::Value* var = generator.findValue(it.first.getName()) ;
                 llvm::Value* ini = it.second ;
                 if ( ini->getType() != llvmType ) 
                     ini = typeCast(ini,llvmType) ;
                 builder.CreateStore(ini,var) ;
-                // cout << "Local Variable Initialized!" << endl ;
+                // // cout << "Local Variable Initialized!" << endl ;
             }
         }
     }
-    // cout << "Variable success!" << endl ;
+    // // cout << "Variable success!" << endl ;
     return nullptr ;
 }
 
@@ -136,7 +136,7 @@ llvm::Value* Node::irBuildVariable(){
  */
 llvm::Function *Node::irBuildFunction(){
 
-    // cout << "Into function!" << endl ;
+    // // cout << "Into function!" << endl ;
     // GlobalDefinition --> Typer Function
     Node* type = this->child_Node[0] ;
     Node* funcnode = this->child_Node[1] ;
@@ -147,7 +147,7 @@ llvm::Function *Node::irBuildFunction(){
     if ( child_Node[2] != nullptr ) 
         parameters = funcnode->child_Node[2]->getParameterList() ;
 
-    // cout << "Parameters get!" << endl ;
+    // // cout << "Parameters get!" << endl ;
     
     vector<llvm::Type*> argTypes;
     for ( auto it : parameters ) 
@@ -160,7 +160,7 @@ llvm::Function *Node::irBuildFunction(){
         function = generator.getModule()->getFunction(funcnode->child_Node[0]->node_Name) ;
     }
     
-    // cout << "Function declared!" << endl ;
+    // // cout << "Function declared!" << endl ;
     generator.pushFunction(function) ;
 
     llvm::BasicBlock *newBlock = llvm::BasicBlock::Create(context, "entrypoint", function) ;
@@ -176,7 +176,7 @@ llvm::Function *Node::irBuildFunction(){
     // Construct on FunctionCode
     if ( funcnode->child_Node[5] != nullptr ) 
         funcnode->child_Node[5]->irBuildCode() ;
-    // cout << "Function code built!" << endl ;
+    // // cout << "Function code built!" << endl ;
 
     // Pop
     generator.popFunction() ;
@@ -197,9 +197,9 @@ llvm::Value *Node::irBuildCode(){
     while ( true ) {
         // FunctionCode --> Instruction FunctionCode | Instruction
         Node* inst = totalCode->child_Node[0] ;
-        // cout << "Running at " << inst->line_Count << endl ;
+        // // cout << "Running at " << inst->line_Count << endl ;
         inst->irBuildInstruction() ;
-        // cout << "Running at " << inst->line_Count << "End!" << endl ;
+        // // cout << "Running at " << inst->line_Count << "End!" << endl ;
         if ( totalCode->child_Num == 1 ) 
             break;
         else if ( totalCode->child_Num == 2 )
@@ -380,7 +380,7 @@ llvm::Value* Node::irBuildConst() {
         return llvm::ConstantFP::get(builder.getFloatTy(), llvm::APFloat(stof(this->child_Node[0]->node_Name))) ;
     // Expression --> String
     if ( this->child_Node[0]->node_Type == "String" ) 
-        return builder.CreateGlobalStringPtr(this->child_Node[0]->node_Name) ;
+        return builder.CreateGlobalStringPtr(this->child_Node[0]->node_Name.substr(1, this->child_Node[0]->node_Name.size() - 2)) ;
     // Expression --> Character
     if ( this->child_Node[0]->node_Type == "Character" ) {
         if (this->child_Node[0]->node_Name.length() == 3)
@@ -529,6 +529,7 @@ llvm::Value *Node::irBuildLeftValue(){
         return id ;
     } else if ( this->child_Num == 4 ) {
         // cout << "Into address array" << endl ;
+        // // cout << "Into address array" << endl ;
         llvm::Value* idx = this->child_Node[2]->irBuildExpression() ;
         if ( idx->getType() != llvm::Type::getInt32Ty(context) ) 
             idx = this->typeCast( idx, llvm::Type::getInt32Ty(context) ) ;
@@ -652,18 +653,18 @@ llvm::Value *Node::irBuildWhile(){
     builder.SetInsertPoint(condBB);
     // WHILE LP Exp RP Stmt
     llvm::Value *condValue = this->child_Node[2]->irBuildExpression() ;
-    // cout<< "while 1" << endl ;
+    // // cout<< "while 1" << endl ;
     condValue = builder.CreateICmpNE(condValue, llvm::ConstantInt::get(llvm::Type::getInt1Ty(context), 0, true), "whileCond");
     
     builder.CreateCondBr(condValue, loopBB, afterBB);
     // builder.SetInsertPoint(condBB) ;
     condBB = builder.GetInsertBlock();
-    // cout << "Into BodyCode" << endl ;
+    // // cout << "Into BodyCode" << endl ;
     //Loop
     builder.SetInsertPoint(loopBB);
     this->child_Node[5]->irBuildCode() ;
     builder.CreateBr(condBB);
-    // cout<< "loop after" << endl ;
+    // // cout<< "loop after" << endl ;
     //After
     builder.SetInsertPoint(afterBB);
     //this->backward(generator);
@@ -773,7 +774,7 @@ llvm::Value *Node::irBuildIf(){
     llvm::Value *condValue = this->child_Node[2]->irBuildExpression(), *thenValue = nullptr, *elseValue = nullptr;
     condValue = builder.CreateICmpNE(condValue, llvm::ConstantInt::get(llvm::Type::getInt1Ty(context), 0, true), "ifCond");
 
-    // cout << "Branch Notation!" << endl ;
+    // // cout << "Branch Notation!" << endl ;
 
     llvm::Function *TheFunction = generator.getCurFunction();
     llvm::BasicBlock *thenBB = llvm::BasicBlock::Create(context, "then", TheFunction);
@@ -787,7 +788,7 @@ llvm::Value *Node::irBuildIf(){
     thenValue = this->child_Node[5]->irBuildCode();
     builder.CreateBr(mergeBB);
     thenBB = builder.GetInsertBlock();
-    // cout << "Branch Then!" << endl ;
+    // // cout << "Branch Then!" << endl ;
 
     // else
     builder.SetInsertPoint(elseBB);
@@ -795,7 +796,7 @@ llvm::Value *Node::irBuildIf(){
         elseValue = this->child_Node[9]->irBuildCode();
     elseBB = builder.GetInsertBlock();
     builder.CreateBr(mergeBB);
-    // cout << "Branch Else!" << endl ;
+    // // cout << "Branch Else!" << endl ;
 
     builder.SetInsertPoint(mergeBB);    
     return branch;
@@ -891,10 +892,10 @@ llvm::Value *Node::irBuildComparer() {
  * modificated by: Wang Hui
  */
 llvm::Value *Node::irBuildPrint(){
-    // cout << "Into print function!" << endl ;
+    // // cout << "Into print function!" << endl ;
     string formatStr = "";
     vector<llvm::Value *> args = this->child_Node[2]->getPrintArguments() ;
-    // cout << "Print arguments get!" << endl ;
+    // // cout << "Print arguments get!" << endl ;
     for (auto & arg : args) {
         if (arg->getType() == llvm::Type::getInt32Ty(context) ) 
             formatStr += "%d";
@@ -922,7 +923,7 @@ llvm::Value *Node::irBuildPrint(){
     llvm::Constant* indices[] = {zero, zero};
     auto varRef = llvm::ConstantExpr::getGetElementPtr(formatStrVar->getType()->getElementType(), formatStrVar, indices);
     args.insert(args.begin(), varRef);
-    // cout << "Before CreateCall!" << endl ;
+    // // cout << "Before CreateCall!" << endl ;
     return builder.CreateCall(generator.getPrint(), args, "print");
 }
 
