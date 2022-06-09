@@ -15,14 +15,29 @@ build:
 	bison -d -o parser.cpp parser.yacc
 	$(CC) -g $(LLVM_INCLUDE) $(LLVM_LIBS) $(LD_FLAGS) -lLLVM ./*.cpp -o parse
 
-test:
+test1:
 # Q1: quicksort
-	@echo "\n\n******Q1: Quicksort******"
+	@echo "\n\n******Q1: Quick Sort******"
 	cat ../test/quicksort.c | ./parse > ../test/test1.ll
 	llvm-as ../test/test1.ll -o ../test/test1.bc	
 	$(CC) ../test/test1.bc -o ../test/test1_exe
 	../test/quicksort/linux-amd64 ../test/test1_exe
 
+test2:
+# Q2: matrix-multiplication
+	@echo "\n\n******Q2: Matrix Multiplication******"
+	cat ../test/matrix-multiplication.c | ./parse > ../test/test2.ll
+	llvm-as ../test/test2.ll -o ../test/test2.bc	
+	$(CC) ../test/test2.bc -o ../test/test2_exe
+	../test/matrix-multiplication/linux-amd64 ../test/test2_exe
+
+test3:
+# Q3: auto-advisor
+	@echo "\n\n******Q3: Auto Advisor******"
+	cat ../test/auto-advisor.c | ./parse > ../test/test3.ll
+	llvm-as ../test/test3.ll -o ../test/test3.bc	
+	$(CC) ../test/test3.bc -o ../test/test3_exe
+	../test/auto-advisor/linux-amd64 ../test/test3_exe
 
 temp_test:
 	cat ../test/test0.c | ./parse > ../test/test0.ll
