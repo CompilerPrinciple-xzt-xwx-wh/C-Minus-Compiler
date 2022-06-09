@@ -151,7 +151,7 @@ llvm::Function *Node::irBuildFunction(){
 
     // Function --> ID OPENPAREN ParameterList CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
     vector<pair<string,llvm::Type*>> parameters ;
-    if ( child_Node[2] != nullptr ) 
+    if ( funcnode->child_Node[2] != nullptr ) 
         parameters = funcnode->child_Node[2]->getParameterList() ;
 
     // // cout << "Parameters get!" << endl ;
