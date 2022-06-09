@@ -644,20 +644,23 @@ llvm::Value *Node::irBuildWhile(){
     builder.SetInsertPoint(condBB);
     // WHILE LP Exp RP Stmt
     llvm::Value *condValue = this->child_Node[2]->irBuildExpression() ;
+    cout<< "while 1" << endl ;
     condValue = builder.CreateICmpNE(condValue, llvm::ConstantInt::get(llvm::Type::getInt1Ty(context), 0, true), "whileCond");
-    auto branch = builder.CreateCondBr(condValue, loopBB, afterBB);
+    
+    builder.CreateCondBr(condValue, loopBB, afterBB);
+    // builder.SetInsertPoint(condBB) ;
     condBB = builder.GetInsertBlock();
-
+    cout << "Into BodyCode" << endl ;
     //Loop
     builder.SetInsertPoint(loopBB);
-    this->child_Node[4]->irBuildCode() ;
+    this->child_Node[5]->irBuildCode() ;
     builder.CreateBr(condBB);
-    
+    cout<< "loop after" << endl ;
     //After
     builder.SetInsertPoint(afterBB);
     //this->backward(generator);
     GlobalAfterBB.pop();
-    return branch;
+    return nullptr ;
 }
 
 
@@ -673,8 +676,7 @@ llvm::Value* Node::irBuildFor() {
     llvm::Value* StartExp = this->child_Node[2]->irBuildExpression() ;
     Node* CodeBody = this->child_Node[9] ;
 
-    // Make the new basic block for the loop header, inserting after current
-    // block.
+    // Make the new basic block for the loop header, inserting after current block.
     llvm::Function *TheFunction = builder.GetInsertBlock()->getParent() ;
     llvm::BasicBlock *PreheaderBB = builder.GetInsertBlock();
     llvm::BasicBlock *CondBB = llvm::BasicBlock::Create(context, "cond", TheFunction) ;
