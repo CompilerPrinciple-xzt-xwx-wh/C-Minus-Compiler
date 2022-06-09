@@ -29,7 +29,8 @@ int main()
         i=i+1;
     }
     if (n1 != m2) {
-        printf("Incompatible Dimensions\n");
+        printf("Incompatible Dimensions");
+        print("");
     } else {
         int C[25][25], k;
         i = 0;
@@ -51,10 +52,10 @@ int main()
             j = 0;
             while (j < n2) {
                 // printf("%10d", C[i][j]);
-                printf("%d", C[i][j]);
+                printf("%10d", C[i][j]);
                 j=j+1;
             }
-            printf("\n");
+            print("");
             i=i+1;
         }
     }
