@@ -136,7 +136,7 @@ llvm::Value* Node::irBuildVariable(){
  */
 llvm::Function *Node::irBuildFunction(){
 
-    cout << "Into function!" << endl ;
+    // cout << "Into function!" << endl ;
     // GlobalDefinition --> Typer Function
     Node* type = this->child_Node[0] ;
     Node* funcnode = this->child_Node[1] ;
@@ -147,7 +147,7 @@ llvm::Function *Node::irBuildFunction(){
     if ( child_Node[2] != nullptr ) 
         parameters = funcnode->child_Node[2]->getParameterList() ;
 
-    cout << "Parameters get!" << endl ;
+    // cout << "Parameters get!" << endl ;
     
     vector<llvm::Type*> argTypes;
     for ( auto it : parameters ) 
@@ -160,7 +160,7 @@ llvm::Function *Node::irBuildFunction(){
         function = generator.getModule()->getFunction(funcnode->child_Node[0]->node_Name) ;
     }
     
-    cout << "Function declared!" << endl ;
+    // cout << "Function declared!" << endl ;
     generator.pushFunction(function) ;
 
     llvm::BasicBlock *newBlock = llvm::BasicBlock::Create(context, "entrypoint", function) ;
@@ -176,7 +176,7 @@ llvm::Function *Node::irBuildFunction(){
     // Construct on FunctionCode
     if ( funcnode->child_Node[5] != nullptr ) 
         funcnode->child_Node[5]->irBuildCode() ;
-    cout << "Function code built!" << endl ;
+    // cout << "Function code built!" << endl ;
 
     // Pop
     generator.popFunction() ;
@@ -261,6 +261,11 @@ llvm::Value *Node::irBuildStatement(){
     if ( flag->node_Name == "for" ) 
         return this->irBuildFor() ;
     
+    if ( flag->node_Name == "break" ) 
+        return this->irBuildBreak() ;
+    if ( flag->node_Name == "continue" )
+        return this->irBuildContinue() ;
+
     return nullptr ;
 }
 
@@ -470,11 +475,12 @@ llvm::Value* Node::irBuildBinaryOperator() {
     llvm::Value *right = this->child_Node[2]->irBuildExpression() ;
     // Expression --> Expression AND Expression
     if ( this->child_Node[1]->node_Type == "AND" ) 
-        return typeCast( builder.CreateAnd(typeCast(left,llvm::Type::getInt1Ty(context)), typeCast(right,llvm::Type::getInt1Ty(context)), "tmpAnd"), llvm::Type::getInt32Ty(context) ) ;
+        return builder.CreateAnd(typeCast(left,llvm::Type::getInt1Ty(context)), typeCast(right,llvm::Type::getInt1Ty(context)), "tmpAnd") ;
+        // return typeCast( builder.CreateAnd(typeCast(left,llvm::Type::getInt1Ty(context)), typeCast(right,llvm::Type::getInt1Ty(context)), "tmpAnd"), llvm::Type::getInt32Ty(context) ) ;
     // Expression --> Expression OR Expression
     if ( this->child_Node[1]->node_Type == "OR" ) 
-        return typeCast( builder.CreateOr(typeCast(left,llvm::Type::getInt1Ty(context)), typeCast(right,llvm::Type::getInt1Ty(context)), "tmpAnd"), llvm::Type::getInt32Ty(context) ) ;
-    
+        return builder.CreateOr(typeCast(left,llvm::Type::getInt1Ty(context)), typeCast(right,llvm::Type::getInt1Ty(context)), "tmpAnd") ;
+        // return typeCast( builder.CreateOr(typeCast(left,llvm::Type::getInt1Ty(context)), typeCast(right,llvm::Type::getInt1Ty(context)), "tmpAnd"), llvm::Type::getInt32Ty(context) ) ;
     // Expression --> Expression MOD Expression
     if ( this->child_Node[1]->node_Type == "MOD" ){
         //TODO
@@ -812,6 +818,22 @@ llvm::Value *Node::irBuildReturn(){
     // Statement --> RETURN SEMI
     else 
         return builder.CreateRetVoid();
+}
+
+
+/**
+ * @brief 
+ * Statement --> Continue SEMI
+ * Statement --> Break SEMI
+ * @return llvm::Value* 
+ * modification log: 2022/6/9,22:05
+ * modificated by: Wang Hui
+ */
+llvm::Value* Node::irBuildBreak() {
+
+}
+llvm::Value* Node::irBuildContinue() {
+
 }
 
 /**

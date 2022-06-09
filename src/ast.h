@@ -291,6 +291,17 @@ public:
     llvm::Value *irBuildWhile();
     llvm::Value *irBuildIf();
     llvm::Value *irBuildReturn();
+    /**
+     * @brief 
+     * Statement --> Continue SEMI
+     * Statement --> Break SEMI
+     * @return llvm::Value* 
+     * modification log: 2022/6/9,22:05
+     * modificated by: Wang Hui
+     */
+    llvm::Value* irBuildBreak() ;
+    llvm::Value* irBuildContinue() ;
+
     llvm::Value *irBuildCode();
     llvm::Value *irBuildComparer();
 
