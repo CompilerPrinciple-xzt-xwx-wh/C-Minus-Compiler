@@ -2,8 +2,9 @@
 
 Variable::Variable(/* args */string n, int t, int s ) {
     this->Name = n ;
-    this->Size = s ;
     this->Type = t ;
+    this->Size = s ;
+    this->BottomSize = s ;
 }
 Variable::Variable(string n, int t, int s, int bs ) {
     this->Name = n ;

@@ -236,22 +236,24 @@ llvm::Type* Node::getLlvmType(int type, int len, int wid ) {
         case TYPE_CHAR_ARRAY_ARRAY :
             /* code */
             if ( len == 0 ) 
-                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(context),wid) , 0 ) ;
+                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(context),wid) , len ) ;
             else
                 return llvm::ArrayType::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(context),wid), len) ;
         case TYPE_INT_ARRAY_ARRAY:
             if ( len == 0 ) 
-                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getInt32Ty(context),wid) , 0) ;
+                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getInt32Ty(context),wid) , len ) ;
             else 
                 return llvm::ArrayType::get( llvm::ArrayType::get(llvm::Type::getInt32Ty(context),wid), len ) ;
         case TYPE_FLOAT_ARRAY_ARRAY:
             if ( len == 0 )
-                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getFloatTy(context), wid) ,0 ) ;
+                return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getFloatTy(context), wid) ,len ) ;
             else 
                 return llvm::ArrayType::get(llvm::ArrayType::get(llvm::Type::getFloatTy(context),wid), len) ;
         case TYPE_DOUBLE_ARRAY_ARRAY:
             if ( len == 0 ) 
                 return llvm::PointerType::get(llvm::ArrayType::get(llvm::Type::getDoubleTy(context),wid),len) ;
+            else 
+                return llvm::ArrayType::get(llvm::ArrayType::get(llvm::Type::getDoubleTy(context),wid),len) ;
         default:
             break;
     }

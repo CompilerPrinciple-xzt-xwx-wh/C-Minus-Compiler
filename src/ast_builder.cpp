@@ -63,7 +63,14 @@ llvm::Value* Node::irBuildVariable(){
     //     // cout<< it.first.getName() << ": " << it.second->getValueID() << endl ;
     llvm::Type *llvmType ;
     for (auto it : nameList) {
-        llvmType = getLlvmType(it.first.getType(),it.first.getSize()) ;
+        // variable and one-dimension arrays' llvmType
+        if ( it.first.getBottomSize() == it.first.getSize() ) {
+            llvmType = getLlvmType(it.first.getType(),it.first.getSize()) ;
+        }
+        // two-dimension arrays' llvmType
+        else {
+            llvmType = getLlvmType(it.first.getType(),it.first.getSize()/it.first.getBottomSize(),it.first.getBottomSize()) ;
+        }
         // global variable
         if (generator.getStack().empty()) {
             llvm::Value *tmp = generator.getModule()->getGlobalVariable(it.first.getName(), true) ;
@@ -546,10 +553,10 @@ llvm::Value *Node::irBuildLeftValue(){
 
         vector<llvm::Value*> indexList1 = { builder.getInt32(0), idx1 } ;
         llvm::Value* ptr_arr = builder.CreateInBoundsGEP(id, llvm::ArrayRef<llvm::Value*>(indexList1), "tmparr" ) ;
-        llvm::Value* arr = builder.CreateLoad(ptr_arr->getType()->getPointerElementType(), ptr_arr, "tmparr") ;
+        // llvm::Value* arr = builder.CreateLoad(ptr_arr->getType()->getPointerElementType(), ptr_arr, "tmparr") ;
         
         vector<llvm::Value*> indexList2 = { builder.getInt32(0), idx2 } ;
-        return builder.CreateInBoundsGEP(arr, llvm::ArrayRef<llvm::Value*>(indexList2), "tmpvar" ) ;
+        return builder.CreateInBoundsGEP(ptr_arr, llvm::ArrayRef<llvm::Value*>(indexList2), "tmpvar" ) ;
     } else {
         //ERROR
         throw logic_error("Error! Invalid left value.") ;
@@ -595,10 +602,10 @@ llvm::Value *Node::irBuildRightValue() {
             idx2 = this->typeCast( idx2, llvm::Type::getInt32Ty(context) ) ;
         vector<llvm::Value*> indexList1 = { builder.getInt32(0), idx1 } ;
         llvm::Value* ptr_arr = builder.CreateInBoundsGEP(id, llvm::ArrayRef<llvm::Value*>(indexList1), "tmparr" ) ;
-        llvm::Value* arr = builder.CreateLoad(ptr_arr->getType()->getPointerElementType(), ptr_arr, "tmparr") ;
+        // llvm::Value* arr = builder.CreateLoad(ptr_arr->getType()->getPointerElementType(), ptr_arr, "tmparr") ;
         
         vector<llvm::Value*> indexList2 = { builder.getInt32(0), idx2 } ;
-        llvm::Value* ptr_var = builder.CreateInBoundsGEP(arr, llvm::ArrayRef<llvm::Value*>(indexList2), "tmpvar" ) ;
+        llvm::Value* ptr_var = builder.CreateInBoundsGEP(ptr_arr, llvm::ArrayRef<llvm::Value*>(indexList2), "tmpvar" ) ;
         return builder.CreateLoad(ptr_var->getType()->getPointerElementType(), ptr_var, "tmpvar" ) ;
     }
 
@@ -835,7 +842,7 @@ llvm::Value* Node::irBuildBreak() {
 }
 
 llvm::Value* Node::irBuildContinue() {
-
+    return nullptr ;
 }
 
 /**
