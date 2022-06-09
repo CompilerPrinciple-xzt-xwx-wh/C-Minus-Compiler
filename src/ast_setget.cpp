@@ -171,6 +171,7 @@ llvm::Instruction::CastOps Node::getCastOperator(llvm::Type* src, llvm::Type* ds
  * modificated by: Wang Hui
  */
 llvm::Value* Node::typeCast(llvm::Value* src, llvm::Type* dst){
+    if ( src->getType() == dst ) return src ;
     llvm::Instruction::CastOps op = getCastOperator(src->getType(), dst);
     return builder.CreateCast(op, src, dst, "tmptypecast");
 }
