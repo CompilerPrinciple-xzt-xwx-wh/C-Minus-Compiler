@@ -1,17 +1,17 @@
-int MAXN = 1000;
+int array[10000];
 
-int partition( int array[], int left, int right )
+int partition(int left, int right )
 {
 	int pivot = array[(left+right)/2], i = left, j = right;
 	while (i <= j) {
-		while ( array[i] < pivot ) { i++; }
-		while ( array[j] > pivot ) { j--; }
+		while ( array[i] < pivot ) { i=i+1; }
+		while ( array[j] > pivot ) { j=j-1; }
 		if ( i <= j ) {
 			int temp = array[i];
 			array[i] = array[j];
 			array[j] = temp;
-			i++;
-			j--;
+			i=i+1;
+			j=j-1;
 		}
 	}
 	
@@ -19,13 +19,15 @@ int partition( int array[], int left, int right )
 }
 
 
-void sort ( int array[], int left, int right )
+int sort (int left, int right )
 {
     if ( left < right ) {
-        int p = partition(array, left, right);
-        sort(array, left, p);
-        sort(array, p+1, right);
+        int p = partition(left, right);
+        int pp = sort(left, p);
+        int ppp = sort(p+1, right);
     }
+
+	return 2;
 }
 
 
@@ -34,17 +36,19 @@ int main()
     int N;
     scanf("%d", &N);
     int i;
-    int array[1000];
 	i = 0;
 	while (i < N) {
-		scanf("%d", &array[i]);
-		i++;
+		int num;
+		scanf("%d", &num);
+		array[i] = num;
+		i=i+1;
 	}
-	sort(array, 0, N - 1);
+	int pppp = sort(0, N - 1);
 	i = 0;
 	while (i < N) {
-		printf("%d\n", array[i]);
-		i++;
+		printf("%d", array[i]);
+		print("");
+		i=i+1;
 	}
 
 	return 0;
