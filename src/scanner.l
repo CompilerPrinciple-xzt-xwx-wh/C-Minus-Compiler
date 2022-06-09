@@ -16,7 +16,7 @@ letter   [a-zA-Z]
 ID      {letter}({digit}|{letter}|"_")*
 
 ICONST   "0"|[1-9]{digit}*
-FCONST   "0"|[1-9]{digit}*"."{digit}+
+FCONST   "0"|{digit}*"."{digit}+
 CCONST   \'.\'|\'\\.\'  
 SCONST   \"(\\.|[^"\\])*\"
 

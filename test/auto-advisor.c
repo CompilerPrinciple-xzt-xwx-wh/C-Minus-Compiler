@@ -1,20 +1,3 @@
-/*
- * @Author: xwxr
- * @Date: 2022-05-14 10:26:11
- * @LastEditors: xwxr
- * @LastEditTime: 2022-05-21 23:10:12
- * @Description: delete addition assignment operator '+=' and division assignment operator '/='
- */
-
-/*
- * @Author: xwxr
- * @Date: 2022-05-14 10:26:11
- * @LastEditors: xwxr
- * @LastEditTime: 2022-05-14 23:36:07
- * @Description: "auto advisor" test for C-Minus.
- */
-
-
 int main()
 {
     char course[100][5], precourse[100][1000], grade[100];
@@ -28,7 +11,7 @@ int main()
         if (ch == '\n') { break; }
         else {
             course[i][j] = ch;
-            j=j+1;;
+            j=j+1;
         }
         while (1) {
             scanf("%c", &ch);
@@ -37,7 +20,7 @@ int main()
                 break;
             } else {
                 course[i][j] = ch;
-                j=j+1;;
+                j=j+1;
             }
         }
         scanf("%d", &crd);
@@ -51,7 +34,7 @@ int main()
                 break;
             } else {
                 precourse[i][j] = ch;
-                j=j+1;;
+                j=j+1;
             }
         }
         scanf("%c", &ch);
@@ -61,11 +44,11 @@ int main()
             grade[i] = ch;
             scanf("%c", &ch);
         }
-        i=i+1;;
+        i=i+1;
     }
     int coursenum = i;
     int creditsAttempted = 0, creditsCompleted = 0, creditsRemain = 0;
-    float GPA = 0.0;
+    float GPA = 0;
     int remainIndex[100], cnt = 0;
     i = 0;
     while (i < coursenum) {
@@ -74,7 +57,7 @@ int main()
                 remainIndex[cnt] = i;
                 cnt=cnt+1;
                 creditsCompleted = creditsCompleted + credit[i];
-                GPA = GPA + credit[i] * ('A' - grade[i] + 4);
+                GPA = GPA + credit[i] * ('A' + 4 - grade[i]);
             } else {
                 creditsRemain = creditsRemain + credit[i];
             }
@@ -82,28 +65,55 @@ int main()
         } else {
             creditsRemain = creditsRemain + credit[i];
         }
-        i=i+1;;
+        i=i+1;
     }
-    GPA = GPA / creditsAttempted;
-    printf("GPA: %.1f\n", GPA);
-    printf("Hours Attempted: %d\n", creditsAttempted);
-    printf("Hours Completed: %d\n", creditsCompleted);
-    printf("Credits Remaining: %d\n\n", creditsRemain);
-    printf("Possible Courses to Take Next\n");
+    if (GPA != 0.0) {
+        GPA = GPA / creditsAttempted;
+    }
+    printf("GPA: %.1f", GPA);
+    print("");
+    printf("Hours Attempted: %d", creditsAttempted);
+    print("");
+    printf("Hours Completed: %d", creditsCompleted);
+    print("");
+    printf("Credits Remaining: %d", creditsRemain);
+    print("");
+    print("");
+    printf("Possible Courses to Take Next");
+    print("");
     if (creditsRemain == 0) {
         printf("  None - Congratulations!");
+        print("");
+    }
+    if (cnt == 0) {
+        int pp = 0;
+        while (pp < coursenum) {
+            if (precourse[pp][0] == '\0') {
+                int q = 0;
+                printf("  ");
+                while (course[pp][q] != '\0') {
+                    printf("%c", course[pp][q]);
+                    q=q+1;
+                }
+                print("");
+            }
+            pp=pp+1;
+        }
     }
     i = 0;
     while (i < coursenum) {
+        if (cnt == 0) {
+            break;
+        }
         if (grade[i] == 'F' || grade[i] == '\0') {
             if (precourse[i][0] == '\0') {
                 j = 0;
                 printf("  ");
                 while (course[i][j] != '\0') {
                     printf("%c", course[i][j]);
-                    j=j+1;;
+                    j=j+1;
                 }
-                printf("\n");
+                print("");
             } else {
                 char precourseterm[5];
                 char precourseset[100];
@@ -142,38 +152,38 @@ int main()
                                 flagnum=flagnum+1;
                                 num=num+1;
                                 l = 0;
-                                k=k+1;;
+                                k=k+1;
                                 if (precourseset[k-1] == '\0') {
                                     break;
                                 }
                             }
                             
                             precourseterm[l] = precourseset[k];
-                            l=l+1;;
-                            k=k+1;;
+                            l=l+1;
+                            k=k+1;
                         }
                         if (num == flagnum) {
                             int p = 0;
                             printf("  ");
                             while (course[i][p] != '\0') {
                                 printf("%c", course[i][p]);
-                                p=p+1;;
+                                p=p+1;
                             }
-                            printf("\n");
+                            print("");
                             break;
                         }
                         k = 0;
-                        j=j+1;;
+                        j=j+1;
                         if (precourse[i][j-1] == '\0') { break; }
                     }
                     precourseset[k] = precourse[i][j];
-                    j=j+1;;
-                    k=k+1;;
+                    j=j+1;
+                    k=k+1;
                     
                 }
             }
         }
-        i=i+1;;
+        i=i+1;
     }
     
 
