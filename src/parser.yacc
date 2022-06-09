@@ -551,7 +551,7 @@ Expression
                 }
     |           Realnumber {
                     $$ = new Node("", "Expression", 1, $1);
-                    $$->setValueType($1->getValueType());
+                    $$->setValueType(TYPE_FLOAT);
                 }
     |           Character {
                     $$ = new Node("", "Expression", 1, $1);
