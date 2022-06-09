@@ -39,6 +39,6 @@ int main() {
     llvm::InitializeNativeTargetAsmParser();
     generator = Generator();
     generator.generate(ASTroot);
-    printf("Main finished!\n");
+    // printf("Main finished!\n");
     return 0;
 }
