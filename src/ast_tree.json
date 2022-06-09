@@ -11,14 +11,14 @@
 							"children" : 
 							[
 								{
-									"name" : "CLOSECURLY"
-								},
-								{
 									"children" : 
 									[
 										{
 											"children" : 
 											[
+												{
+													"name" : "CLOSECURLY"
+												},
 												{
 													"children" : 
 													[
@@ -44,19 +44,1189 @@
 																											"children" : 
 																											[
 																												{
+																													"children" : 
+																													[
+																														{
+																															"children" : 
+																															[
+																																{
+																																	"children" : 
+																																	[
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"name" : "SEMI"
+																																										},
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"name" : "Integer"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										},
+																																										{
+																																											"name" : "RETURN"
+																																										}
+																																									],
+																																									"name" : "Statement"
+																																								}
+																																							],
+																																							"name" : "Instruction"
+																																						}
+																																					],
+																																					"name" : "FunctionCode"
+																																				},
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"name" : "CLOSECURLY"
+																																								},
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "SEMI"
+																																														},
+																																														{
+																																															"children" : 
+																																															[
+																																																{
+																																																	"name" : "CLOSEPAREN"
+																																																},
+																																																{
+																																																	"children" : 
+																																																	[
+																																																		{
+																																																			"children" : 
+																																																			[
+																																																				{
+																																																					"name" : "String"
+																																																				}
+																																																			],
+																																																			"name" : "Expression"
+																																																		}
+																																																	],
+																																																	"name" : "Arguments"
+																																																},
+																																																{
+																																																	"name" : "OPENPAREN"
+																																																},
+																																																{
+																																																	"name" : "ID"
+																																																}
+																																															],
+																																															"name" : "Expression"
+																																														}
+																																													],
+																																													"name" : "Statement"
+																																												}
+																																											],
+																																											"name" : "Instruction"
+																																										}
+																																									],
+																																									"name" : "FunctionCode"
+																																								},
+																																								{
+																																									"name" : "OPENCURLY"
+																																								},
+																																								{
+																																									"name" : "CLOSEPAREN"
+																																								},
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "Integer"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												},
+																																												{
+																																													"name" : "EQUAL"
+																																												},
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "CLOSEBRACKET"
+																																														},
+																																														{
+																																															"children" : 
+																																															[
+																																																{
+																																																	"name" : "Integer"
+																																																}
+																																															],
+																																															"name" : "Expression"
+																																														},
+																																														{
+																																															"name" : "OPENBRACKET"
+																																														},
+																																														{
+																																															"name" : "CLOSEBRACKET"
+																																														},
+																																														{
+																																															"children" : 
+																																															[
+																																																{
+																																																	"name" : "Integer"
+																																																}
+																																															],
+																																															"name" : "Expression"
+																																														},
+																																														{
+																																															"name" : "OPENBRACKET"
+																																														},
+																																														{
+																																															"name" : "ID"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										},
+																																										{
+																																											"name" : "OR"
+																																										},
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "Integer"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												},
+																																												{
+																																													"name" : "EQUAL"
+																																												},
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "CLOSEBRACKET"
+																																														},
+																																														{
+																																															"children" : 
+																																															[
+																																																{
+																																																	"name" : "Integer"
+																																																}
+																																															],
+																																															"name" : "Expression"
+																																														},
+																																														{
+																																															"name" : "OPENBRACKET"
+																																														},
+																																														{
+																																															"name" : "CLOSEBRACKET"
+																																														},
+																																														{
+																																															"children" : 
+																																															[
+																																																{
+																																																	"name" : "Integer"
+																																																}
+																																															],
+																																															"name" : "Expression"
+																																														},
+																																														{
+																																															"name" : "OPENBRACKET"
+																																														},
+																																														{
+																																															"name" : "ID"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										}
+																																									],
+																																									"name" : "Expression"
+																																								},
+																																								{
+																																									"name" : "OPENPAREN"
+																																								},
+																																								{
+																																									"name" : "IF"
+																																								}
+																																							],
+																																							"name" : "Statement"
+																																						}
+																																					],
+																																					"name" : "Instruction"
+																																				}
+																																			],
+																																			"name" : "FunctionCode"
+																																		},
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"name" : "SEMI"
+																																						},
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"name" : "CLOSEPAREN"
+																																								},
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"name" : "Integer"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										}
+																																									],
+																																									"name" : "Arguments"
+																																								},
+																																								{
+																																									"name" : "OPENPAREN"
+																																								},
+																																								{
+																																									"name" : "ID"
+																																								}
+																																							],
+																																							"name" : "Expression"
+																																						}
+																																					],
+																																					"name" : "Statement"
+																																				}
+																																			],
+																																			"name" : "Instruction"
+																																		}
+																																	],
+																																	"name" : "FunctionCode"
+																																},
+																																{
+																																	"children" : 
+																																	[
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"name" : "CLOSECURLY"
+																																				},
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"name" : "SEMI"
+																																												},
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "CLOSEPAREN"
+																																														},
+																																														{
+																																															"children" : 
+																																															[
+																																																{
+																																																	"children" : 
+																																																	[
+																																																		{
+																																																			"name" : "String"
+																																																		}
+																																																	],
+																																																	"name" : "Expression"
+																																																}
+																																															],
+																																															"name" : "Arguments"
+																																														},
+																																														{
+																																															"name" : "OPENPAREN"
+																																														},
+																																														{
+																																															"name" : "ID"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												}
+																																											],
+																																											"name" : "Statement"
+																																										}
+																																									],
+																																									"name" : "Instruction"
+																																								}
+																																							],
+																																							"name" : "FunctionCode"
+																																						},
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"name" : "CLOSECURLY"
+																																										},
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"children" : 
+																																															[
+																																																{
+																																																	"name" : "SEMI"
+																																																},
+																																																{
+																																																	"children" : 
+																																																	[
+																																																		{
+																																																			"name" : "CLOSEPAREN"
+																																																		},
+																																																		{
+																																																			"children" : 
+																																																			[
+																																																				{
+																																																					"children" : 
+																																																					[
+																																																						{
+																																																							"children" : 
+																																																							[
+																																																								{
+																																																									"name" : "CLOSEBRACKET"
+																																																								},
+																																																								{
+																																																									"children" : 
+																																																									[
+																																																										{
+																																																											"name" : "ID"
+																																																										}
+																																																									],
+																																																									"name" : "Expression"
+																																																								},
+																																																								{
+																																																									"name" : "OPENBRACKET"
+																																																								},
+																																																								{
+																																																									"name" : "CLOSEBRACKET"
+																																																								},
+																																																								{
+																																																									"children" : 
+																																																									[
+																																																										{
+																																																											"name" : "ID"
+																																																										}
+																																																									],
+																																																									"name" : "Expression"
+																																																								},
+																																																								{
+																																																									"name" : "OPENBRACKET"
+																																																								},
+																																																								{
+																																																									"name" : "ID"
+																																																								}
+																																																							],
+																																																							"name" : "Expression"
+																																																						}
+																																																					],
+																																																					"name" : "Arguments"
+																																																				},
+																																																				{
+																																																					"name" : "COMMA"
+																																																				},
+																																																				{
+																																																					"children" : 
+																																																					[
+																																																						{
+																																																							"name" : "String"
+																																																						}
+																																																					],
+																																																					"name" : "Expression"
+																																																				}
+																																																			],
+																																																			"name" : "Arguments"
+																																																		},
+																																																		{
+																																																			"name" : "OPENPAREN"
+																																																		},
+																																																		{
+																																																			"name" : "ID"
+																																																		}
+																																																	],
+																																																	"name" : "Expression"
+																																																}
+																																															],
+																																															"name" : "Statement"
+																																														}
+																																													],
+																																													"name" : "Instruction"
+																																												}
+																																											],
+																																											"name" : "FunctionCode"
+																																										},
+																																										{
+																																											"name" : "OPENCURLY"
+																																										},
+																																										{
+																																											"name" : "CLOSEPAREN"
+																																										},
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"name" : "INCR_M"
+																																												},
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "ID"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										},
+																																										{
+																																											"name" : "SEMI"
+																																										},
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "Integer"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												},
+																																												{
+																																													"name" : "GT"
+																																												},
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "ID"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										},
+																																										{
+																																											"name" : "SEMI"
+																																										},
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "Integer"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												},
+																																												{
+																																													"name" : "ASSIGN"
+																																												},
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "ID"
+																																														}
+																																													],
+																																													"name" : "Expression"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										},
+																																										{
+																																											"name" : "OPENPAREN"
+																																										},
+																																										{
+																																											"name" : "FOR"
+																																										}
+																																									],
+																																									"name" : "Statement"
+																																								}
+																																							],
+																																							"name" : "Instruction"
+																																						}
+																																					],
+																																					"name" : "FunctionCode"
+																																				},
+																																				{
+																																					"name" : "OPENCURLY"
+																																				},
+																																				{
+																																					"name" : "CLOSEPAREN"
+																																				},
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"name" : "INCR_M"
+																																						},
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"name" : "ID"
+																																								}
+																																							],
+																																							"name" : "Expression"
+																																						}
+																																					],
+																																					"name" : "Expression"
+																																				},
+																																				{
+																																					"name" : "SEMI"
+																																				},
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"name" : "Integer"
+																																								}
+																																							],
+																																							"name" : "Expression"
+																																						},
+																																						{
+																																							"name" : "GT"
+																																						},
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"name" : "ID"
+																																								}
+																																							],
+																																							"name" : "Expression"
+																																						}
+																																					],
+																																					"name" : "Expression"
+																																				},
+																																				{
+																																					"name" : "SEMI"
+																																				},
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"name" : "Integer"
+																																								}
+																																							],
+																																							"name" : "Expression"
+																																						},
+																																						{
+																																							"name" : "ASSIGN"
+																																						},
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"name" : "ID"
+																																								}
+																																							],
+																																							"name" : "Expression"
+																																						}
+																																					],
+																																					"name" : "Expression"
+																																				},
+																																				{
+																																					"name" : "OPENPAREN"
+																																				},
+																																				{
+																																					"name" : "FOR"
+																																				}
+																																			],
+																																			"name" : "Statement"
+																																		}
+																																	],
+																																	"name" : "Instruction"
+																																}
+																															],
+																															"name" : "FunctionCode"
+																														},
+																														{
+																															"children" : 
+																															[
+																																{
+																																	"children" : 
+																																	[
+																																		{
+																																			"name" : "CLOSECURLY"
+																																		},
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"children" : 
+																																							[
+																																								{
+																																									"name" : "CLOSECURLY"
+																																								},
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"children" : 
+																																													[
+																																														{
+																																															"name" : "SEMI"
+																																														},
+																																														{
+																																															"children" : 
+																																															[
+																																																{
+																																																	"children" : 
+																																																	[
+																																																		{
+																																																			"children" : 
+																																																			[
+																																																				{
+																																																					"name" : "ID"
+																																																				}
+																																																			],
+																																																			"name" : "Expression"
+																																																		},
+																																																		{
+																																																			"name" : "MUL"
+																																																		},
+																																																		{
+																																																			"children" : 
+																																																			[
+																																																				{
+																																																					"name" : "ID"
+																																																				}
+																																																			],
+																																																			"name" : "Expression"
+																																																		}
+																																																	],
+																																																	"name" : "Expression"
+																																																},
+																																																{
+																																																	"name" : "ASSIGN"
+																																																},
+																																																{
+																																																	"children" : 
+																																																	[
+																																																		{
+																																																			"name" : "CLOSEBRACKET"
+																																																		},
+																																																		{
+																																																			"children" : 
+																																																			[
+																																																				{
+																																																					"name" : "ID"
+																																																				}
+																																																			],
+																																																			"name" : "Expression"
+																																																		},
+																																																		{
+																																																			"name" : "OPENBRACKET"
+																																																		},
+																																																		{
+																																																			"name" : "CLOSEBRACKET"
+																																																		},
+																																																		{
+																																																			"children" : 
+																																																			[
+																																																				{
+																																																					"name" : "ID"
+																																																				}
+																																																			],
+																																																			"name" : "Expression"
+																																																		},
+																																																		{
+																																																			"name" : "OPENBRACKET"
+																																																		},
+																																																		{
+																																																			"name" : "ID"
+																																																		}
+																																																	],
+																																																	"name" : "Expression"
+																																																}
+																																															],
+																																															"name" : "Expression"
+																																														}
+																																													],
+																																													"name" : "Statement"
+																																												}
+																																											],
+																																											"name" : "Instruction"
+																																										}
+																																									],
+																																									"name" : "FunctionCode"
+																																								},
+																																								{
+																																									"name" : "OPENCURLY"
+																																								},
+																																								{
+																																									"name" : "CLOSEPAREN"
+																																								},
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"name" : "INCR_P"
+																																										},
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"name" : "ID"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										}
+																																									],
+																																									"name" : "Expression"
+																																								},
+																																								{
+																																									"name" : "SEMI"
+																																								},
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"name" : "ID"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										},
+																																										{
+																																											"name" : "LT"
+																																										},
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"name" : "ID"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										}
+																																									],
+																																									"name" : "Expression"
+																																								},
+																																								{
+																																									"name" : "SEMI"
+																																								},
+																																								{
+																																									"children" : 
+																																									[
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"name" : "Integer"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										},
+																																										{
+																																											"name" : "ASSIGN"
+																																										},
+																																										{
+																																											"children" : 
+																																											[
+																																												{
+																																													"name" : "ID"
+																																												}
+																																											],
+																																											"name" : "Expression"
+																																										}
+																																									],
+																																									"name" : "Expression"
+																																								},
+																																								{
+																																									"name" : "OPENPAREN"
+																																								},
+																																								{
+																																									"name" : "FOR"
+																																								}
+																																							],
+																																							"name" : "Statement"
+																																						}
+																																					],
+																																					"name" : "Instruction"
+																																				}
+																																			],
+																																			"name" : "FunctionCode"
+																																		},
+																																		{
+																																			"name" : "OPENCURLY"
+																																		},
+																																		{
+																																			"name" : "CLOSEPAREN"
+																																		},
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"name" : "INCR_P"
+																																				},
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"name" : "ID"
+																																						}
+																																					],
+																																					"name" : "Expression"
+																																				}
+																																			],
+																																			"name" : "Expression"
+																																		},
+																																		{
+																																			"name" : "SEMI"
+																																		},
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"name" : "ID"
+																																						}
+																																					],
+																																					"name" : "Expression"
+																																				},
+																																				{
+																																					"name" : "LT"
+																																				},
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"name" : "ID"
+																																						}
+																																					],
+																																					"name" : "Expression"
+																																				}
+																																			],
+																																			"name" : "Expression"
+																																		},
+																																		{
+																																			"name" : "SEMI"
+																																		},
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"name" : "Integer"
+																																						}
+																																					],
+																																					"name" : "Expression"
+																																				},
+																																				{
+																																					"name" : "ASSIGN"
+																																				},
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"name" : "ID"
+																																						}
+																																					],
+																																					"name" : "Expression"
+																																				}
+																																			],
+																																			"name" : "Expression"
+																																		},
+																																		{
+																																			"name" : "OPENPAREN"
+																																		},
+																																		{
+																																			"name" : "FOR"
+																																		}
+																																	],
+																																	"name" : "Statement"
+																																}
+																															],
+																															"name" : "Instruction"
+																														}
+																													],
+																													"name" : "FunctionCode"
+																												},
+																												{
+																													"children" : 
+																													[
+																														{
+																															"children" : 
+																															[
+																																{
+																																	"name" : "SEMI"
+																																},
+																																{
+																																	"children" : 
+																																	[
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"name" : "CLOSEBRACKET"
+																																				},
+																																				{
+																																					"name" : "Integer"
+																																				},
+																																				{
+																																					"name" : "OPENBRACKET"
+																																				},
+																																				{
+																																					"name" : "ID"
+																																				}
+																																			],
+																																			"name" : "LocalVariable"
+																																		}
+																																	],
+																																	"name" : "LocalVariableList"
+																																},
+																																{
+																																	"children" : 
+																																	[
+																																		{
+																																			"name" : "INT"
+																																		}
+																																	],
+																																	"name" : "Typer: int"
+																																}
+																															],
+																															"name" : "Definition"
+																														}
+																													],
+																													"name" : "Instruction"
+																												}
+																											],
+																											"name" : "FunctionCode"
+																										},
+																										{
+																											"children" : 
+																											[
+																												{
+																													"children" : 
+																													[
+																														{
+																															"name" : "SEMI"
+																														},
+																														{
+																															"children" : 
+																															[
+																																{
+																																	"children" : 
+																																	[
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"children" : 
+																																					[
+																																						{
+																																							"name" : "Integer"
+																																						}
+																																					],
+																																					"name" : "Expression"
+																																				},
+																																				{
+																																					"name" : "ASSIGN"
+																																				},
+																																				{
+																																					"name" : "ID"
+																																				}
+																																			],
+																																			"name" : "LocalVariable"
+																																		}
+																																	],
+																																	"name" : "LocalVariableList"
+																																},
+																																{
+																																	"name" : "COMMA"
+																																},
+																																{
+																																	"children" : 
+																																	[
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"name" : "Integer"
+																																				}
+																																			],
+																																			"name" : "Expression"
+																																		},
+																																		{
+																																			"name" : "ASSIGN"
+																																		},
+																																		{
+																																			"name" : "ID"
+																																		}
+																																	],
+																																	"name" : "LocalVariable"
+																																}
+																															],
+																															"name" : "LocalVariableList"
+																														},
+																														{
+																															"children" : 
+																															[
+																																{
+																																	"name" : "INT"
+																																}
+																															],
+																															"name" : "Typer: int"
+																														}
+																													],
+																													"name" : "Definition"
+																												}
+																											],
+																											"name" : "Instruction"
+																										}
+																									],
+																									"name" : "FunctionCode"
+																								},
+																								{
+																									"children" : 
+																									[
+																										{
+																											"children" : 
+																											[
+																												{
 																													"name" : "SEMI"
 																												},
 																												{
 																													"children" : 
 																													[
 																														{
-																															"name" : "Integer"
+																															"name" : "CLOSEPAREN"
+																														},
+																														{
+																															"children" : 
+																															[
+																																{
+																																	"children" : 
+																																	[
+																																		{
+																																			"name" : "CLOSEBRACKET"
+																																		},
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"name" : "Integer"
+																																				}
+																																			],
+																																			"name" : "Expression"
+																																		},
+																																		{
+																																			"name" : "OPENBRACKET"
+																																		},
+																																		{
+																																			"name" : "CLOSEBRACKET"
+																																		},
+																																		{
+																																			"children" : 
+																																			[
+																																				{
+																																					"name" : "Integer"
+																																				}
+																																			],
+																																			"name" : "Expression"
+																																		},
+																																		{
+																																			"name" : "OPENBRACKET"
+																																		},
+																																		{
+																																			"name" : "ID"
+																																		}
+																																	],
+																																	"name" : "Expression"
+																																}
+																															],
+																															"name" : "Arguments"
+																														},
+																														{
+																															"name" : "OPENPAREN"
+																														},
+																														{
+																															"name" : "ID"
 																														}
 																													],
 																													"name" : "Expression"
-																												},
-																												{
-																													"name" : "RETURN"
 																												}
 																											],
 																											"name" : "Statement"
@@ -80,11 +1250,23 @@
 																											"children" : 
 																											[
 																												{
-																													"name" : "CLOSEPAREN"
+																													"children" : 
+																													[
+																														{
+																															"name" : "Integer"
+																														}
+																													],
+																													"name" : "Expression"
+																												},
+																												{
+																													"name" : "ASSIGN"
 																												},
 																												{
 																													"children" : 
 																													[
+																														{
+																															"name" : "CLOSEBRACKET"
+																														},
 																														{
 																															"children" : 
 																															[
@@ -93,15 +1275,30 @@
 																																}
 																															],
 																															"name" : "Expression"
+																														},
+																														{
+																															"name" : "OPENBRACKET"
+																														},
+																														{
+																															"name" : "CLOSEBRACKET"
+																														},
+																														{
+																															"children" : 
+																															[
+																																{
+																																	"name" : "Integer"
+																																}
+																															],
+																															"name" : "Expression"
+																														},
+																														{
+																															"name" : "OPENBRACKET"
+																														},
+																														{
+																															"name" : "ID"
 																														}
 																													],
-																													"name" : "Arguments"
-																												},
-																												{
-																													"name" : "OPENPAREN"
-																												},
-																												{
-																													"name" : "ID"
+																													"name" : "Expression"
 																												}
 																											],
 																											"name" : "Expression"
@@ -122,126 +1319,6 @@
 																							"children" : 
 																							[
 																								{
-																									"name" : "CLOSECURLY"
-																								},
-																								{
-																									"children" : 
-																									[
-																										{
-																											"children" : 
-																											[
-																												{
-																													"children" : 
-																													[
-																														{
-																															"name" : "SEMI"
-																														},
-																														{
-																															"children" : 
-																															[
-																																{
-																																	"name" : "CLOSEPAREN"
-																																},
-																																{
-																																	"children" : 
-																																	[
-																																		{
-																																			"children" : 
-																																			[
-																																				{
-																																					"name" : "CLOSEBRACKET"
-																																				},
-																																				{
-																																					"children" : 
-																																					[
-																																						{
-																																							"name" : "ID"
-																																						}
-																																					],
-																																					"name" : "Expression"
-																																				},
-																																				{
-																																					"name" : "OPENBRACKET"
-																																				},
-																																				{
-																																					"name" : "ID"
-																																				}
-																																			],
-																																			"name" : "Expression"
-																																		}
-																																	],
-																																	"name" : "Arguments"
-																																},
-																																{
-																																	"name" : "OPENPAREN"
-																																},
-																																{
-																																	"name" : "ID"
-																																}
-																															],
-																															"name" : "Expression"
-																														}
-																													],
-																													"name" : "Statement"
-																												}
-																											],
-																											"name" : "Instruction"
-																										}
-																									],
-																									"name" : "FunctionCode"
-																								},
-																								{
-																									"name" : "OPENCURLY"
-																								},
-																								{
-																									"name" : "CLOSEPAREN"
-																								},
-																								{
-																									"children" : 
-																									[
-																										{
-																											"children" : 
-																											[
-																												{
-																													"children" : 
-																													[
-																														{
-																															"name" : "Integer"
-																														}
-																													],
-																													"name" : "Expression"
-																												},
-																												{
-																													"name" : "MINUS"
-																												},
-																												{
-																													"children" : 
-																													[
-																														{
-																															"name" : "ID"
-																														}
-																													],
-																													"name" : "Expression"
-																												}
-																											],
-																											"name" : "Expression"
-																										},
-																										{
-																											"name" : "ASSIGN"
-																										},
-																										{
-																											"children" : 
-																											[
-																												{
-																													"name" : "ID"
-																												}
-																											],
-																											"name" : "Expression"
-																										}
-																									],
-																									"name" : "Expression"
-																								},
-																								{
 																									"name" : "SEMI"
 																								},
 																								{
@@ -251,64 +1328,43 @@
 																											"children" : 
 																											[
 																												{
+																													"name" : "CLOSEBRACKET"
+																												},
+																												{
 																													"name" : "Integer"
-																												}
-																											],
-																											"name" : "Expression"
-																										},
-																										{
-																											"name" : "GE"
-																										},
-																										{
-																											"children" : 
-																											[
+																												},
+																												{
+																													"name" : "OPENBRACKET"
+																												},
+																												{
+																													"name" : "CLOSEBRACKET"
+																												},
+																												{
+																													"name" : "Integer"
+																												},
+																												{
+																													"name" : "OPENBRACKET"
+																												},
 																												{
 																													"name" : "ID"
 																												}
 																											],
-																											"name" : "Expression"
+																											"name" : "LocalVariable"
 																										}
 																									],
-																									"name" : "Expression"
-																								},
-																								{
-																									"name" : "SEMI"
+																									"name" : "LocalVariableList"
 																								},
 																								{
 																									"children" : 
 																									[
 																										{
-																											"children" : 
-																											[
-																												{
-																													"name" : "Integer"
-																												}
-																											],
-																											"name" : "Expression"
-																										},
-																										{
-																											"name" : "ASSIGN"
-																										},
-																										{
-																											"children" : 
-																											[
-																												{
-																													"name" : "ID"
-																												}
-																											],
-																											"name" : "Expression"
+																											"name" : "INT"
 																										}
 																									],
-																									"name" : "Expression"
-																								},
-																								{
-																									"name" : "OPENPAREN"
-																								},
-																								{
-																									"name" : "FOR"
+																									"name" : "Typer: int"
 																								}
 																							],
-																							"name" : "Statement"
+																							"name" : "Definition"
 																						}
 																					],
 																					"name" : "Instruction"
@@ -323,296 +1379,17 @@
 																					"children" : 
 																					[
 																						{
-																							"name" : "CLOSECURLY"
+																							"name" : "SEMI"
 																						},
 																						{
 																							"children" : 
 																							[
 																								{
-																									"children" : 
-																									[
-																										{
-																											"children" : 
-																											[
-																												{
-																													"name" : "CLOSECURLY"
-																												},
-																												{
-																													"children" : 
-																													[
-																														{
-																															"children" : 
-																															[
-																																{
-																																	"children" : 
-																																	[
-																																		{
-																																			"name" : "SEMI"
-																																		},
-																																		{
-																																			"children" : 
-																																			[
-																																				{
-																																					"children" : 
-																																					[
-																																						{
-																																							"children" : 
-																																							[
-																																								{
-																																									"name" : "Integer"
-																																								}
-																																							],
-																																							"name" : "Expression"
-																																						},
-																																						{
-																																							"name" : "MINUS"
-																																						},
-																																						{
-																																							"children" : 
-																																							[
-																																								{
-																																									"children" : 
-																																									[
-																																										{
-																																											"name" : "Integer"
-																																										}
-																																									],
-																																									"name" : "Expression"
-																																								},
-																																								{
-																																									"name" : "MUL"
-																																								},
-																																								{
-																																									"children" : 
-																																									[
-																																										{
-																																											"name" : "CLOSEBRACKET"
-																																										},
-																																										{
-																																											"children" : 
-																																											[
-																																												{
-																																													"children" : 
-																																													[
-																																														{
-																																															"name" : "Integer"
-																																														}
-																																													],
-																																													"name" : "Expression"
-																																												},
-																																												{
-																																													"name" : "MINUS"
-																																												},
-																																												{
-																																													"children" : 
-																																													[
-																																														{
-																																															"name" : "ID"
-																																														}
-																																													],
-																																													"name" : "Expression"
-																																												}
-																																											],
-																																											"name" : "Expression"
-																																										},
-																																										{
-																																											"name" : "OPENBRACKET"
-																																										},
-																																										{
-																																											"name" : "ID"
-																																										}
-																																									],
-																																									"name" : "Expression"
-																																								}
-																																							],
-																																							"name" : "Expression"
-																																						}
-																																					],
-																																					"name" : "Expression"
-																																				},
-																																				{
-																																					"name" : "ASSIGN"
-																																				},
-																																				{
-																																					"children" : 
-																																					[
-																																						{
-																																							"name" : "CLOSEBRACKET"
-																																						},
-																																						{
-																																							"children" : 
-																																							[
-																																								{
-																																									"name" : "ID"
-																																								}
-																																							],
-																																							"name" : "Expression"
-																																						},
-																																						{
-																																							"name" : "OPENBRACKET"
-																																						},
-																																						{
-																																							"name" : "ID"
-																																						}
-																																					],
-																																					"name" : "Expression"
-																																				}
-																																			],
-																																			"name" : "Expression"
-																																		}
-																																	],
-																																	"name" : "Statement"
-																																}
-																															],
-																															"name" : "Instruction"
-																														}
-																													],
-																													"name" : "FunctionCode"
-																												},
-																												{
-																													"name" : "OPENCURLY"
-																												},
-																												{
-																													"name" : "ELSE"
-																												},
-																												{
-																													"name" : "CLOSECURLY"
-																												},
-																												{
-																													"children" : 
-																													[
-																														{
-																															"children" : 
-																															[
-																																{
-																																	"children" : 
-																																	[
-																																		{
-																																			"name" : "SEMI"
-																																		},
-																																		{
-																																			"children" : 
-																																			[
-																																				{
-																																					"children" : 
-																																					[
-																																						{
-																																							"name" : "Integer"
-																																						}
-																																					],
-																																					"name" : "Expression"
-																																				},
-																																				{
-																																					"name" : "ASSIGN"
-																																				},
-																																				{
-																																					"children" : 
-																																					[
-																																						{
-																																							"name" : "CLOSEBRACKET"
-																																						},
-																																						{
-																																							"children" : 
-																																							[
-																																								{
-																																									"name" : "ID"
-																																								}
-																																							],
-																																							"name" : "Expression"
-																																						},
-																																						{
-																																							"name" : "OPENBRACKET"
-																																						},
-																																						{
-																																							"name" : "ID"
-																																						}
-																																					],
-																																					"name" : "Expression"
-																																				}
-																																			],
-																																			"name" : "Expression"
-																																		}
-																																	],
-																																	"name" : "Statement"
-																																}
-																															],
-																															"name" : "Instruction"
-																														}
-																													],
-																													"name" : "FunctionCode"
-																												},
-																												{
-																													"name" : "OPENCURLY"
-																												},
-																												{
-																													"name" : "CLOSEPAREN"
-																												},
-																												{
-																													"children" : 
-																													[
-																														{
-																															"children" : 
-																															[
-																																{
-																																	"name" : "Integer"
-																																}
-																															],
-																															"name" : "Expression"
-																														},
-																														{
-																															"name" : "EQUAL"
-																														},
-																														{
-																															"children" : 
-																															[
-																																{
-																																	"name" : "ID"
-																																}
-																															],
-																															"name" : "Expression"
-																														}
-																													],
-																													"name" : "Expression"
-																												},
-																												{
-																													"name" : "OPENPAREN"
-																												},
-																												{
-																													"name" : "IF"
-																												}
-																											],
-																											"name" : "Statement"
-																										}
-																									],
-																									"name" : "Instruction"
-																								}
-																							],
-																							"name" : "FunctionCode"
-																						},
-																						{
-																							"name" : "OPENCURLY"
-																						},
-																						{
-																							"name" : "CLOSEPAREN"
-																						},
-																						{
-																							"children" : 
-																							[
+																									"name" : "CLOSEPAREN"
+																								},
 																								{
 																									"children" : 
 																									[
-																										{
-																											"children" : 
-																											[
-																												{
-																													"name" : "Integer"
-																												}
-																											],
-																											"name" : "Expression"
-																										},
-																										{
-																											"name" : "PLUS"
-																										},
 																										{
 																											"children" : 
 																											[
@@ -623,88 +1400,16 @@
 																											"name" : "Expression"
 																										}
 																									],
-																									"name" : "Expression"
+																									"name" : "Arguments"
 																								},
 																								{
-																									"name" : "ASSIGN"
+																									"name" : "OPENPAREN"
 																								},
 																								{
-																									"children" : 
-																									[
-																										{
-																											"name" : "ID"
-																										}
-																									],
-																									"name" : "Expression"
+																									"name" : "ID"
 																								}
 																							],
 																							"name" : "Expression"
-																						},
-																						{
-																							"name" : "SEMI"
-																						},
-																						{
-																							"children" : 
-																							[
-																								{
-																									"children" : 
-																									[
-																										{
-																											"name" : "Integer"
-																										}
-																									],
-																									"name" : "Expression"
-																								},
-																								{
-																									"name" : "LT"
-																								},
-																								{
-																									"children" : 
-																									[
-																										{
-																											"name" : "ID"
-																										}
-																									],
-																									"name" : "Expression"
-																								}
-																							],
-																							"name" : "Expression"
-																						},
-																						{
-																							"name" : "SEMI"
-																						},
-																						{
-																							"children" : 
-																							[
-																								{
-																									"children" : 
-																									[
-																										{
-																											"name" : "Integer"
-																										}
-																									],
-																									"name" : "Expression"
-																								},
-																								{
-																									"name" : "ASSIGN"
-																								},
-																								{
-																									"children" : 
-																									[
-																										{
-																											"name" : "ID"
-																										}
-																									],
-																									"name" : "Expression"
-																								}
-																							],
-																							"name" : "Expression"
-																						},
-																						{
-																							"name" : "OPENPAREN"
-																						},
-																						{
-																							"name" : "FOR"
 																						}
 																					],
 																					"name" : "Statement"
@@ -731,13 +1436,55 @@
 																							"children" : 
 																							[
 																								{
-																									"name" : "CLOSEBRACKET"
+																									"children" : 
+																									[
+																										{
+																											"name" : "CLOSEPAREN"
+																										},
+																										{
+																											"children" : 
+																											[
+																												{
+																													"children" : 
+																													[
+																														{
+																															"children" : 
+																															[
+																																{
+																																	"name" : "Integer"
+																																}
+																															],
+																															"name" : "Expression"
+																														}
+																													],
+																													"name" : "Arguments"
+																												},
+																												{
+																													"name" : "COMMA"
+																												},
+																												{
+																													"children" : 
+																													[
+																														{
+																															"name" : "Integer"
+																														}
+																													],
+																													"name" : "Expression"
+																												}
+																											],
+																											"name" : "Arguments"
+																										},
+																										{
+																											"name" : "OPENPAREN"
+																										},
+																										{
+																											"name" : "ID"
+																										}
+																									],
+																									"name" : "Expression"
 																								},
 																								{
-																									"name" : "Integer"
-																								},
-																								{
-																									"name" : "OPENBRACKET"
+																									"name" : "ASSIGN"
 																								},
 																								{
 																									"name" : "ID"
@@ -821,6 +1568,147 @@
 													"name" : "FunctionCode"
 												},
 												{
+													"name" : "OPENCURLY"
+												},
+												{
+													"name" : "CLOSEPAREN"
+												},
+												{
+													"name" : "OPENPAREN"
+												},
+												{
+													"name" : "ID"
+												}
+											],
+											"name" : "Function"
+										},
+										{
+											"children" : 
+											[
+												{
+													"name" : "INT"
+												}
+											],
+											"name" : "Typer: int"
+										}
+									],
+									"name" : "GlobalDefinition"
+								}
+							],
+							"name" : "GlobalDefinition"
+						},
+						{
+							"children" : 
+							[
+								{
+									"children" : 
+									[
+										{
+											"name" : "CLOSECURLY"
+										},
+										{
+											"children" : 
+											[
+												{
+													"children" : 
+													[
+														{
+															"children" : 
+															[
+																{
+																	"children" : 
+																	[
+																		{
+																			"children" : 
+																			[
+																				{
+																					"name" : "SEMI"
+																				},
+																				{
+																					"children" : 
+																					[
+																						{
+																							"name" : "ID"
+																						}
+																					],
+																					"name" : "Expression"
+																				},
+																				{
+																					"name" : "RETURN"
+																				}
+																			],
+																			"name" : "Statement"
+																		}
+																	],
+																	"name" : "Instruction"
+																}
+															],
+															"name" : "FunctionCode"
+														},
+														{
+															"children" : 
+															[
+																{
+																	"children" : 
+																	[
+																		{
+																			"name" : "SEMI"
+																		},
+																		{
+																			"children" : 
+																			[
+																				{
+																					"children" : 
+																					[
+																						{
+																							"children" : 
+																							[
+																								{
+																									"name" : "ID"
+																								}
+																							],
+																							"name" : "Expression"
+																						},
+																						{
+																							"name" : "MINUS"
+																						},
+																						{
+																							"children" : 
+																							[
+																								{
+																									"name" : "ID"
+																								}
+																							],
+																							"name" : "Expression"
+																						}
+																					],
+																					"name" : "Expression"
+																				},
+																				{
+																					"name" : "ASSIGN"
+																				},
+																				{
+																					"children" : 
+																					[
+																						{
+																							"name" : "ID"
+																						}
+																					],
+																					"name" : "Expression"
+																				}
+																			],
+																			"name" : "Expression"
+																		}
+																	],
+																	"name" : "Statement"
+																}
+															],
+															"name" : "Instruction"
+														}
+													],
+													"name" : "FunctionCode"
+												},
+												{
 													"children" : 
 													[
 														{
@@ -836,58 +1724,25 @@
 																			"children" : 
 																			[
 																				{
-																					"name" : "Integer"
-																				}
-																			],
-																			"name" : "Expression"
-																		},
-																		{
-																			"name" : "ASSIGN"
-																		},
-																		{
-																			"children" : 
-																			[
-																				{
-																					"name" : "CLOSEBRACKET"
-																				},
-																				{
-																					"children" : 
-																					[
-																						{
-																							"name" : "Integer"
-																						}
-																					],
-																					"name" : "Expression"
-																				},
-																				{
-																					"name" : "OPENBRACKET"
-																				},
-																				{
-																					"name" : "CLOSEBRACKET"
-																				},
-																				{
-																					"children" : 
-																					[
-																						{
-																							"name" : "Integer"
-																						}
-																					],
-																					"name" : "Expression"
-																				},
-																				{
-																					"name" : "OPENBRACKET"
-																				},
-																				{
 																					"name" : "ID"
 																				}
 																			],
-																			"name" : "Expression"
+																			"name" : "LocalVariable"
 																		}
 																	],
-																	"name" : "Expression"
+																	"name" : "LocalVariableList"
+																},
+																{
+																	"children" : 
+																	[
+																		{
+																			"name" : "INT"
+																		}
+																	],
+																	"name" : "Typer: int"
 																}
 															],
-															"name" : "Statement"
+															"name" : "Definition"
 														}
 													],
 													"name" : "Instruction"
@@ -896,14 +1751,17 @@
 											"name" : "FunctionCode"
 										},
 										{
+											"name" : "OPENCURLY"
+										},
+										{
+											"name" : "CLOSEPAREN"
+										},
+										{
 											"children" : 
 											[
 												{
 													"children" : 
 													[
-														{
-															"name" : "SEMI"
-														},
 														{
 															"children" : 
 															[
@@ -911,31 +1769,40 @@
 																	"children" : 
 																	[
 																		{
-																			"name" : "CLOSEBRACKET"
-																		},
-																		{
-																			"name" : "Integer"
-																		},
-																		{
-																			"name" : "OPENBRACKET"
-																		},
-																		{
-																			"name" : "CLOSEBRACKET"
-																		},
-																		{
-																			"name" : "Integer"
-																		},
-																		{
-																			"name" : "OPENBRACKET"
-																		},
-																		{
 																			"name" : "ID"
 																		}
 																	],
-																	"name" : "LocalVariable"
+																	"name" : "FunctionVariable"
+																},
+																{
+																	"children" : 
+																	[
+																		{
+																			"name" : "INT"
+																		}
+																	],
+																	"name" : "Typer: int"
 																}
 															],
-															"name" : "LocalVariableList"
+															"name" : "Parameter"
+														}
+													],
+													"name" : "ParameterList"
+												},
+												{
+													"name" : "COMMA"
+												},
+												{
+													"children" : 
+													[
+														{
+															"children" : 
+															[
+																{
+																	"name" : "ID"
+																}
+															],
+															"name" : "FunctionVariable"
 														},
 														{
 															"children" : 
@@ -947,28 +1814,64 @@
 															"name" : "Typer: int"
 														}
 													],
-													"name" : "Definition"
+													"name" : "Parameter"
 												}
 											],
-											"name" : "Instruction"
+											"name" : "ParameterList"
+										},
+										{
+											"name" : "OPENPAREN"
+										},
+										{
+											"name" : "ID"
 										}
 									],
-									"name" : "FunctionCode"
+									"name" : "Function"
 								},
 								{
-									"name" : "OPENCURLY"
-								},
-								{
-									"name" : "CLOSEPAREN"
-								},
-								{
-									"name" : "OPENPAREN"
-								},
-								{
-									"name" : "ID"
+									"children" : 
+									[
+										{
+											"name" : "INT"
+										}
+									],
+									"name" : "Typer: int"
 								}
 							],
-							"name" : "Function"
+							"name" : "GlobalDefinition"
+						}
+					],
+					"name" : "GlobalDefinitionList"
+				},
+				{
+					"children" : 
+					[
+						{
+							"name" : "SEMI"
+						},
+						{
+							"children" : 
+							[
+								{
+									"children" : 
+									[
+										{
+											"name" : "CLOSEBRACKET"
+										},
+										{
+											"name" : "Integer"
+										},
+										{
+											"name" : "OPENBRACKET"
+										},
+										{
+											"name" : "ID"
+										}
+									],
+									"name" : "GlobalVariable"
+								}
+							],
+							"name" : "GlobalVariableList"
 						},
 						{
 							"children" : 
@@ -983,7 +1886,7 @@
 					"name" : "GlobalDefinition"
 				}
 			],
-			"name" : "GlobalDefinition"
+			"name" : "GlobalDefinitionList"
 		}
 	],
 	"name" : "Program"

@@ -78,7 +78,7 @@ llvm::Value* Node::irBuildVariable(){
                 throw logic_error("Error! Redefined global variable: " + it.first.getName()+".") ;
             llvm::GlobalVariable* globalVar = new llvm::GlobalVariable(*generator.getModule(), llvmType, false, llvm::GlobalValue::PrivateLinkage, 0, it.first.getName()) ;
             // // cout << "Global Variable Success!" << endl ;
-        /*
+        
             // Initialize the variable
             // adjust two-dimensional array only
             if ( llvmType->isArrayTy() ) {
@@ -96,19 +96,19 @@ llvm::Value* Node::irBuildVariable(){
                     globalVar->setInitializer(constArray) ;
                 }
             } else {
-                globalVar->setInitializer(llvm::ConstantInt::get(llvmType, 0)) ;
-            }
-        */
-            // Initial value is declared
-            // Only support variable, do not support array
-            if ( it.second != nullptr ) {
-                llvm::Value* var = generator.findValue(it.first.getName()) ;
-                llvm::Value* initial = it.second ;
-                if ( initial->getType() != llvmType ) 
-                    initial = typeCast(initial,llvmType) ;
-                // // cout<< var->isPointerTy() << endl ;
-                builder.CreateStore(initial,var) ;
-                // // cout << "Global Variable Initialized!" << endl ;
+                if ( it.second == nullptr ) 
+                    globalVar->setInitializer(llvm::ConstantInt::get(llvmType, 0)) ;
+                // Initial value is declared
+                // Only support variable, do not support array
+                else {
+                    llvm::Value* var = generator.findValue(it.first.getName()) ;
+                    llvm::Value* initial = it.second ;
+                    if ( initial->getType() != llvmType ) 
+                        initial = typeCast(initial,llvmType) ;
+                    // // cout<< var->isPointerTy() << endl ;
+                    // builder.CreateStore(initial,var) ; 
+                    globalVar->setInitializer(llvm::ConstantInt::get(llvmType, 0)) ;
+                }
             }
         }
         // local variable
@@ -151,7 +151,7 @@ llvm::Function *Node::irBuildFunction(){
 
     // Function --> ID OPENPAREN ParameterList CLOSEPAREN OPENCURLY FunctionCode CLOSECURLY
     vector<pair<string,llvm::Type*>> parameters ;
-    if ( child_Node[2] != nullptr ) 
+    if ( funcnode->child_Node[2] != nullptr ) 
         parameters = funcnode->child_Node[2]->getParameterList() ;
 
     // // cout << "Parameters get!" << endl ;
@@ -442,14 +442,52 @@ llvm::Value* Node::irBuildUnaryOperator() {
     if ( this->child_Node[0]->node_Type == "MINUS" ) {
         return builder.CreateNeg(this->child_Node[1]->irBuildExpression(), "tmpNeg") ;
     }
-    if ( this->child_Node[0]->node_Type == "INCR" ) {
-        //TODO
+    if ( this->child_Node[0]->node_Type == "INCR_P" ) {
+        llvm::Value* operand = this->child_Node[1]->irBuildLeftValue() ;
+        llvm::Value* target = this->child_Node[1]->irBuildRightValue() ;
+        if ( operand->getType()->getPointerElementType() == llvm::Type::getInt32Ty(context) ){
+            llvm::Value* const_one = builder.getInt32(1) ;
+            llvm::Value* ret = builder.CreateAdd(target, const_one, "addtempi") ; 
+            builder.CreateStore( ret, operand) ;
+            return operand ;
+        } else 
+            throw logic_error("Error! Unsupported operand for increment.") ; 
     }
     if ( this->child_Node[0]->node_Type == "ADDRESS" ) {
         //TODO
     }
-    if ( this->child_Node[1]->node_Type == "INCR" ) {
-        //TODO
+    if ( this->child_Node[1]->node_Type == "INCR_P" ) {
+        llvm::Value* operand = this->child_Node[0]->irBuildLeftValue() ;
+        llvm::Value* target = this->child_Node[0]->irBuildRightValue() ;
+        if ( operand->getType()->getPointerElementType() == llvm::Type::getInt32Ty(context) ){
+            llvm::Value* const_one = builder.getInt32(1) ;
+            llvm::Value* ret = builder.CreateAdd(target, const_one, "addtempi") ; 
+            builder.CreateStore( ret, operand) ;
+            return target ;
+        } else 
+            throw logic_error("Error! Unsupported operand for increment.") ; 
+    }
+    if ( this->child_Node[0]->node_Type == "INCR_M" ) {
+        llvm::Value* operand = this->child_Node[1]->irBuildLeftValue() ;
+        llvm::Value* target = this->child_Node[1]->irBuildRightValue() ;
+        if ( operand->getType()->getPointerElementType() == llvm::Type::getInt32Ty(context) ){
+            llvm::Value* const_one = builder.getInt32(1) ;
+            llvm::Value* ret = builder.CreateSub(target, const_one, "addtempi") ; 
+            builder.CreateStore( ret, operand) ;
+            return operand ;
+        } else 
+            throw logic_error("Error! Unsupported operand for increment.") ; 
+    }
+    if ( this->child_Node[1]->node_Type == "INCR_M" ) {
+        llvm::Value* operand = this->child_Node[0]->irBuildLeftValue() ;
+        llvm::Value* target = this->child_Node[0]->irBuildRightValue() ;
+        if ( operand->getType()->getPointerElementType() == llvm::Type::getInt32Ty(context) ){
+            llvm::Value* const_one = builder.getInt32(1) ;
+            llvm::Value* ret = builder.CreateSub(target, const_one, "addtempi") ; 
+            builder.CreateStore( ret, operand) ;
+            return target ;
+        } else 
+            throw logic_error("Error! Unsupported operand for increment.") ; 
     }
     return nullptr ;
 }
