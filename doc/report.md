@@ -2,13 +2,13 @@
 
 
 
-<img src=".\image\zju.png" alt="zju" style="zoom: 40%;" />
+<img src=".\image\zju.jpg" alt="zju" style="zoom: 40%;" />
 
 <h1 align = "center">C-Minus Compiler</h1>
 
 
 
-<img src=".\image\logo.png" alt="logo" style="zoom: 33%;" />
+<img src=".\image\logo.jpg" alt="logo" style="zoom: 33%;" />
 
 
 
@@ -38,7 +38,7 @@
 
 
 
-<h3 align = "center">Date:2022-05-21</h3>
+<h3 align = "center">Date:2022-06-11</h3>
 
 <div style="page-break-after:always"></div>
 
@@ -75,14 +75,8 @@
 
 ```
 |-- README.md							<--项目说明文档
-|-- AST_visualization
-|   |-- example.jpg
-|   |-- example.json
-|   |-- visualization.sh
+|-- AST_visualization					<--AST可视化
 |-- doc
-|   |-- Project 验收细则.md
-|   |-- Project 验收细则.pdf
-|   |-- report.md
 |   |-- report.pdf						<--项目报告
 |   |-- image							<--项目报告图片
 |-- src
@@ -115,11 +109,11 @@
 
 #### 4 组员分工
 
-| 组员   | 具体分工 |
-| ------ | -------- |
-| 汪辉   |          |
-| 徐正韬 |          |
-| 谢文想 |          |
+| 组员   | 具体分工           |
+| ------ | ------------------ |
+| 汪辉   | 语义分析、代码生成 |
+| 徐正韬 | 词法分析、代码测试 |
+| 谢文想 | 语法分析、测试文件 |
 
 
 
@@ -151,7 +145,7 @@ token共分为以下几种情况：
 
 - **关键字**
 
-```markdown
+```
 "char"            {yylval.node = new Node(yytext, "CHAR", 0); return CHAR;}
 "int"             {yylval.node = new Node(yytext, "INT", 0); return INT;}
 "float"           {yylval.node = new Node(yytext, "FLOAT", 0); return FLOAT;}
@@ -168,7 +162,7 @@ token共分为以下几种情况：
 
 - **各种运算符**
 
-```markdown
+```
 "+"               {yylval.node = new Node(yytext, "PLUS", 0); return PLUS;}
 "-"               {yylval.node = new Node(yytext, "MINUS", 0); return MINUS;}
 "*"               {yylval.node = new Node(yytext, "MUL", 0); return MUL;}
@@ -191,7 +185,7 @@ token共分为以下几种情况：
 
 - **括号及标点**
 
-```markdown
+```
 "("               {yylval.node = new Node(yytext, "OPENPAREN", 0); return OPENPAREN;}
 ")"               {yylval.node = new Node(yytext, "CLOSEPAREN", 0); return CLOSEPAREN;}
 "["               {yylval.node = new Node(yytext, "OPENBRACKET", 0); return OPENBRACKET;}
@@ -204,7 +198,7 @@ token共分为以下几种情况：
 
 - 用户自定义变量以及常量
 
-```markdown
+```
 digit   [0-9]
 letter   [a-zA-Z]
 ID      {letter}({digit}|{letter}|"_")*
@@ -223,7 +217,7 @@ SCONST   \"(\\.|[^"\\])*\"
 
 - 注释以及其它转义符
 
-```markdown
+```
 COMMENT ("//"[^\n]*)
 %%
 {COMMENT}         { ;}
@@ -847,6 +841,10 @@ llvm::Value* Node::typeCast(llvm::Value* src, llvm::Type* dst){
 
 ## 第四章 代码生成
 
+通过我们编译出的parse可执⾏⽂件可以将源代码转化为 .ll ⽂件，我们使⽤ llvm-as 命令⽤ .ll ⽂件⽣成 .bc
+
+⽂件，之后使⽤ llc -filetype=obj *.bc 便可⽣成⽬标⽂件，之后使⽤ clang 便可⽣成可执⾏⽂件。
+
 
 
 ## 第五章 测试结果
@@ -857,63 +855,335 @@ llvm::Value* Node::typeCast(llvm::Value* src, llvm::Type* dst){
 
 测试代码：
 
-AST：
+```c
+int i = 1;
 
-IR：
+int main()
+{
+    float f = 0.0;
+    char c = 'a';
+    printf("%d ",i);
+    printf("%c ",c);
+    printf("%.1f ",f);
 
-汇编指令：
+    return 0;
+}
+```
+
+中间代码：
+
+```
+; ModuleID = 'main'
+source_filename = "main"
+
+@i = private global i32 0
+@0 = private unnamed_addr constant [4 x i8] c"%d \00", align 1
+@1 = private unnamed_addr constant [4 x i8] c"%c \00", align 1
+@2 = private unnamed_addr constant [6 x i8] c"%.1f \00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @scanf(...)
+
+define i32 @main() {
+entrypoint:
+  %c = alloca i8
+  %f = alloca float
+  store float 0.000000e+00, float* %f
+  store i8 97, i8* %c
+  %tmpvar = load i32, i32* @i
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i32 %tmpvar)
+  %tmpvar1 = load i8, i8* %c
+  %printf2 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @1, i32 0, i32 0), i8 %tmpvar1)
+  %tmpvar3 = load float, float* %f
+  %tempdouble = fpext float %tmpvar3 to double
+  %printf4 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([6 x i8], [6 x i8]* @2, i32 0, i32 0), double %tempdouble)
+  ret i32 0
+}
+```
 
 结果：
+
+![image-20220612001912534](.\image\image-20220612001912534.png)
 
 ###### 数组测试
 
 测试代码：
 
-AST：
+```c
+int main()
+{
+    int a[5];
+    int i, j;
+    for (i = 0; i < 5; i++) {
+        a[i] = i;
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+    int b[5][5];
+    for(i = 0; i < 5; i++) {
+        for(j = 0; j < 5; j++) {
+            b[i][j] = i*j;
+            printf("%d ", b[i][j]);
+        }
+        printf("\n");
+    }
 
-IR：
+    return 0;
+}
+```
 
-汇编指令：
+中间代码：
+
+```
+; ModuleID = 'main'
+source_filename = "main"
+
+@0 = private unnamed_addr constant [4 x i8] c"%d \00", align 1
+@1 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str = constant [4 x i8] c"%s\0A\00"
+@2 = private unnamed_addr constant [4 x i8] c"%d \00", align 1
+@3 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str.1 = constant [4 x i8] c"%s\0A\00"
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @scanf(...)
+
+define i32 @main() {
+entrypoint:
+  %b = alloca [5 x [5 x i32]]
+  %j = alloca i32
+  %i = alloca i32
+  %a = alloca [5 x i32]
+  store i32 0, i32* %i
+  br label %cond
+
+cond:                                             ; preds = %loop, %entrypoint
+  %tmpvar = load i32, i32* %i
+  %icmptmp = icmp slt i32 %tmpvar, 5
+  %forCond = icmp ne i1 %icmptmp, false
+  br i1 %forCond, label %loop, label %afterloop
+
+loop:                                             ; preds = %cond
+  %tmpvar1 = load i32, i32* %i
+  %tmpvar2 = getelementptr inbounds [5 x i32], [5 x i32]* %a, i32 0, i32 %tmpvar1
+  %tmpvar3 = load i32, i32* %i
+  store i32 %tmpvar3, i32* %tmpvar2
+  %tmpvar4 = load i32, i32* %i
+  %tmpvar5 = getelementptr inbounds [5 x i32], [5 x i32]* %a, i32 0, i32 %tmpvar4
+  %tmpvar6 = load i32, i32* %tmpvar5
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i32 %tmpvar6)
+  %tmpvar7 = load i32, i32* %i
+  %addtempi = add i32 %tmpvar7, 1
+  store i32 %addtempi, i32* %i
+  br label %cond
+
+afterloop:                                        ; preds = %cond
+  %print = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @1, i32 0, i32 0))
+  store i32 0, i32* %i
+  br label %cond8
+
+cond8:                                            ; preds = %afterloop16, %afterloop
+  %tmpvar11 = load i32, i32* %i
+  %icmptmp12 = icmp slt i32 %tmpvar11, 5
+  %forCond13 = icmp ne i1 %icmptmp12, false
+  br i1 %forCond13, label %loop9, label %afterloop10
+
+loop9:                                            ; preds = %cond8
+  store i32 0, i32* %j
+  br label %cond14
+
+afterloop10:                                      ; preds = %cond8
+  ret i32 0
+
+cond14:                                           ; preds = %loop15, %loop9
+  %tmpvar17 = load i32, i32* %j
+  %icmptmp18 = icmp slt i32 %tmpvar17, 5
+  %forCond19 = icmp ne i1 %icmptmp18, false
+  br i1 %forCond19, label %loop15, label %afterloop16
+
+loop15:                                           ; preds = %cond14
+  %tmpvar20 = load i32, i32* %i
+  %tmpvar21 = load i32, i32* %j
+  %tmparr = getelementptr inbounds [5 x [5 x i32]], [5 x [5 x i32]]* %b, i32 0, i32 %tmpvar20
+  %tmpvar22 = getelementptr inbounds [5 x i32], [5 x i32]* %tmparr, i32 0, i32 %tmpvar21
+  %tmpvar23 = load i32, i32* %i
+  %tmpvar24 = load i32, i32* %j
+  %addtmpi = mul i32 %tmpvar23, %tmpvar24
+  store i32 %addtmpi, i32* %tmpvar22
+  %tmpvar25 = load i32, i32* %i
+  %tmpvar26 = load i32, i32* %j
+  %tmparr27 = getelementptr inbounds [5 x [5 x i32]], [5 x [5 x i32]]* %b, i32 0, i32 %tmpvar25
+  %tmpvar28 = getelementptr inbounds [5 x i32], [5 x i32]* %tmparr27, i32 0, i32 %tmpvar26
+  %tmpvar29 = load i32, i32* %tmpvar28
+  %printf30 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @2, i32 0, i32 0), i32 %tmpvar29)
+  %tmpvar31 = load i32, i32* %j
+  %addtempi32 = add i32 %tmpvar31, 1
+  store i32 %addtempi32, i32* %j
+  br label %cond14
+
+afterloop16:                                      ; preds = %cond14
+  %print33 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.1, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @3, i32 0, i32 0))
+  %tmpvar34 = load i32, i32* %i
+  %addtempi35 = add i32 %tmpvar34, 1
+  store i32 %addtempi35, i32* %i
+  br label %cond8
+}
+```
 
 结果：
+
+![image-20220612002331419](.\image\image-20220612002331419.png)
 
 #### 5.2 数据运算测试
 
 测试代码：
 
-AST：
+```c
+int main()
+{
+    int a = 7, b = 2;
+    printf("a+b=%d\n", a+b);
+    printf("a-b=%d\n", a-b);
+    printf("a*b=%d\n", a*b);
+    printf("a/b=%d\n", a/b);
 
-IR：
+    return 0;
+}
+```
 
-汇编指令：
+中间代码：
+
+```
+; ModuleID = 'main'
+source_filename = "main"
+
+@0 = private unnamed_addr constant [7 x i8] c"a+b=%d\00", align 1
+@1 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str = constant [4 x i8] c"%s\0A\00"
+@2 = private unnamed_addr constant [7 x i8] c"a-b=%d\00", align 1
+@3 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str.1 = constant [4 x i8] c"%s\0A\00"
+@4 = private unnamed_addr constant [7 x i8] c"a*b=%d\00", align 1
+@5 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str.2 = constant [4 x i8] c"%s\0A\00"
+@6 = private unnamed_addr constant [7 x i8] c"a/b=%d\00", align 1
+@7 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str.3 = constant [4 x i8] c"%s\0A\00"
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @scanf(...)
+
+define i32 @main() {
+entrypoint:
+  %b = alloca i32
+  %a = alloca i32
+  store i32 7, i32* %a
+  store i32 2, i32* %b
+  %tmpvar = load i32, i32* %a
+  %tmpvar1 = load i32, i32* %b
+  %addtmpi = add i32 %tmpvar, %tmpvar1
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @0, i32 0, i32 0), i32 %addtmpi)
+  %print = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @1, i32 0, i32 0))
+  %tmpvar2 = load i32, i32* %a
+  %tmpvar3 = load i32, i32* %b
+  %addtmpi4 = sub i32 %tmpvar2, %tmpvar3
+  %printf5 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @2, i32 0, i32 0), i32 %addtmpi4)
+  %print6 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.1, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @3, i32 0, i32 0))
+  %tmpvar7 = load i32, i32* %a
+  %tmpvar8 = load i32, i32* %b
+  %addtmpi9 = mul i32 %tmpvar7, %tmpvar8
+  %printf10 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @4, i32 0, i32 0), i32 %addtmpi9)
+  %print11 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.2, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @5, i32 0, i32 0))
+  %tmpvar12 = load i32, i32* %a
+  %tmpvar13 = load i32, i32* %b
+  %addtmpi14 = sdiv i32 %tmpvar12, %tmpvar13
+  %printf15 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @6, i32 0, i32 0), i32 %addtmpi14)
+  %print16 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.3, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @7, i32 0, i32 0))
+  ret i32 0
+}
+```
 
 结果：
+
+![image-20220612003121478](.\image\image-20220612003121478.png)
 
 #### 5.3 控制流测试
 
 ###### 循环语句测试
 
-测试代码：
-
-AST：
-
-IR：
-
-汇编指令：
-
-结果：
+可见5.1数组测试部分
 
 ###### 条件语句测试
 
 测试代码：
 
-AST：
+```c
+int main()
+{
+    int a = 4;
+    char c = 'c';
+    if (a == 4 && c == 'c') {
+        printf("a=4 & c=c");
+    } else {
+        printf("No");
+    }
 
-IR：
+    return 0;
+}
+```
 
-汇编指令：
+中间代码：
+
+```
+; ModuleID = 'main'
+source_filename = "main"
+
+@0 = private unnamed_addr constant [10 x i8] c"a=4 & c=c\00", align 1
+@1 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str = constant [4 x i8] c"%s\0A\00"
+@2 = private unnamed_addr constant [3 x i8] c"No\00", align 1
+@3 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str.1 = constant [4 x i8] c"%s\0A\00"
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @scanf(...)
+
+define i32 @main() {
+entrypoint:
+  %c = alloca i8
+  %a = alloca i32
+  store i32 4, i32* %a
+  store i8 99, i8* %c
+  %tmpvar = load i32, i32* %a
+  %icmptmp = icmp eq i32 %tmpvar, 4
+  %tmpvar1 = load i8, i8* %c
+  %icmptmp2 = icmp eq i8 %tmpvar1, 99
+  %tmpAnd = and i1 %icmptmp, %icmptmp2
+  %ifCond = icmp ne i1 %tmpAnd, false
+  br i1 %ifCond, label %then, label %else
+
+then:                                             ; preds = %entrypoint
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([10 x i8], [10 x i8]* @0, i32 0, i32 0))
+  %print = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @1, i32 0, i32 0))
+  br label %merge
+
+else:                                             ; preds = %entrypoint
+  %printf3 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @2, i32 0, i32 0))
+  %print4 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.1, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @3, i32 0, i32 0))
+  br label %merge
+
+merge:                                            ; preds = %else, %then
+  ret i32 0
+}
+```
 
 结果：
+
+![image-20220612002619653](.\image\image-20220612002619653.png)
 
 #### 5.4 函数测试
 
@@ -921,63 +1191,179 @@ IR：
 
 测试代码：
 
-AST：
+```c
+int func(int n) {
+    return n*n;
+}
 
-IR：
+int main()
+{
+    int a = 7;
+    printf("%d\n", func(a));
 
-汇编指令：
+    return 0;
+}
+```
+
+中间代码：
+
+```
+; ModuleID = 'main'
+source_filename = "main"
+
+@0 = private unnamed_addr constant [3 x i8] c"%d\00", align 1
+@1 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str = constant [4 x i8] c"%s\0A\00"
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @scanf(...)
+
+define i32 @func(i32 %n) {
+entrypoint:
+  %addtmpi = mul i32 %n, %n
+  ret i32 %addtmpi
+}
+
+define i32 @main() {
+entrypoint:
+  %a = alloca i32
+  store i32 7, i32* %a
+  %tmpvar = load i32, i32* %a
+  %calltmp = call i32 @func(i32 %tmpvar)
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @0, i32 0, i32 0), i32 %calltmp)
+  %print = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @1, i32 0, i32 0))
+  ret i32 0
+}
+```
 
 结果：
+
+![image-20220612003324046](.\image\image-20220612003324046.png)
 
 ###### 递归函数测试
 
 测试代码：
 
-AST：
+```c
+int func(int n) {
+    int ret;
+    if (n == 1) ret = 1;
+    if (n == 2) ret = 1;
+    if (n != 1 && n != 2) ret = func(n-1)+func(n-2);
+    return ret;
+}
 
-IR：
+int main()
+{
+    int a = 7;
+    printf("%d\n", func(7));
 
-汇编指令：
+    return 0;
+}
+```
+
+中间代码：
+
+```
+; ModuleID = 'main'
+source_filename = "main"
+
+@0 = private unnamed_addr constant [3 x i8] c"%d\00", align 1
+@1 = private unnamed_addr constant [1 x i8] zeroinitializer, align 1
+@.str = constant [4 x i8] c"%s\0A\00"
+
+declare i32 @printf(i8*, ...)
+
+declare i32 @scanf(...)
+
+define i32 @func(i32 %n) {
+entrypoint:
+  %ret = alloca i32
+  %icmptmp = icmp eq i32 %n, 1
+  %ifCond = icmp ne i1 %icmptmp, false
+  br i1 %ifCond, label %then, label %else
+
+then:                                             ; preds = %entrypoint
+  store i32 1, i32* %ret
+  br label %merge
+
+else:                                             ; preds = %entrypoint
+  br label %merge
+
+merge:                                            ; preds = %else, %then
+  %icmptmp1 = icmp eq i32 %n, 2
+  %ifCond2 = icmp ne i1 %icmptmp1, false
+  br i1 %ifCond2, label %then3, label %else4
+
+then3:                                            ; preds = %merge
+  store i32 1, i32* %ret
+  br label %merge5
+
+else4:                                            ; preds = %merge
+  br label %merge5
+
+merge5:                                           ; preds = %else4, %then3
+  %icmptmp6 = icmp ne i32 %n, 1
+  %icmptmp7 = icmp ne i32 %n, 2
+  %tmpAnd = and i1 %icmptmp6, %icmptmp7
+  %ifCond8 = icmp ne i1 %tmpAnd, false
+  br i1 %ifCond8, label %then9, label %else10
+
+then9:                                            ; preds = %merge5
+  %addtmpi = sub i32 %n, 1
+  %calltmp = call i32 @func(i32 %addtmpi)
+  %addtmpi12 = sub i32 %n, 2
+  %calltmp13 = call i32 @func(i32 %addtmpi12)
+  %addtmpi14 = add i32 %calltmp, %calltmp13
+  store i32 %addtmpi14, i32* %ret
+  br label %merge11
+
+else10:                                           ; preds = %merge5
+  br label %merge11
+
+merge11:                                          ; preds = %else10, %then9
+  %tmpvar = load i32, i32* %ret
+  ret i32 %tmpvar
+}
+
+define i32 @main() {
+entrypoint:
+  %a = alloca i32
+  store i32 7, i32* %a
+  %calltmp = call i32 @func(i32 7)
+  %printf = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @0, i32 0, i32 0), i32 %calltmp)
+  %print = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i8* getelementptr inbounds ([1 x i8], [1 x i8]* @1, i32 0, i32 0))
+  ret i32 0
+}
+```
 
 结果：
+
+![image-20220612003619713](.\image\image-20220612003619713.png)
 
 #### 5.5 综合测试
 
 ###### 测试样例1——quicksort
 
-测试代码：
-
-AST：
-
-IR：
-
-汇编指令：
+测试代码和中间代码可见代码部分。
 
 结果：
+
+![image-20220612003832253](.\image\image-20220612003832253.png)
 
 ###### 测试样例2——matrix-multiplication
 
-测试代码：
-
-AST：
-
-IR：
-
-汇编指令：
+测试代码和中间代码可见代码部分。
 
 结果：
+
+![image-20220612003844576](.\image\image-20220612003844576.png)
 
 ###### 测试样例3——auto-advisor
 
-测试代码：
-
-AST：
-
-IR：
-
-汇编指令：
+测试代码和中间代码可见代码部分。
 
 结果：
 
-## 第六章 总结
-
+![image-20220612003852089](.\image\image-20220612003852089.png)
